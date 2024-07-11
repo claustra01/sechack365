@@ -14,7 +14,7 @@ services:
   reverse-proxy:
     build: ./nginx
     ports:
-      - "8443:8443"
+      - "443:443"
     depends_on:
       - api
       - frontend
