@@ -15,7 +15,7 @@ FROM gcr.io/distroless/base:nonroot AS runner
 ENV TZ=Asia/Tokyo
 ENV GOENV=production
 # should be set by the environment
-ENV PORT=8080 
+ENV PORT=1323 
 
 COPY --from=build /bin/server /bin/server
 

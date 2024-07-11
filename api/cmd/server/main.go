@@ -12,7 +12,7 @@ func main() {
 
 	var port string
 	if port = os.Getenv("PORT"); port == "" {
-		port = "8080"
+		port = "1323"
 	}
 	http.ListenAndServe(":"+port, nil)
 }
