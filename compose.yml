@@ -12,7 +12,7 @@ services:
       - api
 
   reverse-proxy:
-    image: nginx:latest
+    image: nginx:1.27.0-alpine-slim
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
