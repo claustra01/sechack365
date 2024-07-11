@@ -2,12 +2,12 @@ services:
   api:
     build: ./api
     ports:
-      - "1323:1323"
+      - "127.0.0.1:1323:1323"
 
   frontend:
     build: ./frontend
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       - api
 
