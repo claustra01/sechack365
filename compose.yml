@@ -2,7 +2,7 @@ services:
   api:
     build: ./api
     ports:
-      - "8080:8080"
+      - "1323:1323"
 
   frontend:
     build: ./frontend
@@ -10,3 +10,13 @@ services:
       - "3000:3000"
     depends_on:
       - api
+
+  reverse-proxy:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api
+      - frontend
