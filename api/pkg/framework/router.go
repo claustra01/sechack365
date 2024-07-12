@@ -11,11 +11,11 @@ type HandlerFunc http.HandlerFunc
 type Middleware func(HandlerFunc) HandlerFunc
 
 type RouterInterface interface {
-	GET(path string, handler HandlerFunc, middleware ...Middleware) error
-	POST(path string, handler HandlerFunc, middleware ...Middleware) error
-	PUT(path string, handler HandlerFunc, middleware ...Middleware) error
-	DELETE(path string, handler HandlerFunc, middleware ...Middleware) error
-	PATCH(path string, handler HandlerFunc, middleware ...Middleware) error
+	Get(path string, handler HandlerFunc, middleware ...Middleware) error
+	Post(path string, handler HandlerFunc, middleware ...Middleware) error
+	Put(path string, handler HandlerFunc, middleware ...Middleware) error
+	Delete(path string, handler HandlerFunc, middleware ...Middleware) error
+	Patch(path string, handler HandlerFunc, middleware ...Middleware) error
 	HandleRoutes()
 }
 
@@ -49,23 +49,23 @@ func (r *Router) addRoute(path string, method string, handler HandlerFunc, middl
 	return nil
 }
 
-func (r *Router) GET(path string, handler HandlerFunc, middleware ...Middleware) error {
+func (r *Router) Get(path string, handler HandlerFunc, middleware ...Middleware) error {
 	return r.addRoute(path, http.MethodGet, handler, middleware...)
 }
 
-func (r *Router) POST(path string, handler HandlerFunc, middleware ...Middleware) error {
+func (r *Router) Post(path string, handler HandlerFunc, middleware ...Middleware) error {
 	return r.addRoute(path, http.MethodPost, handler, middleware...)
 }
 
-func (r *Router) PUT(path string, handler HandlerFunc, middleware ...Middleware) error {
+func (r *Router) Put(path string, handler HandlerFunc, middleware ...Middleware) error {
 	return r.addRoute(path, http.MethodPut, handler, middleware...)
 }
 
-func (r *Router) DELETE(path string, handler HandlerFunc, middleware ...Middleware) error {
+func (r *Router) Delete(path string, handler HandlerFunc, middleware ...Middleware) error {
 	return r.addRoute(path, http.MethodDelete, handler, middleware...)
 }
 
-func (r *Router) PATCH(path string, handler HandlerFunc, middleware ...Middleware) error {
+func (r *Router) Patch(path string, handler HandlerFunc, middleware ...Middleware) error {
 	return r.addRoute(path, http.MethodPatch, handler, middleware...)
 }
 

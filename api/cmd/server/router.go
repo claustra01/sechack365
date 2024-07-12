@@ -9,11 +9,11 @@ import (
 
 func SetupRouter(r *framework.Router) error {
 	// TODO: check error
-	r.GET("/", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello, World!")
 	})
 
-	r.POST("/", func(w http.ResponseWriter, r *http.Request) {
+	r.Post("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello, World!")
 	})
 
