@@ -11,11 +11,12 @@ type HandlerFunc http.HandlerFunc
 type Middleware func(HandlerFunc) HandlerFunc
 
 type RouterInterface interface {
-	GET(path string, handler HandlerFunc, middleware ...Middleware)
-	POST(path string, handler HandlerFunc, middleware ...Middleware)
-	PUT(path string, handler HandlerFunc, middleware ...Middleware)
-	DELETE(path string, handler HandlerFunc, middleware ...Middleware)
-	PATCH(path string, handler HandlerFunc, middleware ...Middleware)
+	GET(path string, handler HandlerFunc, middleware ...Middleware) error
+	POST(path string, handler HandlerFunc, middleware ...Middleware) error
+	PUT(path string, handler HandlerFunc, middleware ...Middleware) error
+	DELETE(path string, handler HandlerFunc, middleware ...Middleware) error
+	PATCH(path string, handler HandlerFunc, middleware ...Middleware) error
+	HandleRoutes()
 }
 
 type Router struct {
@@ -31,13 +32,13 @@ func NewRouter() *Router {
 	}
 }
 
-func (r *Router) addRoute(path string, method string, handler HandlerFunc, middleware ...Middleware) {
+func (r *Router) addRoute(path string, method string, handler HandlerFunc, middleware ...Middleware) error {
 	if r.routes[path] == nil {
 		r.routes[path] = make(map[string]HandlerFunc)
 	}
 
 	if r.routes[path][method] != nil {
-		panic(ErrRouteAlreadyExists)
+		return ErrRouteAlreadyExists
 	}
 
 	finalHandler := handler
@@ -45,9 +46,30 @@ func (r *Router) addRoute(path string, method string, handler HandlerFunc, middl
 		finalHandler = m(finalHandler)
 	}
 	r.routes[path][method] = finalHandler
+	return nil
 }
 
-func (r *Router) registerRoute() {
+func (r *Router) GET(path string, handler HandlerFunc, middleware ...Middleware) error {
+	return r.addRoute(path, http.MethodGet, handler, middleware...)
+}
+
+func (r *Router) POST(path string, handler HandlerFunc, middleware ...Middleware) error {
+	return r.addRoute(path, http.MethodPost, handler, middleware...)
+}
+
+func (r *Router) PUT(path string, handler HandlerFunc, middleware ...Middleware) error {
+	return r.addRoute(path, http.MethodPut, handler, middleware...)
+}
+
+func (r *Router) DELETE(path string, handler HandlerFunc, middleware ...Middleware) error {
+	return r.addRoute(path, http.MethodDelete, handler, middleware...)
+}
+
+func (r *Router) PATCH(path string, handler HandlerFunc, middleware ...Middleware) error {
+	return r.addRoute(path, http.MethodPatch, handler, middleware...)
+}
+
+func (r *Router) HandleRoutes() {
 	for path, handlers := range r.routes {
 		r.mux.HandleFunc(path, func(w http.ResponseWriter, req *http.Request) {
 			handler := handlers[req.Method]
@@ -58,24 +80,4 @@ func (r *Router) registerRoute() {
 			handler(w, req)
 		})
 	}
-}
-
-func (r *Router) GET(path string, handler HandlerFunc, middleware ...Middleware) {
-	r.addRoute(path, http.MethodGet, handler, middleware...)
-}
-
-func (r *Router) POST(path string, handler HandlerFunc, middleware ...Middleware) {
-	r.addRoute(path, http.MethodPost, handler, middleware...)
-}
-
-func (r *Router) PUT(path string, handler HandlerFunc, middleware ...Middleware) {
-	r.addRoute(path, http.MethodPut, handler, middleware...)
-}
-
-func (r *Router) DELETE(path string, handler HandlerFunc, middleware ...Middleware) {
-	r.addRoute(path, http.MethodDelete, handler, middleware...)
-}
-
-func (r *Router) PATCH(path string, handler HandlerFunc, middleware ...Middleware) {
-	r.addRoute(path, http.MethodPatch, handler, middleware...)
 }

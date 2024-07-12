@@ -7,9 +7,8 @@ import (
 	"github.com/claustra01/sechack365/pkg/framework"
 )
 
-func SetupRouter() *framework.Router {
-	r := framework.NewRouter()
-
+func SetupRouter(r *framework.Router) error {
+	// TODO: check error
 	r.GET("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello, World!")
 	})
@@ -18,5 +17,6 @@ func SetupRouter() *framework.Router {
 		fmt.Fprint(w, "Hello, World!")
 	})
 
-	return r
+	r.HandleRoutes()
+	return nil
 }

@@ -12,7 +12,11 @@ func main() {
 		port = "1323"
 	}
 
-	router := SetupRouter()
+	router := framework.NewRouter()
+	if err := SetupRouter(router); err != nil {
+		panic(err)
+	}
+
 	server := framework.NewServer(*router, port)
 	if err := server.ListenAndServe(); err != nil {
 		panic(err)

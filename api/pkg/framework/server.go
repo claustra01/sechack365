@@ -22,6 +22,5 @@ func NewServer(router Router, port string) *Server {
 }
 
 func (s *Server) ListenAndServe() error {
-	s.router.registerRoute()
 	return http.ListenAndServe(":"+s.port, s.router.mux)
 }
