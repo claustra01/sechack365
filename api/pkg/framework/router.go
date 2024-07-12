@@ -17,6 +17,7 @@ type RouterInterface interface {
 	Delete(path string, handler HandlerFunc, middleware ...Middleware) error
 	Patch(path string, handler HandlerFunc, middleware ...Middleware) error
 	Group(path string, middleware ...Middleware) Router
+	Use(middleware ...Middleware)
 	HandleRoutes()
 }
 
@@ -83,6 +84,10 @@ func (r *Router) Group(path string, middleware ...Middleware) Router {
 		routes:     r.routes,
 		middleware: append(r.middleware, middleware...),
 	}
+}
+
+func (r *Router) Use(middleware ...Middleware) {
+	r.middleware = append(r.middleware, middleware...)
 }
 
 func (r *Router) HandleRoutes() {
