@@ -22,7 +22,7 @@ type RouterInterface interface {
 
 type Router struct {
 	mux        *http.ServeMux
-	path       string
+	basePath   string
 	routes     map[string]map[string]HandlerFunc
 	middleware []Middleware
 }
@@ -30,21 +30,21 @@ type Router struct {
 func NewRouter() *Router {
 	return &Router{
 		mux:        http.NewServeMux(),
-		path:       "",
+		basePath:   "",
 		routes:     make(map[string]map[string]HandlerFunc),
 		middleware: []Middleware{},
 	}
 }
 
 func (r *Router) addRoute(path string, method string, handler HandlerFunc, middleware ...Middleware) error {
-	path = r.path + path
+	normalizedPath := r.basePath + path
 	middleware = append(r.middleware, middleware...)
 
-	if r.routes[path] == nil {
-		r.routes[path] = make(map[string]HandlerFunc)
+	if r.routes[normalizedPath] == nil {
+		r.routes[normalizedPath] = make(map[string]HandlerFunc)
 	}
 
-	if r.routes[path][method] != nil {
+	if r.routes[normalizedPath][method] != nil {
 		return ErrRouteAlreadyExists
 	}
 
@@ -52,7 +52,7 @@ func (r *Router) addRoute(path string, method string, handler HandlerFunc, middl
 	for _, m := range middleware {
 		finalHandler = m(finalHandler)
 	}
-	r.routes[path][method] = finalHandler
+	r.routes[normalizedPath][method] = finalHandler
 	return nil
 }
 
@@ -79,7 +79,7 @@ func (r *Router) Patch(path string, handler HandlerFunc, middleware ...Middlewar
 func (r *Router) Group(path string, middleware ...Middleware) Router {
 	return Router{
 		mux:        r.mux,
-		path:       r.path + path,
+		basePath:   r.basePath + path,
 		routes:     r.routes,
 		middleware: append(r.middleware, middleware...),
 	}
