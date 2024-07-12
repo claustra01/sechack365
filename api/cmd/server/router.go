@@ -14,7 +14,12 @@ func SetupRouter(r *framework.Router) error {
 	})
 
 	r.Post("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello, World!")
+		fmt.Fprint(w, "Goodbye, World!")
+	})
+
+	hello := r.Group("/hello")
+	hello.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "Hello!")
 	})
 
 	r.HandleRoutes()

@@ -16,23 +16,30 @@ type RouterInterface interface {
 	Put(path string, handler HandlerFunc, middleware ...Middleware) error
 	Delete(path string, handler HandlerFunc, middleware ...Middleware) error
 	Patch(path string, handler HandlerFunc, middleware ...Middleware) error
+	Group(path string, middleware ...Middleware) Router
 	HandleRoutes()
 }
 
 type Router struct {
-	RouterInterface
-	mux    *http.ServeMux
-	routes map[string]map[string]HandlerFunc
+	mux        *http.ServeMux
+	path       string
+	routes     map[string]map[string]HandlerFunc
+	middleware []Middleware
 }
 
 func NewRouter() *Router {
 	return &Router{
-		mux:    http.NewServeMux(),
-		routes: make(map[string]map[string]HandlerFunc),
+		mux:        http.NewServeMux(),
+		path:       "",
+		routes:     make(map[string]map[string]HandlerFunc),
+		middleware: []Middleware{},
 	}
 }
 
 func (r *Router) addRoute(path string, method string, handler HandlerFunc, middleware ...Middleware) error {
+	path = r.path + path
+	middleware = append(r.middleware, middleware...)
+
 	if r.routes[path] == nil {
 		r.routes[path] = make(map[string]HandlerFunc)
 	}
@@ -67,6 +74,15 @@ func (r *Router) Delete(path string, handler HandlerFunc, middleware ...Middlewa
 
 func (r *Router) Patch(path string, handler HandlerFunc, middleware ...Middleware) error {
 	return r.addRoute(path, http.MethodPatch, handler, middleware...)
+}
+
+func (r *Router) Group(path string, middleware ...Middleware) Router {
+	return Router{
+		mux:        r.mux,
+		path:       r.path + path,
+		routes:     r.routes,
+		middleware: append(r.middleware, middleware...),
+	}
 }
 
 func (r *Router) HandleRoutes() {

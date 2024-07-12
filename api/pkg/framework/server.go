@@ -9,7 +9,6 @@ type ServerInterface interface {
 }
 
 type Server struct {
-	ServerInterface
 	router Router
 	port   string
 }
