@@ -17,6 +17,11 @@ func SetupRouter(r *framework.Router) error {
 		fmt.Fprint(w, "Goodbye, World!")
 	})
 
+	r.Get("/user/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		fmt.Fprintf(w, "Hello, %s!", id)
+	})
+
 	hello := r.Group("/hello")
 	hello.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello!")
