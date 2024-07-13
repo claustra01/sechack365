@@ -16,7 +16,7 @@ func Chain(middleware ...Middleware) Middleware {
 	}
 }
 
-func LoggerMiddleware(next HandlerFunc) HandlerFunc {
+func LoggingMiddleware(next HandlerFunc) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		slog.Info("Request:", "Method", r.Method, "Path", r.URL.Path, "RemoteAddr", r.RemoteAddr, "Proto", r.Proto, "UserAgent", r.UserAgent())
 		next(w, r)
