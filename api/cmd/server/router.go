@@ -31,6 +31,5 @@ func SetupRouter(r *framework.Router) error {
 	// 	fmt.Fprint(w, "Hello!")
 	// })
 
-	r.HandleRoutes()
 	return nil
 }

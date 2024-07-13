@@ -17,7 +17,6 @@ type RouterInterface interface {
 	Patch(path string, handler HandlerFunc, middleware ...Middleware) error
 	Group(path string, middleware ...Middleware) Router
 	Use(middleware ...Middleware)
-	HandleRoutes()
 }
 
 type Router struct {
@@ -28,12 +27,16 @@ type Router struct {
 }
 
 func NewRouter() *Router {
-	return &Router{
+	r := &Router{
 		mux:        http.NewServeMux(),
 		basePath:   "",
 		routes:     make(map[string]map[string]HandlerFunc),
 		middleware: []Middleware{},
 	}
+	r.mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	})
+	return r
 }
 
 func (r *Router) addRoute(path string, method string, handler HandlerFunc, middleware ...Middleware) error {
@@ -42,16 +45,9 @@ func (r *Router) addRoute(path string, method string, handler HandlerFunc, middl
 		p += "{$}"
 	}
 
-	if r.routes[p] == nil {
-		r.routes[p] = make(map[string]HandlerFunc)
-	}
-
-	if r.routes[p][method] != nil {
-		return ErrRouteAlreadyExists
-	}
-
+	pattern := fmt.Sprintf("%s %s", method, p)
 	middleware = append(r.middleware, middleware...)
-	r.routes[p][method] = chain(middleware...)(handler)
+	r.mux.HandleFunc(pattern, chain(middleware...)(handler))
 	return nil
 }
 
@@ -86,21 +82,4 @@ func (r *Router) Group(path string, middleware ...Middleware) Router {
 
 func (r *Router) Use(middleware ...Middleware) {
 	r.middleware = append(r.middleware, middleware...)
-}
-
-func (r *Router) HandleRoutes() {
-	r.mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-	})
-
-	for path, handlers := range r.routes {
-		r.mux.HandleFunc(path, func(w http.ResponseWriter, req *http.Request) {
-			handler := handlers[req.Method]
-			if handler == nil {
-				http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-				return
-			}
-			handler(w, req)
-		})
-	}
 }
