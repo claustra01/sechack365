@@ -13,6 +13,9 @@ func setupRouter(r *framework.Router) error {
 	wk.Get("/nodeinfo", handler.Nodeinfo)
 	wk.Get("/webfinger", handler.Webfinger)
 
+	// mock actor endpoint
+	api.Get("/actor/mock", handler.MockActor)
+
 	// api.Get("/", func(w http.ResponseWriter, r *http.Request) {
 	// 	fmt.Fprint(w, "Hello, World!")
 	// })
