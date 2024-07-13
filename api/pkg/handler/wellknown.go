@@ -101,7 +101,7 @@ func Webfinger(c *framework.Context) http.HandlerFunc {
 				{
 					Rel:  "self",
 					Type: "application/activity+json",
-					Href: fmt.Sprintf("http://%s/api/v1/actor/mock", c.Config.Host),
+					Href: fmt.Sprintf("https://%s/api/v1/actor/mock", c.Config.Host),
 				},
 			},
 		}
