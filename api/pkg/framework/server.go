@@ -8,18 +8,15 @@ type ServerInterface interface {
 	ListenAndServe() error
 }
 
-type Server struct {
-	router Router
-	port   string
-}
+type Server http.Server
 
 func NewServer(router Router, port string) *Server {
 	return &Server{
-		router: router,
-		port:   port,
+		Addr:    ":" + port,
+		Handler: router.mux,
 	}
 }
 
 func (s *Server) ListenAndServe() error {
-	return http.ListenAndServe(":"+s.port, s.router.mux)
+	return (*http.Server)(s).ListenAndServe()
 }
