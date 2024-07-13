@@ -5,14 +5,15 @@ import (
 )
 
 func main() {
-	router := framework.NewRouter()
+	config := framework.NewServerConfig()
+	server := framework.NewServer(config)
+	router := server.Router
+
 	router.Use(framework.LoggingMiddleware, framework.RecoverMiddleware)
 	if err := setupRouter(router); err != nil {
 		panic(err)
 	}
 
-	config := framework.NewServerConfig()
-	server := framework.NewServer(*router, config)
 	if err := server.ListenAndServe(); err != nil {
 		panic(err)
 	}

@@ -10,7 +10,11 @@ type ServerInterface interface {
 	ListenAndServe() error
 }
 
-type Server http.Server
+type Server struct {
+	s      *http.Server
+	Config *ServerConfig
+	Router *Router
+}
 
 type ServerConfig struct {
 	Host     string
@@ -18,19 +22,25 @@ type ServerConfig struct {
 	LogLevel slog.Level
 }
 
-func NewServer(router Router, config ServerConfig) *Server {
+func NewServer(config *ServerConfig) *Server {
+	router := NewRouter()
 	slog.SetLogLoggerLevel(config.LogLevel)
+
 	return &Server{
-		Addr:    ":" + config.Port,
-		Handler: router.mux,
+		s: &http.Server{
+			Addr:    ":" + config.Port,
+			Handler: router.mux,
+		},
+		Config: config,
+		Router: router,
 	}
 }
 
 func (s *Server) ListenAndServe() error {
-	return (*http.Server)(s).ListenAndServe()
+	return s.s.ListenAndServe()
 }
 
-func NewServerConfig() ServerConfig {
+func NewServerConfig() *ServerConfig {
 	var host string
 	if host = os.Getenv("HOST"); host == "" {
 		slog.Warn("HOST is not set. Using default value.")
@@ -49,7 +59,7 @@ func NewServerConfig() ServerConfig {
 		logLevel = "info"
 	}
 
-	return ServerConfig{
+	return &ServerConfig{
 		Host:     host,
 		Port:     port,
 		LogLevel: convertLogLevel(logLevel),
