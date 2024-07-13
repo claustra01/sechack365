@@ -1,24 +1,18 @@
 package main
 
 import (
-	"os"
-
 	"github.com/claustra01/sechack365/pkg/framework"
 )
 
 func main() {
-	var port string
-	if port = os.Getenv("PORT"); port == "" {
-		port = "1323"
-	}
-
 	router := framework.NewRouter()
 	router.Use(framework.LoggingMiddleware, framework.RecoverMiddleware)
-	if err := SetupRouter(router); err != nil {
+	if err := setupRouter(router); err != nil {
 		panic(err)
 	}
 
-	server := framework.NewServer(*router, port)
+	config := framework.NewServerConfig()
+	server := framework.NewServer(*router, config)
 	if err := server.ListenAndServe(); err != nil {
 		panic(err)
 	}

@@ -5,7 +5,7 @@ import (
 	"github.com/claustra01/sechack365/pkg/handler"
 )
 
-func SetupRouter(r *framework.Router) error {
+func setupRouter(r *framework.Router) error {
 	// TODO: check error
 	api := r.Group("/api/v1")
 
