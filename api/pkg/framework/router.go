@@ -72,10 +72,12 @@ func (r *Router) Patch(path string, handler HandlerFunc, middleware ...Middlewar
 }
 
 func (r *Router) Group(path string, middleware ...MiddlewareFunc) Router {
-	router := *r
-	router.basePath = r.basePath + path
-	router.middleware = append(r.middleware, middleware...)
-	return router
+	return Router{
+		Ctx:        r.Ctx,
+		mux:        r.mux,
+		basePath:   r.basePath + path,
+		middleware: append(r.middleware, middleware...),
+	}
 }
 
 func (r *Router) Use(middleware ...MiddlewareFunc) {
