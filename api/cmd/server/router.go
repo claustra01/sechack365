@@ -6,13 +6,11 @@ import (
 )
 
 func setupRouter(r *framework.Router) error {
-	// TODO: check error
-	api := r.Group("/api/v1")
-
-	wk := api.Group("/.well-known")
+	wk := r.Group("/.well-known")
 	wk.Get("/nodeinfo", handler.Nodeinfo)
 	wk.Get("/webfinger", handler.Webfinger)
 
+	api := r.Group("/api/v1")
 	// mock actor endpoint
 	api.Get("/actor/mock", handler.MockActor)
 
