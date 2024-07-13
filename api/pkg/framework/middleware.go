@@ -5,10 +5,10 @@ import (
 	"net/http"
 )
 
-type MiddlewareFunc func(HandlerFunc) HandlerFunc
+type MiddlewareFunc func(http.HandlerFunc) http.HandlerFunc
 
 func chain(middleware ...MiddlewareFunc) MiddlewareFunc {
-	return func(handler HandlerFunc) HandlerFunc {
+	return func(handler http.HandlerFunc) http.HandlerFunc {
 		for i := len(middleware) - 1; i >= 0; i-- {
 			handler = middleware[i](handler)
 		}
@@ -16,14 +16,14 @@ func chain(middleware ...MiddlewareFunc) MiddlewareFunc {
 	}
 }
 
-func LoggingMiddleware(next HandlerFunc) HandlerFunc {
+func LoggingMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		slog.Info("Request:", "Method", r.Method, "Path", r.URL.Path, "RemoteAddr", r.RemoteAddr, "Proto", r.Proto, "UserAgent", r.UserAgent())
 		next(w, r)
 	}
 }
 
-func RecoverMiddleware(next HandlerFunc) HandlerFunc {
+func RecoverMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if err := recover(); err != nil {

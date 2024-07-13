@@ -7,7 +7,7 @@ import (
 
 var ErrRouteAlreadyExists = fmt.Errorf("route already exists")
 
-type HandlerFunc http.HandlerFunc
+type HandlerFunc func(*Config) http.HandlerFunc
 
 type RouterInterface interface {
 	Get(path string, handler HandlerFunc, middleware ...MiddlewareFunc) error
@@ -20,13 +20,15 @@ type RouterInterface interface {
 }
 
 type Router struct {
+	Config     *Config
 	mux        *http.ServeMux
 	basePath   string
 	middleware []MiddlewareFunc
 }
 
-func NewRouter() *Router {
+func NewRouter(config *Config) *Router {
 	r := &Router{
+		Config:     config,
 		mux:        http.NewServeMux(),
 		basePath:   "",
 		middleware: []MiddlewareFunc{},
@@ -45,7 +47,7 @@ func (r *Router) addRoute(path string, method string, handler HandlerFunc, middl
 
 	pattern := fmt.Sprintf("%s %s", method, p)
 	middleware = append(r.middleware, middleware...)
-	r.mux.HandleFunc(pattern, chain(middleware...)(handler))
+	r.mux.HandleFunc(pattern, chain(middleware...)(handler(r.Config)))
 	return nil
 }
 
@@ -70,11 +72,10 @@ func (r *Router) Patch(path string, handler HandlerFunc, middleware ...Middlewar
 }
 
 func (r *Router) Group(path string, middleware ...MiddlewareFunc) Router {
-	return Router{
-		mux:        r.mux,
-		basePath:   r.basePath + path,
-		middleware: append(r.middleware, middleware...),
-	}
+	router := *r
+	router.basePath = r.basePath + path
+	router.middleware = append(r.middleware, middleware...)
+	return router
 }
 
 func (r *Router) Use(middleware ...MiddlewareFunc) {

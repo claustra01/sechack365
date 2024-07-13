@@ -12,18 +12,18 @@ type ServerInterface interface {
 
 type Server struct {
 	s      *http.Server
-	Config *ServerConfig
+	Config *Config
 	Router *Router
 }
 
-type ServerConfig struct {
+type Config struct {
 	Host     string
 	Port     string
 	LogLevel slog.Level
 }
 
-func NewServer(config *ServerConfig) *Server {
-	router := NewRouter()
+func NewServer(config *Config) *Server {
+	router := NewRouter(config)
 
 	slog.Info("LogLevel set to:", "level", config.LogLevel)
 	slog.SetLogLoggerLevel(config.LogLevel)
@@ -42,7 +42,7 @@ func (s *Server) ListenAndServe() error {
 	return s.s.ListenAndServe()
 }
 
-func NewServerConfig() *ServerConfig {
+func NewServerConfig() *Config {
 	var host string
 	if host = os.Getenv("HOST"); host == "" {
 		slog.Warn("HOST is not set. Using default value.")
@@ -61,7 +61,7 @@ func NewServerConfig() *ServerConfig {
 		logLevel = "info"
 	}
 
-	return &ServerConfig{
+	return &Config{
 		Host:     host,
 		Port:     port,
 		LogLevel: convertLogLevel(logLevel),
