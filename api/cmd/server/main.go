@@ -5,8 +5,8 @@ import (
 )
 
 func main() {
-	config := framework.NewServerConfig()
-	server := framework.NewServer(config)
+	ctx := framework.NewContext()
+	server := framework.NewServer(ctx)
 	router := server.Router
 
 	router.Use(framework.LoggingMiddleware, framework.RecoverMiddleware)

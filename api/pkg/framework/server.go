@@ -3,7 +3,6 @@ package framework
 import (
 	"log/slog"
 	"net/http"
-	"os"
 )
 
 type ServerInterface interface {
@@ -11,74 +10,26 @@ type ServerInterface interface {
 }
 
 type Server struct {
-	s      *http.Server
-	Config *Config
+	Ctx    *Context
 	Router *Router
+	srv    *http.Server
 }
 
-type Config struct {
-	Host     string
-	Port     string
-	LogLevel slog.Level
-}
+func NewServer(ctx *Context) *Server {
+	router := NewRouter(ctx)
 
-func NewServer(config *Config) *Server {
-	router := NewRouter(config)
-
-	slog.Info("LogLevel set to:", "level", config.LogLevel)
-	slog.SetLogLoggerLevel(config.LogLevel)
+	slog.Info("LogLevel set to:", "level", ctx.Config.LogLevel)
+	slog.SetLogLoggerLevel(ctx.Config.LogLevel)
 
 	return &Server{
-		s: &http.Server{
-			Addr:    ":" + config.Port,
+		srv: &http.Server{
+			Addr:    ":" + ctx.Config.Port,
 			Handler: router.mux,
 		},
-		Config: config,
 		Router: router,
 	}
 }
 
 func (s *Server) ListenAndServe() error {
-	return s.s.ListenAndServe()
-}
-
-func NewServerConfig() *Config {
-	var host string
-	if host = os.Getenv("HOST"); host == "" {
-		slog.Warn("HOST is not set. Using default value.")
-		host = "localhost"
-	}
-
-	var port string
-	if port = os.Getenv("PORT"); port == "" {
-		slog.Warn("PORT is not set. Using default value.")
-		port = "1323"
-	}
-
-	var logLevel string
-	if logLevel = os.Getenv("LOG_LEVEL"); logLevel == "" {
-		slog.Warn("LOG_LEVEL is not set. Using default value.")
-		logLevel = "info"
-	}
-
-	return &Config{
-		Host:     host,
-		Port:     port,
-		LogLevel: convertLogLevel(logLevel),
-	}
-}
-
-func convertLogLevel(level string) slog.Level {
-	switch level {
-	case "debug":
-		return slog.LevelDebug
-	case "info":
-		return slog.LevelInfo
-	case "warn":
-		return slog.LevelWarn
-	case "error":
-		return slog.LevelError
-	default:
-		return slog.LevelInfo
-	}
+	return s.srv.ListenAndServe()
 }
