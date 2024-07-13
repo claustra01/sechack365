@@ -37,21 +37,21 @@ func NewRouter() *Router {
 }
 
 func (r *Router) addRoute(path string, method string, handler HandlerFunc, middleware ...Middleware) error {
-	normalizedPath := r.basePath + path
-	if normalizedPath[len(normalizedPath)-1] != '}' {
-		normalizedPath += "{$}"
+	p := r.basePath + path
+	if p[len(p)-1] == '/' {
+		p += "{$}"
 	}
 
-	if r.routes[normalizedPath] == nil {
-		r.routes[normalizedPath] = make(map[string]HandlerFunc)
+	if r.routes[p] == nil {
+		r.routes[p] = make(map[string]HandlerFunc)
 	}
 
-	if r.routes[normalizedPath][method] != nil {
+	if r.routes[p][method] != nil {
 		return ErrRouteAlreadyExists
 	}
 
 	middleware = append(r.middleware, middleware...)
-	r.routes[normalizedPath][method] = chain(middleware...)(handler)
+	r.routes[p][method] = chain(middleware...)(handler)
 	return nil
 }
 
