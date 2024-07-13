@@ -7,7 +7,7 @@ import (
 
 type Middleware func(HandlerFunc) HandlerFunc
 
-func Chain(middleware ...Middleware) Middleware {
+func chain(middleware ...Middleware) Middleware {
 	return func(handler HandlerFunc) HandlerFunc {
 		for i := len(middleware) - 1; i >= 0; i-- {
 			handler = middleware[i](handler)

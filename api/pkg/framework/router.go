@@ -51,7 +51,7 @@ func (r *Router) addRoute(path string, method string, handler HandlerFunc, middl
 	}
 
 	middleware = append(r.middleware, middleware...)
-	r.routes[normalizedPath][method] = Chain(middleware...)(handler)
+	r.routes[normalizedPath][method] = chain(middleware...)(handler)
 	return nil
 }
 
