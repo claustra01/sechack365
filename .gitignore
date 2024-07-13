@@ -1,2 +1,4 @@
+.env
+
 nginx/*.crt
 nginx/*.key

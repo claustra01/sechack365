@@ -2,19 +2,25 @@ services:
   api:
     build: ./api
     ports:
-      - "127.0.0.1:1323:1323"
+      - "127.0.0.1:${API_PORT}:${API_PORT}"
+    environment:
+      - HOST=${HOST}
+      - PORT=${API_PORT}
+      - LOG_LEVEL=${API_LOG_LEVEL}
 
   frontend:
     build: ./frontend
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      - PORT=${FRONTEND_PORT}
     depends_on:
       - api
 
   reverse-proxy:
     build: ./nginx
     ports:
-      - "443:443"
+      - "${REVERSE_PROXY_PORT}:443"
     depends_on:
       - api
       - frontend
