@@ -22,7 +22,6 @@ type RouterInterface interface {
 type Router struct {
 	mux        *http.ServeMux
 	basePath   string
-	routes     map[string]map[string]HandlerFunc
 	middleware []Middleware
 }
 
@@ -30,7 +29,6 @@ func NewRouter() *Router {
 	r := &Router{
 		mux:        http.NewServeMux(),
 		basePath:   "",
-		routes:     make(map[string]map[string]HandlerFunc),
 		middleware: []Middleware{},
 	}
 	r.mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
@@ -75,7 +73,6 @@ func (r *Router) Group(path string, middleware ...Middleware) Router {
 	return Router{
 		mux:        r.mux,
 		basePath:   r.basePath + path,
-		routes:     r.routes,
 		middleware: append(r.middleware, middleware...),
 	}
 }
