@@ -9,20 +9,22 @@ import (
 
 func SetupRouter(r *framework.Router) error {
 	// TODO: check error
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	api := r.Group("/api/v1")
+
+	api.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello, World!")
 	})
 
-	r.Post("/", func(w http.ResponseWriter, r *http.Request) {
+	api.Post("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Goodbye, World!")
 	})
 
-	r.Get("/user/{id}", func(w http.ResponseWriter, r *http.Request) {
+	api.Get("/user/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 		fmt.Fprintf(w, "Hello, %s!", id)
 	})
 
-	hello := r.Group("/hello")
+	hello := api.Group("/hello")
 	hello.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello!")
 	})
