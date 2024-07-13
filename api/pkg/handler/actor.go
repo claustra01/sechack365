@@ -70,8 +70,8 @@ func MockActor(c *framework.Context) http.HandlerFunc {
 			Id:                url,
 			Inbox:             url + "/inbox",
 			Outbox:            url + "/outbox",
-			PreferredUsername: "test",
-			Name:              "Test User",
+			PreferredUsername: "mock",
+			Name:              "Mock User",
 			Summary:           "The user in activitypub server made by claustra01",
 			PublicKey: PublicKey{
 				Type:         "Key",
