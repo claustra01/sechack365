@@ -24,6 +24,8 @@ type ServerConfig struct {
 
 func NewServer(config *ServerConfig) *Server {
 	router := NewRouter()
+
+	slog.Info("LogLevel set to:", "level", config.LogLevel)
 	slog.SetLogLoggerLevel(config.LogLevel)
 
 	return &Server{
