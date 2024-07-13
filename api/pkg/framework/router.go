@@ -38,7 +38,9 @@ func NewRouter() *Router {
 
 func (r *Router) addRoute(path string, method string, handler HandlerFunc, middleware ...Middleware) error {
 	normalizedPath := r.basePath + path
-	middleware = append(r.middleware, middleware...)
+	if normalizedPath[len(normalizedPath)-1] != '}' {
+		normalizedPath += "{$}"
+	}
 
 	if r.routes[normalizedPath] == nil {
 		r.routes[normalizedPath] = make(map[string]HandlerFunc)
@@ -48,6 +50,7 @@ func (r *Router) addRoute(path string, method string, handler HandlerFunc, middl
 		return ErrRouteAlreadyExists
 	}
 
+	middleware = append(r.middleware, middleware...)
 	r.routes[normalizedPath][method] = Chain(middleware...)(handler)
 	return nil
 }
@@ -86,6 +89,10 @@ func (r *Router) Use(middleware ...Middleware) {
 }
 
 func (r *Router) HandleRoutes() {
+	r.mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+	})
+
 	for path, handlers := range r.routes {
 		r.mux.HandleFunc(path, func(w http.ResponseWriter, req *http.Request) {
 			handler := handlers[req.Method]
