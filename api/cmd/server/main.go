@@ -13,6 +13,7 @@ func main() {
 	}
 
 	router := framework.NewRouter()
+	router.Use(framework.LoggerMiddleware, framework.RecoverMiddleware)
 	if err := SetupRouter(router); err != nil {
 		panic(err)
 	}

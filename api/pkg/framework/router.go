@@ -8,7 +8,6 @@ import (
 var ErrRouteAlreadyExists = fmt.Errorf("route already exists")
 
 type HandlerFunc http.HandlerFunc
-type Middleware func(HandlerFunc) HandlerFunc
 
 type RouterInterface interface {
 	Get(path string, handler HandlerFunc, middleware ...Middleware) error
@@ -49,11 +48,7 @@ func (r *Router) addRoute(path string, method string, handler HandlerFunc, middl
 		return ErrRouteAlreadyExists
 	}
 
-	finalHandler := handler
-	for _, m := range middleware {
-		finalHandler = m(finalHandler)
-	}
-	r.routes[normalizedPath][method] = finalHandler
+	r.routes[normalizedPath][method] = Chain(middleware...)(handler)
 	return nil
 }
 
