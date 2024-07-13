@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-type Middleware func(HandlerFunc) HandlerFunc
+type MiddlewareFunc func(HandlerFunc) HandlerFunc
 
-func chain(middleware ...Middleware) Middleware {
+func chain(middleware ...MiddlewareFunc) MiddlewareFunc {
 	return func(handler HandlerFunc) HandlerFunc {
 		for i := len(middleware) - 1; i >= 0; i-- {
 			handler = middleware[i](handler)
