@@ -11,26 +11,7 @@ func setupRouter(r *framework.Router) error {
 	wk.Get("/webfinger", handler.Webfinger)
 
 	api := r.Group("/api/v1")
-	// mock actor endpoint
-	api.Get("/actor/mock", handler.MockActor)
-
-	// api.Get("/", func(w http.ResponseWriter, r *http.Request) {
-	// 	fmt.Fprint(w, "Hello, World!")
-	// })
-
-	// api.Post("/", func(w http.ResponseWriter, r *http.Request) {
-	// 	fmt.Fprint(w, "Goodbye, World!")
-	// })
-
-	// api.Get("/user/{id}", func(w http.ResponseWriter, r *http.Request) {
-	// 	id := r.PathValue("id")
-	// 	fmt.Fprintf(w, "Hello, %s!", id)
-	// })
-
-	// hello := api.Group("/hello")
-	// hello.Get("/", func(w http.ResponseWriter, r *http.Request) {
-	// 	fmt.Fprint(w, "Hello!")
-	// })
+	api.Get("/actor/{username}", handler.GetActor)
 
 	return nil
 }

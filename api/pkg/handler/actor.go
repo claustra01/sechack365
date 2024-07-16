@@ -9,9 +9,17 @@ import (
 	"github.com/claustra01/sechack365/pkg/framework"
 )
 
-func MockActor(c *framework.Context) http.HandlerFunc {
+func GetActor(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		actor, err := activitypub.GetActor("mock", c.Config.Host)
+		name := r.PathValue("username")
+		// TODO: check database
+		// mock actor
+		if name != "mock" {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		actor, err := activitypub.GetActor(name, c.Config.Host)
 		if err != nil {
 			// TODO: switch error (404, 500, etc...)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
