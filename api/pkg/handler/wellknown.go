@@ -9,9 +9,9 @@ import (
 	"github.com/claustra01/sechack365/pkg/framework"
 )
 
-func Nodeinfo(c *framework.Context) http.HandlerFunc {
+func NodeinfoLinks(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		nodeinfo := activitypub.GetNodeInfo()
+		nodeinfo := activitypub.GetNodeInfoLinks(c.Config.Host)
 		w.Header().Set("Content-Type", "application/json")
 		data, err := json.Marshal(nodeinfo)
 		if err != nil {
@@ -22,7 +22,7 @@ func Nodeinfo(c *framework.Context) http.HandlerFunc {
 	}
 }
 
-func Webfinger(c *framework.Context) http.HandlerFunc {
+func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resource := r.URL.Query().Get("resource")
 
@@ -33,7 +33,7 @@ func Webfinger(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		webfinger := activitypub.GetWebfingerActor("mock", c.Config.Host)
+		webfinger := activitypub.GetWebfingerActorLinks("mock", c.Config.Host)
 		data, err := json.Marshal(webfinger)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
