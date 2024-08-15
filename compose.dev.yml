@@ -1,0 +1,45 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    ports:
+      - "127.0.0.1:${API_PORT}:${API_PORT}"
+    environment:
+      - HOST=${HOST}
+      - PORT=${API_PORT}
+      - LOG_LEVEL=${API_LOG_LEVEL}
+      - POSTGRES_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      - PORT=${FRONTEND_PORT}
+    depends_on:
+      - api
+    
+  db:
+    image: postgres:14-alpine
+    ports:
+      - "127.0.0.1:${DB_PORT}:5432"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  reverse-proxy:
+    build: ./nginx
+    ports:
+      - "${REVERSE_PROXY_PORT}:443"
+    depends_on:
+      - api
+      - frontend
+
+volumes:
+  dbdata:
