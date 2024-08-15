@@ -9,7 +9,7 @@ services:
       - HOST=${HOST}
       - PORT=${API_PORT}
       - LOG_LEVEL=${API_LOG_LEVEL}
-      - POSTGRES_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}
+      - POSTGRES_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable
     depends_on:
       - db
 
