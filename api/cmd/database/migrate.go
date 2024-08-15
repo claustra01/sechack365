@@ -22,6 +22,6 @@ func migrate(conn *database.SqlHandler) {
 		encrypted_password VARCHAR(255) NOT NULL,
 		display_name VARCHAR(255) NOT NULL,
 		profile VARCHAR(255) NOT NULL,
-		PR
+		PRIMARY KEY (id)
 	);`)
 }
