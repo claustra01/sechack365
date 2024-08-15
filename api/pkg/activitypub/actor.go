@@ -3,24 +3,26 @@ package activitypub
 import (
 	"fmt"
 	"log/slog"
+
+	"github.com/claustra01/sechack365/pkg/util"
 )
 
 type Actor struct {
-	Context           []string  `json:"@context"`
-	Type              string    `json:"type"`
-	Id                string    `json:"id"`
-	Inbox             string    `json:"inbox"`
-	Outbox            string    `json:"outbox"`
-	PreferredUsername string    `json:"preferredUsername"`
-	Name              string    `json:"name"`
-	Summary           string    `json:"summary"`
-	PublicKey         PublicKey `json:"publicKey"`
+	Context           []string       `json:"@context"`
+	Type              string         `json:"type"`
+	Id                string         `json:"id"`
+	Inbox             string         `json:"inbox"`
+	Outbox            string         `json:"outbox"`
+	PreferredUsername string         `json:"preferredUsername"`
+	Name              string         `json:"name"`
+	Summary           string         `json:"summary"`
+	PublicKey         util.PublicKey `json:"publicKey"`
 }
 
 func GetActor(name string, host string) (*Actor, error) {
 	baseUrl := fmt.Sprintf("https://%s/actor/%s", host, name)
 
-	publicKey, err := generatePublicKey()
+	publicKey, _, err := util.GenerateKeyPair()
 	if err != nil {
 		slog.Error("PublicKey Generation Error:", "Error", err)
 		return nil, err
@@ -38,7 +40,7 @@ func GetActor(name string, host string) (*Actor, error) {
 		PreferredUsername: "mock",
 		Name:              "Mock User",
 		Summary:           "The user in activitypub server made by claustra01",
-		PublicKey: PublicKey{
+		PublicKey: util.PublicKey{
 			Type:         "Key",
 			Id:           baseUrl + "#main-key",
 			Owner:        baseUrl,
