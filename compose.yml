@@ -7,6 +7,9 @@ services:
       - HOST=${HOST}
       - PORT=${API_PORT}
       - LOG_LEVEL=${API_LOG_LEVEL}
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}
+    depends_on:
+      - db
 
   frontend:
     build: ./frontend
@@ -16,6 +19,17 @@ services:
       - PORT=${FRONTEND_PORT}
     depends_on:
       - api
+    
+  db:
+    image: postgres:14-alpine
+    ports:
+      - "127.0.0.1:${DB_PORT}:5432"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
 
   reverse-proxy:
     build: ./nginx
@@ -24,3 +38,6 @@ services:
     depends_on:
       - api
       - frontend
+
+volumes:
+  dbdata:
