@@ -38,7 +38,7 @@ func migrate(conn *sql.DB) {
 				user_id VARCHAR(255) PRIMARY KEY,
 				public_key TEXT NOT NULL,
 				private_key TEXT NOT NULL,
-				FOREIGN KEY (user_id) REFERENCES users(user_id)
+				FOREIGN KEY (user_id) REFERENCES users(id)
 		);
 	`)
 	if err != nil {
@@ -51,7 +51,7 @@ func insertMock(conn *sql.DB) {
 	conn.Exec(`
 		INSERT INTO users (id, user_id, host, encrypted_password, display_name, profile)
 			VALUES ('1', 'mock', 'localhost', 'password', 'mock user', 'This is mock user');
-		INSERT INTO ap_user_identifiers (user_id, public_key, secret_key)
+		INSERT INTO ap_user_identifiers (user_id, public_key, private_key)
 			VALUES ('1', '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAykPAEF/84PZaGUc3b8GR
 5df/COT+G8Mjm5/xw2Eyqo6zsbSTt7RyN4xAfl8i1yILUvCM0LkTIKjw+AAXWC+L
