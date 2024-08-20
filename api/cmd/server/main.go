@@ -1,11 +1,20 @@
 package main
 
 import (
+	"os"
+
 	"github.com/claustra01/sechack365/pkg/framework"
+	"github.com/claustra01/sechack365/pkg/infrastructure"
 )
 
 func main() {
-	ctx := framework.NewContext()
+	connStr := os.Getenv("POSTGRES_URL")
+	conn, err := infrastructure.NewSqlHandler(connStr)
+	if err != nil {
+		panic(err)
+	}
+
+	ctx := framework.NewContext(conn)
 	server := framework.NewServer(ctx)
 	router := server.Router
 

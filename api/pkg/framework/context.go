@@ -4,11 +4,15 @@ import (
 	"context"
 	"log/slog"
 	"os"
+
+	"github.com/claustra01/sechack365/pkg/controller"
+	"github.com/claustra01/sechack365/pkg/model"
 )
 
 type Context struct {
-	Ctx    context.Context
-	Config *Config
+	Ctx         context.Context
+	Config      *Config
+	Controllers *Controllers
 }
 
 type Config struct {
@@ -17,10 +21,15 @@ type Config struct {
 	LogLevel slog.Level
 }
 
-func NewContext() *Context {
+type Controllers struct {
+	User *controller.UserController
+}
+
+func NewContext(conn model.ISqlHandler) *Context {
 	return &Context{
-		Ctx:    context.Background(),
-		Config: NewConfig(),
+		Ctx:         context.Background(),
+		Config:      NewConfig(),
+		Controllers: NewControllers(conn),
 	}
 }
 
@@ -47,6 +56,12 @@ func NewConfig() *Config {
 		Host:     host,
 		Port:     port,
 		LogLevel: convertLogLevel(logLevel),
+	}
+}
+
+func NewControllers(conn model.ISqlHandler) *Controllers {
+	return &Controllers{
+		User: controller.NewUserController(conn),
 	}
 }
 
