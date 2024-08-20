@@ -8,6 +8,8 @@ import (
 func setupRouter(r *framework.Router) error {
 	api := r.Group("/api/v1")
 
+	api.Get("/users", handler.GetAllUsers)
+
 	api.Get("/lookup", handler.LookupActor)
 	api.Get("/actor/{username}", handler.GetActor)
 
