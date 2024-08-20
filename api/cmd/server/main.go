@@ -9,7 +9,8 @@ import (
 
 func main() {
 	connStr := os.Getenv("POSTGRES_URL")
-	conn, err := infrastructure.NewSqlHandler(connStr)
+	// FIXME: なぜか?sslmode=disableだけ環境変数から読み取れない
+	conn, err := infrastructure.NewSqlHandler(connStr + "?sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
