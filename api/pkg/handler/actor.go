@@ -37,7 +37,7 @@ func GetActor(c *framework.Context) http.HandlerFunc {
 	}
 }
 
-func GetAllUser(c *framework.Context) http.HandlerFunc {
+func GetAllUsers(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		users, err := c.Controllers.User.FindAll()
 		if err != nil {
