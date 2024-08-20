@@ -6,7 +6,8 @@ type UserRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
-func (repo *UserRepository) FindAll() (users []*model.User, err error) {
+func (repo *UserRepository) FindAll() ([]*model.User, error) {
+	var users []*model.User
 	row, err := repo.SqlHandler.Query("SELECT * FROM users")
 	if err != nil {
 		return nil, err
@@ -14,42 +15,42 @@ func (repo *UserRepository) FindAll() (users []*model.User, err error) {
 	defer row.Close()
 	for row.Next() {
 		var user model.User
-		if err = row.Scan(&user.Id, &user.UserId, &user.Host, &user.DisplayName, &user.Profile); err != nil {
-			return
+		if err = row.Scan(&user.Id, &user.UserId, &user.Host, &user.EncryptedPassword, &user.DisplayName, &user.Profile); err != nil {
+			return nil, err
 		}
 		users = append(users, &user)
 	}
-	return
+	return users, nil
 }
 
-func (repo *UserRepository) FindById(id string) (user *model.User, err error) {
+func (repo *UserRepository) FindById(id string) (*model.User, error) {
 	row, err := repo.SqlHandler.Query("SELECT * FROM users WHERE id = ?", id)
 	if err != nil {
 		return nil, err
 	}
 	defer row.Close()
 	if row.Next() {
-		user = new(model.User)
-		if err = row.Scan(&user.Id, &user.UserId, &user.Host, &user.DisplayName, &user.Profile); err != nil {
-			return
+		var user = new(model.User)
+		if err = row.Scan(&user.Id, &user.UserId, &user.Host, &user.EncryptedPassword, &user.DisplayName, &user.Profile); err != nil {
+			return nil, err
 		}
-		return
+		return user, nil
 	}
 	return nil, nil
 }
 
-func (repo *UserRepository) FindByUserId(userId string) (user *model.User, err error) {
+func (repo *UserRepository) FindByUserId(userId string) (*model.User, error) {
 	row, err := repo.SqlHandler.Query("SELECT * FROM users WHERE user_id = ?", userId)
 	if err != nil {
 		return nil, err
 	}
 	defer row.Close()
 	if row.Next() {
-		user = new(model.User)
-		if err = row.Scan(&user.Id, &user.UserId, &user.Host, &user.DisplayName, &user.Profile); err != nil {
-			return
+		var user = new(model.User)
+		if err = row.Scan(&user.Id, &user.UserId, &user.Host, &user.EncryptedPassword, &user.DisplayName, &user.Profile); err != nil {
+			return nil, err
 		}
-		return
+		return user, nil
 	}
 	return nil, nil
 }
