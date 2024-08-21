@@ -8,6 +8,10 @@ import (
 )
 
 func main() {
+	// Logger
+	logger := infrastructure.NewLogger(os.Getenv("LOG_LEVEL"))
+
+	// DB Connection
 	connStr := os.Getenv("POSTGRES_URL")
 	// FIXME: なぜか?sslmode=disableだけ環境変数から読み取れない
 	conn, err := infrastructure.NewSqlHandler(connStr + "?sslmode=disable")
@@ -15,7 +19,7 @@ func main() {
 		panic(err)
 	}
 
-	ctx := framework.NewContext(conn)
+	ctx := framework.NewContext(logger, conn)
 	server := framework.NewServer(ctx)
 	router := server.Router
 
