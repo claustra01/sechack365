@@ -36,3 +36,14 @@ func GetActor(c *framework.Context) http.HandlerFunc {
 		fmt.Fprint(w, string(data))
 	}
 }
+
+func GetAllUsers(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		users, err := c.Controllers.User.FindAll()
+		if err != nil {
+			returnInternalServerError(w, c.Logger, err)
+			return
+		}
+		jsonResponse(w, users)
+	}
+}

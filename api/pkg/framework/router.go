@@ -9,16 +9,6 @@ var ErrRouteAlreadyExists = fmt.Errorf("route already exists")
 
 type HandlerFunc func(*Context) http.HandlerFunc
 
-type RouterInterface interface {
-	Get(path string, handler HandlerFunc, middleware ...MiddlewareFunc) error
-	Post(path string, handler HandlerFunc, middleware ...MiddlewareFunc) error
-	Put(path string, handler HandlerFunc, middleware ...MiddlewareFunc) error
-	Delete(path string, handler HandlerFunc, middleware ...MiddlewareFunc) error
-	Patch(path string, handler HandlerFunc, middleware ...MiddlewareFunc) error
-	Group(path string, middleware ...MiddlewareFunc) Router
-	Use(middleware ...MiddlewareFunc)
-}
-
 type Router struct {
 	Ctx        *Context
 	mux        *http.ServeMux

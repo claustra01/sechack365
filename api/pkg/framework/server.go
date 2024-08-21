@@ -1,13 +1,8 @@
 package framework
 
 import (
-	"log/slog"
 	"net/http"
 )
-
-type ServerInterface interface {
-	ListenAndServe() error
-}
 
 type Server struct {
 	Ctx    *Context
@@ -17,10 +12,6 @@ type Server struct {
 
 func NewServer(ctx *Context) *Server {
 	router := NewRouter(ctx)
-
-	slog.Info("LogLevel set to:", "level", ctx.Config.LogLevel)
-	slog.SetLogLoggerLevel(ctx.Config.LogLevel)
-
 	return &Server{
 		srv: &http.Server{
 			Addr:    ":" + ctx.Config.Port,
