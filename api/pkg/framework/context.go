@@ -15,7 +15,8 @@ type Context struct {
 }
 
 type Controllers struct {
-	User *controller.UserController
+	User   *controller.UserController
+	ApUser *controller.ApUserController
 }
 
 func NewContext(logger model.ILogger, conn model.ISqlHandler) *Context {
@@ -29,6 +30,7 @@ func NewContext(logger model.ILogger, conn model.ISqlHandler) *Context {
 
 func NewControllers(conn model.ISqlHandler) *Controllers {
 	return &Controllers{
-		User: controller.NewUserController(conn),
+		User:   controller.NewUserController(conn),
+		ApUser: controller.NewApUserController(conn),
 	}
 }

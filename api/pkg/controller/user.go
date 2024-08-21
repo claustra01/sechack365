@@ -31,3 +31,21 @@ func (controller *UserController) FindById(id string) (user *model.User, err err
 func (controller *UserController) FindByUserId(userId string) (user *model.User, err error) {
 	return controller.UserUsecase.FindByUserId(userId)
 }
+
+type ApUserController struct {
+	ApUserUsecase usecase.ApUserUsecase
+}
+
+func NewApUserController(conn model.ISqlHandler) *ApUserController {
+	return &ApUserController{
+		ApUserUsecase: usecase.ApUserUsecase{
+			ApUserRepository: &repository.ApUserRepository{
+				SqlHandler: conn,
+			},
+		},
+	}
+}
+
+func (controller *ApUserController) FindByUserId(userId string) (user *model.ApUser, err error) {
+	return controller.ApUserUsecase.FindByUserId(userId)
+}
