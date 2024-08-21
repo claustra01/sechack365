@@ -9,8 +9,8 @@ import (
 
 type Context struct {
 	Ctx         context.Context
+	Logger      model.ILogger
 	Config      *Config
-	Logger      *model.ILogger
 	Controllers *Controllers
 }
 
@@ -21,8 +21,8 @@ type Controllers struct {
 func NewContext(logger model.ILogger, conn model.ISqlHandler) *Context {
 	return &Context{
 		Ctx:         context.Background(),
+		Logger:      logger,
 		Config:      NewConfig(logger),
-		Logger:      &logger,
 		Controllers: NewControllers(conn),
 	}
 }
