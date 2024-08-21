@@ -23,7 +23,7 @@ func main() {
 	server := framework.NewServer(ctx)
 	router := server.Router
 
-	router.Use(framework.LoggingMiddleware, framework.RecoverMiddleware)
+	router.Use(framework.LoggingMiddleware(logger), framework.RecoverMiddleware(logger))
 	if err := setupRouter(router); err != nil {
 		panic(err)
 	}
