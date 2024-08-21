@@ -4,10 +4,6 @@ import (
 	"net/http"
 )
 
-type ServerInterface interface {
-	ListenAndServe() error
-}
-
 type Server struct {
 	Ctx    *Context
 	Router *Router
