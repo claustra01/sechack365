@@ -15,3 +15,6 @@ dev-mock:
 
 dev-port-clean:
 	sudo kill -9 $(ps aux | grep postgres | awk '{print $2}')
+
+dev-psql:
+	psql -h 127.0.0.1 -p 5432 -U postgres -d sechack365
