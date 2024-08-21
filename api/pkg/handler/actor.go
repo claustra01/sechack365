@@ -41,19 +41,9 @@ func GetAllUsers(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		users, err := c.Controllers.User.FindAll()
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		if len(users) == 0 {
-			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-			return
-		}
-		data, err := json.Marshal(users)
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, string(data))
+		jsonResponse(w, users)
 	}
 }
