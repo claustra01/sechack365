@@ -2,51 +2,46 @@ package activitypub
 
 import (
 	"fmt"
-	"log/slog"
 
-	"github.com/claustra01/sechack365/pkg/util"
+	"github.com/claustra01/sechack365/pkg/model"
 )
 
-type Actor struct {
-	Context           []string       `json:"@context"`
-	Type              string         `json:"type"`
-	Id                string         `json:"id"`
-	Inbox             string         `json:"inbox"`
-	Outbox            string         `json:"outbox"`
-	PreferredUsername string         `json:"preferredUsername"`
-	Name              string         `json:"name"`
-	Summary           string         `json:"summary"`
-	PublicKey         util.PublicKey `json:"publicKey"`
+type PublicKey struct {
+	Type         string `json:"type"`
+	Id           string `json:"id"`
+	Owner        string `json:"owner"`
+	PublicKeyPem string `json:"publicKeyPem"`
 }
 
-func GetActor(name string, host string) (*Actor, error) {
-	baseUrl := fmt.Sprintf("https://%s/actor/%s", host, name)
+type Actor struct {
+	Context           []string  `json:"@context"`
+	Type              string    `json:"type"`
+	Id                string    `json:"id"`
+	Inbox             string    `json:"inbox"`
+	Outbox            string    `json:"outbox"`
+	PreferredUsername string    `json:"preferredUsername"`
+	Name              string    `json:"name"`
+	Summary           string    `json:"summary"`
+	PublicKey         PublicKey `json:"publicKey"`
+}
 
-	publicKey, _, err := util.GenerateKeyPair()
-	if err != nil {
-		slog.Error("PublicKey Generation Error:", "Error", err)
-		return nil, err
-	}
-
+func GetActor(user model.ApUser) *Actor {
+	baseUrl := fmt.Sprintf("https://%s/actor/%s", user.Host, user.UserId)
 	actor := &Actor{
-		Context: []string{
-			"https://www.w3.org/ns/activitystreams",
-			"https://w3id.org/security/v1",
-		},
+		Context:           ApContext[:],
 		Type:              "Person",
 		Id:                baseUrl,
 		Inbox:             baseUrl + "/inbox",
 		Outbox:            baseUrl + "/outbox",
-		PreferredUsername: "mock",
-		Name:              "Mock User",
-		Summary:           "The user in activitypub server made by claustra01",
-		PublicKey: util.PublicKey{
+		PreferredUsername: user.UserId,
+		Name:              user.DisplayName,
+		Summary:           user.Profile,
+		PublicKey: PublicKey{
 			Type:         "Key",
 			Id:           baseUrl + "#main-key",
 			Owner:        baseUrl,
-			PublicKeyPem: publicKey,
+			PublicKeyPem: user.PublicKey,
 		},
 	}
-
-	return actor, nil
+	return actor
 }
