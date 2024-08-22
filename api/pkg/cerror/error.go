@@ -10,3 +10,7 @@ var ErrEncodePrivateKey = fmt.Errorf("failed to encode private key")
 var ErrDecodePublicKey = fmt.Errorf("failed to decode public key")
 var ErrDecodePrivateKey = fmt.Errorf("failed to decode private key")
 var ErrInvalidKeyPair = fmt.Errorf("invalid key pair")
+
+func ErrInvalidResourceQuery(q string) error {
+	return fmt.Errorf("invalid resource query: %s", q)
+}

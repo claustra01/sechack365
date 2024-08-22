@@ -43,6 +43,11 @@ func jsonErrorResponse(w http.ResponseWriter, code int, message string) {
 	http.Error(w, string(body), http.StatusInternalServerError)
 }
 
+func returnBadRequest(w http.ResponseWriter, logger model.ILogger, errInput error) {
+	logger.Warn("Bad Request", "Error", errInput)
+	jsonErrorResponse(w, http.StatusBadRequest, "Bad Request")
+}
+
 func returnNotFound(w http.ResponseWriter, logger model.ILogger, errInput error) {
 	logger.Warn("Not Found", "Error", errInput)
 	jsonErrorResponse(w, http.StatusNotFound, "Not Found")
