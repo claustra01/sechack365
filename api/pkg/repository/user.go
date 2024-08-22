@@ -63,8 +63,8 @@ type ApUserRepository struct {
 
 func (repo *ApUserRepository) FindByUserId(userId string) (*model.ApUser, error) {
 	row, err := repo.SqlHandler.Query(`
-		SELECT * FROM users, ap_user_identifiers
-		WHERE users.user_id = $1 AND users.id = ap_user_identifiers.user_id;
+		SELECT users.id, users.user_id, host, encrypted_password, display_name, profile, public_key, private_key
+		FROM users, ap_user_identifiers WHERE users.user_id = $1 AND users.id = ap_user_identifiers.user_id;
 	`, userId)
 	if err != nil {
 		return nil, err
@@ -72,7 +72,7 @@ func (repo *ApUserRepository) FindByUserId(userId string) (*model.ApUser, error)
 	defer row.Close()
 	if row.Next() {
 		var user = new(model.ApUser)
-		if err = row.Scan(&user.Id, &user.Id, &user.UserId, &user.Host, &user.EncryptedPassword, &user.DisplayName, &user.Profile, &user.PublicKey, &user.PrivateKey); err != nil {
+		if err = row.Scan(&user.Id, &user.UserId, &user.Host, &user.EncryptedPassword, &user.DisplayName, &user.Profile, &user.PublicKey, &user.PrivateKey); err != nil {
 			return nil, err
 		}
 		return user, nil
