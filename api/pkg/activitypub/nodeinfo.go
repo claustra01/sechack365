@@ -30,16 +30,14 @@ type Services struct {
 
 type Metadata struct{}
 
-func GetNodeInfo() *NodeInfo {
-	// mock nodeinfo
+// TODO: usage should be included users, posts, and more
+func GetNodeInfo(usersUsage int) *NodeInfo {
 	return &NodeInfo{
 		OpenRegistrations: false,
-		Protocols: []string{
-			"activitypub",
-		},
+		Protocols:         Protocols,
 		Software: Software{
-			Name:    "sechack365",
-			Version: "0.1.0",
+			Name:    SoftWareName,
+			Version: SoftWareVersion,
 		},
 		Usage: Usage{
 			Users: UsersUsage{
@@ -51,6 +49,6 @@ func GetNodeInfo() *NodeInfo {
 			Outbound: struct{}{},
 		},
 		Metadata: Metadata{},
-		Version:  "2.1",
+		Version:  NodeInfoVersion,
 	}
 }

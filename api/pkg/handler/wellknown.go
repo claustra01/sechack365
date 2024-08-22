@@ -1,24 +1,18 @@
 package handler
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/claustra01/sechack365/pkg/activitypub"
+	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
 )
 
 func NodeinfoLinks(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		nodeinfo := activitypub.GetNodeInfoLinks(c.Config.Host)
-		w.Header().Set("Content-Type", "application/json")
-		data, err := json.Marshal(nodeinfo)
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			panic(err)
-		}
-		fmt.Fprint(w, string(data))
+		jsonResponse(w, nodeinfo)
 	}
 }
 
@@ -26,21 +20,24 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resource := r.URL.Query().Get("resource")
 
-		// mock actor
-		exceptedResource := fmt.Sprintf("acct:%s@%s", "mock", c.Config.Host)
-		if resource != exceptedResource {
-			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		regexp := regexp.MustCompile(`acct:(.+)@(.+)`)
+		matches := regexp.FindStringSubmatch(resource)
+		if len(matches) != 3 || matches[2] != c.Config.Host {
+			returnBadRequest(w, c.Logger, cerror.ErrInvalidResourceQuery(resource))
 			return
 		}
 
-		webfinger := activitypub.GetWebfingerActorLinks("mock", c.Config.Host)
-		data, err := json.Marshal(webfinger)
+		user, err := c.Controllers.User.FindByUserId(matches[1])
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			panic(err)
+			returnInternalServerError(w, c.Logger, err)
+			return
+		}
+		if user == nil {
+			returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
+			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, string(data))
+		webfinger := activitypub.GetWebfingerActorLinks(user.UserId, c.Config.Host)
+		jsonResponse(w, webfinger)
 	}
 }

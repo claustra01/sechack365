@@ -9,13 +9,6 @@ import (
 	"github.com/claustra01/sechack365/pkg/cerror"
 )
 
-type PublicKey struct {
-	Type         string `json:"type"`
-	Id           string `json:"id"`
-	Owner        string `json:"owner"`
-	PublicKeyPem string `json:"publicKeyPem"`
-}
-
 func GenerateKeyPair() (string, string, error) {
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {

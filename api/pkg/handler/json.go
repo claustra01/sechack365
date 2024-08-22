@@ -21,6 +21,15 @@ func jsonResponse(w http.ResponseWriter, data any) {
 	w.Write(body)
 }
 
+func jsonApResponse(w http.ResponseWriter, data any) {
+	body, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+	w.Header().Set("Content-Type", "application/activity+json")
+	w.Write(body)
+}
+
 func jsonErrorResponse(w http.ResponseWriter, code int, message string) {
 	resp := &ErrorResponse{
 		StatusCode: code,
@@ -34,7 +43,17 @@ func jsonErrorResponse(w http.ResponseWriter, code int, message string) {
 	http.Error(w, string(body), http.StatusInternalServerError)
 }
 
+func returnBadRequest(w http.ResponseWriter, logger model.ILogger, errInput error) {
+	logger.Warn("Bad Request", "Error", errInput)
+	jsonErrorResponse(w, http.StatusBadRequest, "Bad Request")
+}
+
+func returnNotFound(w http.ResponseWriter, logger model.ILogger, errInput error) {
+	logger.Warn("Not Found", "Error", errInput)
+	jsonErrorResponse(w, http.StatusNotFound, "Not Found")
+}
+
 func returnInternalServerError(w http.ResponseWriter, logger model.ILogger, errInput error) {
-	logger.Error("Internal Server Error:", "Error", errInput)
+	logger.Error("Internal Server Error", "Error", errInput)
 	jsonErrorResponse(w, http.StatusInternalServerError, "Internal Server Error")
 }

@@ -23,3 +23,15 @@ func (u *UserUsecase) FindById(id string) (*model.User, error) {
 func (u *UserUsecase) FindByUserId(userId string) (*model.User, error) {
 	return u.UserRepository.FindByUserId(userId)
 }
+
+type IApUserRepository interface {
+	FindByUserId(string) (*model.ApUser, error)
+}
+
+type ApUserUsecase struct {
+	ApUserRepository IApUserRepository
+}
+
+func (u *ApUserUsecase) FindByUserId(userId string) (*model.ApUser, error) {
+	return u.ApUserRepository.FindByUserId(userId)
+}
