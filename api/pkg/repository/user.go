@@ -10,7 +10,7 @@ type UserRepository struct {
 
 func (repo *UserRepository) FindAll() ([]*model.User, error) {
 	var users []*model.User
-	row, err := repo.SqlHandler.Query("SELECT * FROM users")
+	row, err := repo.SqlHandler.Query("SELECT * FROM users;")
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (repo *UserRepository) FindAll() ([]*model.User, error) {
 }
 
 func (repo *UserRepository) FindById(id string) (*model.User, error) {
-	row, err := repo.SqlHandler.Query("SELECT * FROM users WHERE id = ?", id)
+	row, err := repo.SqlHandler.Query("SELECT * FROM users WHERE id = $1;", id)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (repo *UserRepository) FindById(id string) (*model.User, error) {
 }
 
 func (repo *UserRepository) FindByUserId(userId string) (*model.User, error) {
-	row, err := repo.SqlHandler.Query("SELECT * FROM users WHERE user_id = ?", userId)
+	row, err := repo.SqlHandler.Query("SELECT * FROM users WHERE user_id = $1;", userId)
 	if err != nil {
 		return nil, err
 	}
