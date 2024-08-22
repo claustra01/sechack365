@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/claustra01/sechack365/pkg/activitypub"
@@ -11,13 +9,11 @@ import (
 
 func Nodeinfo2_0(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		nodeinfo := activitypub.GetNodeInfo()
-		w.Header().Set("Content-Type", "application/json")
-		data, err := json.Marshal(nodeinfo)
+		users, err := c.Controllers.User.FindAll()
 		if err != nil {
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			panic(err)
+			returnInternalServerError(w, c.Logger, err)
 		}
-		fmt.Fprint(w, string(data))
+		nodeinfo := activitypub.GetNodeInfo(len(users))
+		jsonResponse(w, nodeinfo)
 	}
 }
