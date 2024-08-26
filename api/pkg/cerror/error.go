@@ -4,6 +4,7 @@ import "fmt"
 
 var ErrUserNotFound = fmt.Errorf("user not found")
 
+var ErrGeneratePasswordHash = fmt.Errorf("failed to generate password hash")
 var ErrGenerateRsaKey = fmt.Errorf("failed to generate RSA key pair")
 var ErrEncodePublicKey = fmt.Errorf("failed to encode public key")
 var ErrEncodePrivateKey = fmt.Errorf("failed to encode private key")
