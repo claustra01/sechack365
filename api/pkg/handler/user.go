@@ -3,10 +3,12 @@ package handler
 import (
 	"net/http"
 	"regexp"
+	"time"
 
 	"github.com/claustra01/sechack365/pkg/activitypub"
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
+	"github.com/claustra01/sechack365/pkg/util"
 )
 
 func GetAllUsers(c *framework.Context) http.HandlerFunc {
@@ -56,9 +58,38 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
+
 		if cachedUser != nil {
-			jsonResponse(w, cachedUser)
-			return
+			// return cached user
+			cachedTime, err := util.StrToTime(cachedUser.UpdatedAt)
+			if err == nil && util.CalcSubTime(time.Now(), cachedTime) < 24*time.Hour {
+				jsonResponse(w, cachedUser)
+				return
+			}
+
+			// fetch from remote
+			link, err := activitypub.ResolveWebfinger(username, host)
+			if err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+			actor, err := activitypub.ResolveRemoteActor(link)
+			if err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+
+			// update cache
+			if _, err := c.Controllers.User.UpdateRemoteUser(username, host, actor.Name, actor.Summary); err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+			user, err := c.Controllers.User.FindByUsername(username, host)
+			if err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+			jsonResponse(w, user)
 		}
 
 		// fetch from remote
