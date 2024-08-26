@@ -7,6 +7,7 @@ type IUserRepository interface {
 	FindById(id string) (*model.User, error)
 	FindByUsername(username string, host string) (*model.User, error)
 	Insert(username string, password string, host string, display_name string, profile string) (*model.User, error)
+	UpdateRemoteUser(username string, host string, display_name string, profile string) (*model.User, error)
 }
 
 type UserUsecase struct {
@@ -27,6 +28,10 @@ func (u *UserUsecase) FindByUsername(username string, host string) (*model.User,
 
 func (u *UserUsecase) Insert(username string, password string, host string, display_name string, profile string) (*model.User, error) {
 	return u.UserRepository.Insert(username, password, host, display_name, profile)
+}
+
+func (u *UserUsecase) UpdateRemoteUser(username string, host string, display_name string, profile string) (*model.User, error) {
+	return u.UserRepository.UpdateRemoteUser(username, host, display_name, profile)
 }
 
 type IApUserIdentifierRepository interface {

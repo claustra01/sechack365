@@ -87,6 +87,26 @@ func (repo *UserRepository) Insert(username string, password string, host string
 	return nil, nil
 }
 
+func (repo *UserRepository) UpdateRemoteUser(username string, host string, display_name string, profile string) (*model.User, error) {
+	row, err := repo.SqlHandler.Query(`
+		UPDATE users SET display_name = $1, profile = $2, updated_at = NOW()
+		WHERE username = $3 AND host = $4
+		RETURNING id, username, host, hashed_password, display_name, profile, created_at, updated_at;
+	`, display_name, profile, username, host)
+	if err != nil {
+		return nil, err
+	}
+	defer row.Close()
+	if row.Next() {
+		var user = new(model.User)
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.CreatedAt, &user.UpdatedAt); err != nil {
+			return nil, err
+		}
+		return user, nil
+	}
+	return nil, nil
+}
+
 type ApUserIdentifierRepository struct {
 	SqlHandler model.ISqlHandler
 }

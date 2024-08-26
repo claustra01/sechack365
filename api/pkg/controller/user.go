@@ -36,6 +36,10 @@ func (controller *UserController) Insert(username string, password string, host 
 	return controller.UserUsecase.Insert(username, password, host, display_name, profile)
 }
 
+func (controller *UserController) UpdateRemoteUser(username string, host string, display_name string, profile string) (*model.User, error) {
+	return controller.UserUsecase.UpdateRemoteUser(username, host, display_name, profile)
+}
+
 type ApUserIdentifierController struct {
 	ApUserIdentifierUsecase usecase.ApUserIdentifierUsecase
 }
