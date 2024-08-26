@@ -38,6 +38,6 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 		}
 
 		webfinger := activitypub.GetWebfingerActorLinks(user.Username, c.Config.Host)
-		jsonResponse(w, webfinger)
+		jsonCustomContentTypeResponse(w, webfinger, "application/jrd+json")
 	}
 }
