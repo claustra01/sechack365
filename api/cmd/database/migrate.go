@@ -30,7 +30,7 @@ func migrate(conn *sql.DB) {
 				id VARCHAR(255) PRIMARY KEY,
 				username VARCHAR(255) NOT NULL,
 				host VARCHAR(255) NOT NULL,
-				encrypted_password VARCHAR(255) NOT NULL,
+				hashed_password VARCHAR(255) NOT NULL,
 				display_name VARCHAR(255),
 				profile TEXT,
 				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -53,7 +53,7 @@ func migrate(conn *sql.DB) {
 
 func insertMock(conn *sql.DB) {
 	conn.Exec(`
-		INSERT INTO users (id, username, host, encrypted_password, display_name, profile)
+		INSERT INTO users (id, username, host, hashed_password, display_name, profile)
 			VALUES ('1', 'mock', 'localhost', 'password', 'mock user', 'This is mock user');
 		INSERT INTO ap_user_identifiers (user_id, public_key, private_key)
 			VALUES ('1', '-----BEGIN PUBLIC KEY-----
