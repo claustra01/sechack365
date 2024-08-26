@@ -27,7 +27,7 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		user, err := c.Controllers.User.FindByUsername(matches[1])
+		user, err := c.Controllers.User.FindByUsername(matches[1], c.Config.Host)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
