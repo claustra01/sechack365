@@ -21,6 +21,6 @@ func GetActor(c *framework.Context) http.HandlerFunc {
 			return
 		}
 		actor := activitypub.GetActor(*user)
-		jsonApResponse(w, actor)
+		jsonCustomContentTypeResponse(w, actor, "application/activity+json")
 	}
 }

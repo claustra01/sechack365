@@ -21,12 +21,12 @@ func jsonResponse(w http.ResponseWriter, data any) {
 	w.Write(body)
 }
 
-func jsonApResponse(w http.ResponseWriter, data any) {
+func jsonCustomContentTypeResponse(w http.ResponseWriter, data any, contentType string) {
 	body, err := json.Marshal(data)
 	if err != nil {
 		panic(err)
 	}
-	w.Header().Set("Content-Type", "application/activity+json")
+	w.Header().Set("Content-Type", contentType)
 	w.Write(body)
 }
 
