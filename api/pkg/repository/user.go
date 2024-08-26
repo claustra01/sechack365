@@ -64,7 +64,9 @@ func (repo *UserRepository) Insert(username string, password string, host string
 	if err != nil {
 		return nil, err
 	}
-
+	if password == "" {
+		hashedPassword = ""
+	}
 	row, err := repo.SqlHandler.Query(`
 		INSERT INTO users (id, username, host, hashed_password, display_name, profile)
 		VALUES ($1, $2, $3, $4, $5, $6)
@@ -74,7 +76,6 @@ func (repo *UserRepository) Insert(username string, password string, host string
 		return nil, err
 	}
 	defer row.Close()
-
 	if row.Next() {
 		var user = new(model.User)
 		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.CreatedAt, &user.UpdatedAt); err != nil {
@@ -94,7 +95,6 @@ func (repo *ApUserIdentifierRepository) Insert(userId string) (*model.ApUserIden
 	if err != nil {
 		return nil, err
 	}
-
 	row, err := repo.SqlHandler.Query(`
 		INSERT INTO ap_user_identifiers (user_id, public_key, private_key)
 		VALUES ($1, $2, $3)
@@ -104,7 +104,6 @@ func (repo *ApUserIdentifierRepository) Insert(userId string) (*model.ApUserIden
 		return nil, err
 	}
 	defer row.Close()
-
 	if row.Next() {
 		var apUserIdentifier = new(model.ApUserIdentifier)
 		if err = row.Scan(&apUserIdentifier.UserId, &apUserIdentifier.PublicKey, &apUserIdentifier.PrivateKey); err != nil {
