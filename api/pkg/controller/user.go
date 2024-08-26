@@ -28,8 +28,12 @@ func (controller *UserController) FindById(id string) (user *model.User, err err
 	return controller.UserUsecase.FindById(id)
 }
 
-func (controller *UserController) FindByUsername(username string) (user *model.User, err error) {
-	return controller.UserUsecase.FindByUsername(username)
+func (controller *UserController) FindByUsername(username string, host string) (user *model.User, err error) {
+	return controller.UserUsecase.FindByUsername(username, host)
+}
+
+func (controller *UserController) Insert(username string, password string, host string, display_name string, profile string) (*model.User, error) {
+	return controller.UserUsecase.Insert(username, password, host, display_name, profile)
 }
 
 type ApUserIdentifierController struct {
@@ -46,6 +50,10 @@ func NewApUserIdentifierController(conn model.ISqlHandler) *ApUserIdentifierCont
 	}
 }
 
+func (controller *ApUserIdentifierController) Insert(userId string) (*model.ApUserIdentifier, error) {
+	return controller.ApUserIdentifierUsecase.Insert(userId)
+}
+
 type ApUserController struct {
 	ApUserUsecase usecase.ApUserUsecase
 }
@@ -60,6 +68,6 @@ func NewApUserController(conn model.ISqlHandler) *ApUserController {
 	}
 }
 
-func (controller *ApUserController) FindByUsername(username string) (user *model.ApUser, err error) {
-	return controller.ApUserUsecase.FindByUsername(username)
+func (controller *ApUserController) FindByUsername(username string, host string) (user *model.ApUser, err error) {
+	return controller.ApUserUsecase.FindByUsername(username, host)
 }

@@ -42,8 +42,8 @@ func (repo *UserRepository) FindById(id string) (*model.User, error) {
 	return nil, nil
 }
 
-func (repo *UserRepository) FindByUsername(username string) (*model.User, error) {
-	row, err := repo.SqlHandler.Query("SELECT * FROM users WHERE username = $1;", username)
+func (repo *UserRepository) FindByUsername(username string, host string) (*model.User, error) {
+	row, err := repo.SqlHandler.Query("SELECT * FROM users WHERE username = $1 AND host = $2;", username, host)
 	if err != nil {
 		return nil, err
 	}
@@ -58,44 +58,72 @@ func (repo *UserRepository) FindByUsername(username string) (*model.User, error)
 	return nil, nil
 }
 
-func (repo *UserRepository) Insert(username string, password string, host string) error {
+func (repo *UserRepository) Insert(username string, password string, host string, display_name string, profile string) (*model.User, error) {
 	uuid := util.NewUuid()
 	hashedPassword, err := util.GenerateHash(password)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	_, err = repo.SqlHandler.Execute(`
-		INSERT INTO users (id, username, host, encrypted_password, display_name, profile)
-			VALUES ($1, $2, $3, $4, $5, $6);
-	`, uuid, username, host, hashedPassword, username, "")
-	return err
+
+	row, err := repo.SqlHandler.Query(`
+		INSERT INTO users (id, username, host, hashed_password, display_name, profile)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		RETURNING id, username, host, hashed_password, display_name, profile, created_at, updated_at;
+	`, uuid, username, host, hashedPassword, display_name, profile)
+	if err != nil {
+		return nil, err
+	}
+	defer row.Close()
+
+	if row.Next() {
+		var user = new(model.User)
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.CreatedAt, &user.UpdatedAt); err != nil {
+			return nil, err
+		}
+		return user, nil
+	}
+	return nil, nil
 }
 
 type ApUserIdentifierRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
-func (repo *ApUserIdentifierRepository) Insert(userId string) error {
+func (repo *ApUserIdentifierRepository) Insert(userId string) (*model.ApUserIdentifier, error) {
 	publicKey, privateKey, err := util.GenerateKeyPair()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	_, err = repo.SqlHandler.Execute(`
+
+	row, err := repo.SqlHandler.Query(`
 		INSERT INTO ap_user_identifiers (user_id, public_key, private_key)
-			VALUES ($1, $2, $3);
+		VALUES ($1, $2, $3)
+		RETURNING user_id, public_key, private_key;
 	`, userId, publicKey, privateKey)
-	return err
+	if err != nil {
+		return nil, err
+	}
+	defer row.Close()
+
+	if row.Next() {
+		var apUserIdentifier = new(model.ApUserIdentifier)
+		if err = row.Scan(&apUserIdentifier.UserId, &apUserIdentifier.PublicKey, &apUserIdentifier.PrivateKey); err != nil {
+			return nil, err
+		}
+		return apUserIdentifier, nil
+	}
+	return nil, nil
 }
 
 type ApUserRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
-func (repo *ApUserRepository) FindByUsername(username string) (*model.ApUser, error) {
+func (repo *ApUserRepository) FindByUsername(username string, host string) (*model.ApUser, error) {
 	row, err := repo.SqlHandler.Query(`
 		SELECT users.id, users.username, host, hashed_password, display_name, profile, public_key, private_key, users.created_at, users.updated_at
-		FROM users, ap_user_identifiers WHERE users.username = $1 AND users.id = ap_user_identifiers.user_id;
-	`, username)
+		FROM users, ap_user_identifiers WHERE users.username = $1 AND users.host = $2 AND users.id = ap_user_identifiers.user_id;
+	`, username, host)
 	if err != nil {
 		return nil, err
 	}
