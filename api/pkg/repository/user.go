@@ -60,12 +60,13 @@ func (repo *UserRepository) FindByUsername(username string, host string) (*model
 
 func (repo *UserRepository) Insert(username string, password string, host string, display_name string, profile string) (*model.User, error) {
 	uuid := util.NewUuid()
-	hashedPassword, err := util.GenerateHash(password)
-	if err != nil {
-		return nil, err
-	}
-	if password == "" {
-		hashedPassword = ""
+	var hashedPassword string
+	if password != "" {
+		var err error
+		hashedPassword, err = util.GenerateHash(password)
+		if err != nil {
+			return nil, err
+		}
 	}
 	row, err := repo.SqlHandler.Query(`
 		INSERT INTO users (id, username, host, hashed_password, display_name, profile)
@@ -90,10 +91,14 @@ type ApUserIdentifierRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
-func (repo *ApUserIdentifierRepository) Insert(userId string) (*model.ApUserIdentifier, error) {
-	publicKey, privateKey, err := util.GenerateKeyPair()
-	if err != nil {
-		return nil, err
+func (repo *ApUserIdentifierRepository) Insert(userId string, publicKey string) (*model.ApUserIdentifier, error) {
+	var privateKey string
+	if publicKey == "" {
+		var err error
+		publicKey, privateKey, err = util.GenerateKeyPair()
+		if err != nil {
+			return nil, err
+		}
 	}
 	row, err := repo.SqlHandler.Query(`
 		INSERT INTO ap_user_identifiers (user_id, public_key, private_key)

@@ -30,15 +30,15 @@ func (u *UserUsecase) Insert(username string, password string, host string, disp
 }
 
 type IApUserIdentifierRepository interface {
-	Insert(userId string) (*model.ApUserIdentifier, error)
+	Insert(userId string, publicKey string) (*model.ApUserIdentifier, error)
 }
 
 type ApUserIdentifierUsecase struct {
 	ApUserIdentifierRepository IApUserIdentifierRepository
 }
 
-func (u *ApUserIdentifierUsecase) Insert(userId string) (*model.ApUserIdentifier, error) {
-	return u.ApUserIdentifierRepository.Insert(userId)
+func (u *ApUserIdentifierUsecase) Insert(userId string, publicKey string) (*model.ApUserIdentifier, error) {
+	return u.ApUserIdentifierRepository.Insert(userId, publicKey)
 }
 
 type IApUserRepository interface {
