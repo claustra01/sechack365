@@ -8,10 +8,12 @@ import (
 func setupRouter(r *framework.Router) error {
 	api := r.Group("/api/v1")
 
-	api.Get("/users", handler.GetAllUsers)
-	api.Get("/users/{username}", handler.LookupUser)
+	users := api.Group("/users")
+	users.Get("", handler.GetAllUsers)
+	users.Get("/{username}", handler.LookupUser)
 
-	api.Get("/actor/{username}", handler.GetActor)
+	actor := api.Group("/actor/{username}")
+	actor.Get("", handler.GetActor)
 
 	ni := api.Group("/nodeinfo")
 	ni.Get("/2.0", handler.Nodeinfo2_0)
