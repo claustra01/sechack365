@@ -11,7 +11,7 @@ import (
 func GetActor(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		name := r.PathValue("username")
-		user, err := c.Controllers.ApUser.FindByUserId(name)
+		user, err := c.Controllers.ApUser.FindByUsername(name, c.Config.Host)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return

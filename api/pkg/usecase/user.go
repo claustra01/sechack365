@@ -5,7 +5,9 @@ import "github.com/claustra01/sechack365/pkg/model"
 type IUserRepository interface {
 	FindAll() ([]*model.User, error)
 	FindById(id string) (*model.User, error)
-	FindByUserId(string) (*model.User, error)
+	FindByUsername(username string, host string) (*model.User, error)
+	Insert(username string, password string, host string, display_name string, profile string) (*model.User, error)
+	UpdateRemoteUser(username string, host string, display_name string, profile string) (*model.User, error)
 }
 
 type UserUsecase struct {
@@ -20,18 +22,38 @@ func (u *UserUsecase) FindById(id string) (*model.User, error) {
 	return u.UserRepository.FindById(id)
 }
 
-func (u *UserUsecase) FindByUserId(userId string) (*model.User, error) {
-	return u.UserRepository.FindByUserId(userId)
+func (u *UserUsecase) FindByUsername(username string, host string) (*model.User, error) {
+	return u.UserRepository.FindByUsername(username, host)
+}
+
+func (u *UserUsecase) Insert(username string, password string, host string, display_name string, profile string) (*model.User, error) {
+	return u.UserRepository.Insert(username, password, host, display_name, profile)
+}
+
+func (u *UserUsecase) UpdateRemoteUser(username string, host string, display_name string, profile string) (*model.User, error) {
+	return u.UserRepository.UpdateRemoteUser(username, host, display_name, profile)
+}
+
+type IApUserIdentifierRepository interface {
+	Insert(userId string, publicKey string) (*model.ApUserIdentifier, error)
+}
+
+type ApUserIdentifierUsecase struct {
+	ApUserIdentifierRepository IApUserIdentifierRepository
+}
+
+func (u *ApUserIdentifierUsecase) Insert(userId string, publicKey string) (*model.ApUserIdentifier, error) {
+	return u.ApUserIdentifierRepository.Insert(userId, publicKey)
 }
 
 type IApUserRepository interface {
-	FindByUserId(string) (*model.ApUser, error)
+	FindByUsername(username string, host string) (*model.ApUser, error)
 }
 
 type ApUserUsecase struct {
 	ApUserRepository IApUserRepository
 }
 
-func (u *ApUserUsecase) FindByUserId(userId string) (*model.ApUser, error) {
-	return u.ApUserRepository.FindByUserId(userId)
+func (u *ApUserUsecase) FindByUsername(username string, host string) (*model.ApUser, error) {
+	return u.ApUserRepository.FindByUsername(username, host)
 }

@@ -27,7 +27,7 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		user, err := c.Controllers.User.FindByUserId(matches[1])
+		user, err := c.Controllers.User.FindByUsername(matches[1], c.Config.Host)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
@@ -37,7 +37,7 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		webfinger := activitypub.GetWebfingerActorLinks(user.UserId, c.Config.Host)
+		webfinger := activitypub.GetWebfingerActorLinks(user.Username, c.Config.Host)
 		jsonResponse(w, webfinger)
 	}
 }
