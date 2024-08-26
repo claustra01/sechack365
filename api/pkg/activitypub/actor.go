@@ -26,14 +26,14 @@ type Actor struct {
 }
 
 func GetActor(user model.ApUser) *Actor {
-	baseUrl := fmt.Sprintf("https://%s/actor/%s", user.Host, user.UserId)
+	baseUrl := fmt.Sprintf("https://%s/actor/%s", user.Host, user.Username)
 	actor := &Actor{
 		Context:           ApContext[:],
 		Type:              "Person",
 		Id:                baseUrl,
 		Inbox:             baseUrl + "/inbox",
 		Outbox:            baseUrl + "/outbox",
-		PreferredUsername: user.UserId,
+		PreferredUsername: user.Username,
 		Name:              user.DisplayName,
 		Summary:           user.Profile,
 		PublicKey: PublicKey{

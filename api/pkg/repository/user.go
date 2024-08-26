@@ -43,7 +43,7 @@ func (repo *UserRepository) FindById(id string) (*model.User, error) {
 }
 
 func (repo *UserRepository) FindByUsername(username string) (*model.User, error) {
-	row, err := repo.SqlHandler.Query("SELECT * FROM users WHERE user_id = $1;", username)
+	row, err := repo.SqlHandler.Query("SELECT * FROM users WHERE username = $1;", username)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (repo *UserRepository) FindByUsername(username string) (*model.User, error)
 
 func (repo *UserRepository) Insert(user *model.User) error {
 	_, err := repo.SqlHandler.Execute(`
-		INSERT INTO users (id, user_id, host, encrypted_password, display_name, profile)
+		INSERT INTO users (id, username, host, encrypted_password, display_name, profile)
 			VALUES ($1, $2, $3, $4, $5, $6);
 	`, user.Id, user.Username, user.Host, user.EncryptedPassword, user.DisplayName, user.Profile)
 	return err
@@ -88,8 +88,8 @@ type ApUserRepository struct {
 
 func (repo *ApUserRepository) FindByUsername(username string) (*model.ApUser, error) {
 	row, err := repo.SqlHandler.Query(`
-		SELECT users.id, users.user_id, host, encrypted_password, display_name, profile, public_key, private_key, users.created_at, users.updated_at
-		FROM users, ap_user_identifiers WHERE users.user_id = $1 AND users.id = ap_user_identifiers.user_id;
+		SELECT users.id, users.username, host, encrypted_password, display_name, profile, public_key, private_key, users.created_at, users.updated_at
+		FROM users, ap_user_identifiers WHERE users.username = $1 AND users.id = ap_user_identifiers.user_id;
 	`, username)
 	if err != nil {
 		return nil, err
