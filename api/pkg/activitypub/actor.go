@@ -14,7 +14,7 @@ type PublicKey struct {
 }
 
 type Actor struct {
-	Context           []string  `json:"@context"`
+	Context           any       `json:"@context"`
 	Type              string    `json:"type"`
 	Id                string    `json:"id"`
 	Inbox             string    `json:"inbox"`

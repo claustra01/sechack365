@@ -4,6 +4,9 @@ import "fmt"
 
 var ErrUserNotFound = fmt.Errorf("user not found")
 
+var ErrResolveWebfinger = fmt.Errorf("failed to resolve webfinger")
+var ErrResolveRemoteActor = fmt.Errorf("failed to resolve remote actor")
+
 var ErrGeneratePasswordHash = fmt.Errorf("failed to generate password hash")
 var ErrGenerateRsaKey = fmt.Errorf("failed to generate RSA key pair")
 var ErrEncodePublicKey = fmt.Errorf("failed to encode public key")
