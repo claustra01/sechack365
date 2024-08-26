@@ -5,7 +5,7 @@ import "github.com/claustra01/sechack365/pkg/model"
 type IUserRepository interface {
 	FindAll() ([]*model.User, error)
 	FindById(id string) (*model.User, error)
-	FindByUserId(string) (*model.User, error)
+	FindByUsername(string) (*model.User, error)
 }
 
 type UserUsecase struct {
@@ -20,18 +20,18 @@ func (u *UserUsecase) FindById(id string) (*model.User, error) {
 	return u.UserRepository.FindById(id)
 }
 
-func (u *UserUsecase) FindByUserId(userId string) (*model.User, error) {
-	return u.UserRepository.FindByUserId(userId)
+func (u *UserUsecase) FindByUsername(username string) (*model.User, error) {
+	return u.UserRepository.FindByUsername(username)
 }
 
 type IApUserRepository interface {
-	FindByUserId(string) (*model.ApUser, error)
+	FindByUsername(string) (*model.ApUser, error)
 }
 
 type ApUserUsecase struct {
 	ApUserRepository IApUserRepository
 }
 
-func (u *ApUserUsecase) FindByUserId(userId string) (*model.ApUser, error) {
-	return u.ApUserRepository.FindByUserId(userId)
+func (u *ApUserUsecase) FindByUsername(username string) (*model.ApUser, error) {
+	return u.ApUserRepository.FindByUsername(username)
 }

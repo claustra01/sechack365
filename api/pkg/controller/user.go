@@ -28,8 +28,8 @@ func (controller *UserController) FindById(id string) (user *model.User, err err
 	return controller.UserUsecase.FindById(id)
 }
 
-func (controller *UserController) FindByUserId(userId string) (user *model.User, err error) {
-	return controller.UserUsecase.FindByUserId(userId)
+func (controller *UserController) FindByUsername(username string) (user *model.User, err error) {
+	return controller.UserUsecase.FindByUsername(username)
 }
 
 type ApUserController struct {
@@ -46,6 +46,6 @@ func NewApUserController(conn model.ISqlHandler) *ApUserController {
 	}
 }
 
-func (controller *ApUserController) FindByUserId(userId string) (user *model.ApUser, err error) {
-	return controller.ApUserUsecase.FindByUserId(userId)
+func (controller *ApUserController) FindByUsername(username string) (user *model.ApUser, err error) {
+	return controller.ApUserUsecase.FindByUsername(username)
 }
