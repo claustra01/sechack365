@@ -32,6 +32,20 @@ func (controller *UserController) FindByUsername(username string) (user *model.U
 	return controller.UserUsecase.FindByUsername(username)
 }
 
+type ApUserIdentifierController struct {
+	ApUserIdentifierUsecase usecase.ApUserIdentifierUsecase
+}
+
+func NewApUserIdentifierController(conn model.ISqlHandler) *ApUserIdentifierController {
+	return &ApUserIdentifierController{
+		ApUserIdentifierUsecase: usecase.ApUserIdentifierUsecase{
+			ApUserIdentifierRepository: &repository.ApUserIdentifierRepository{
+				SqlHandler: conn,
+			},
+		},
+	}
+}
+
 type ApUserController struct {
 	ApUserUsecase usecase.ApUserUsecase
 }
