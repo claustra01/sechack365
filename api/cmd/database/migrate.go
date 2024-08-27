@@ -25,6 +25,7 @@ func migrate(conn *sql.DB) {
 	_, err := conn.Exec(`
 		DROP TABLE IF EXISTS users CASCADE;
 		DROP TABLE IF EXISTS ap_user_identifiers;
+		DROP TABLE IF EXISTS follows;
 
 		CREATE TABLE users (
 			id VARCHAR(255),
