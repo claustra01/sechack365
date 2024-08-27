@@ -6,7 +6,7 @@ type IUserRepository interface {
 	FindAll() ([]*model.User, error)
 	FindById(id string) (*model.User, error)
 	FindByUsername(username string, host string) (*model.User, error)
-	Insert(username string, password string, host string, display_name string, profile string, icon string) (*model.User, error)
+	Insert(username string, password string, host string, protocol string, display_name string, profile string, icon string) (*model.User, error)
 	UpdateRemoteUser(username string, host string, display_name string, profile string, icon string) (*model.User, error)
 }
 
@@ -26,8 +26,8 @@ func (u *UserUsecase) FindByUsername(username string, host string) (*model.User,
 	return u.UserRepository.FindByUsername(username, host)
 }
 
-func (u *UserUsecase) Insert(username string, password string, host string, display_name string, profile string, icon string) (*model.User, error) {
-	return u.UserRepository.Insert(username, password, host, display_name, profile, icon)
+func (u *UserUsecase) Insert(username string, password string, host string, protocol string, display_name string, profile string, icon string) (*model.User, error) {
+	return u.UserRepository.Insert(username, password, host, protocol, display_name, profile, icon)
 }
 
 func (u *UserUsecase) UpdateRemoteUser(username string, host string, display_name string, profile string, icon string) (*model.User, error) {

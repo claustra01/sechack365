@@ -58,7 +58,7 @@ func (repo *UserRepository) FindByUsername(username string, host string) (*model
 	return nil, nil
 }
 
-func (repo *UserRepository) Insert(username string, password string, host string, display_name string, profile string, icon string) (*model.User, error) {
+func (repo *UserRepository) Insert(username string, password string, host string, protocol string, display_name string, profile string, icon string) (*model.User, error) {
 	uuid := util.NewUuid()
 	var hashedPassword string
 	if password != "" {
@@ -69,17 +69,17 @@ func (repo *UserRepository) Insert(username string, password string, host string
 		}
 	}
 	row, err := repo.SqlHandler.Query(`
-		INSERT INTO users (id, username, host, hashed_password, display_name, profile, icon)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
-		RETURNING id, username, host, hashed_password, display_name, profile, icon, created_at, updated_at;
-	`, uuid, username, host, hashedPassword, display_name, profile, icon)
+		INSERT INTO users (id, username, host, protocol, hashed_password, display_name, profile, icon)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		RETURNING id, username, host, protocol, hashed_password, display_name, profile, icon, created_at, updated_at;
+	`, uuid, username, host, protocol, hashedPassword, display_name, profile, icon)
 	if err != nil {
 		return nil, err
 	}
 	defer row.Close()
 	if row.Next() {
 		var user = new(model.User)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.Protocol, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		return user, nil
