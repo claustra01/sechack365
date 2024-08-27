@@ -30,6 +30,7 @@ func migrate(conn *sql.DB) {
 			id VARCHAR(255),
 			username VARCHAR(255) NOT NULL,
 			host VARCHAR(255) NOT NULL,
+			protocol VARCHAR(255) NOT NULL,
 			hashed_password VARCHAR(255) NOT NULL,
 			display_name VARCHAR(255),
 			profile TEXT,
@@ -68,10 +69,10 @@ func migrate(conn *sql.DB) {
 
 func insertMock(conn *sql.DB) {
 	conn.Exec(`
-		INSERT INTO users (id, username, host, hashed_password, display_name, profile, icon)
-			VALUES ('1', 'mock', 'localhost', 'password', 'mock user', 'This is mock user', 'https://placehold.jp/150x150.png');
-		INSERT INTO users (id, username, host, hashed_password, display_name, profile, icon)
-			VALUES ('2', 'mock', 'sechack365-dev.claustra01.net', 'password', 'mock user', 'This is mock user', 'https://placehold.jp/150x150.png');
+		INSERT INTO users (id, username, host, protocol, hashed_password, display_name, profile, icon)
+			VALUES ('1', 'mock', 'localhost', 'local, 'password', 'mock user', 'This is mock user', 'https://placehold.jp/150x150.png');
+		INSERT INTO users (id, username, host, protocol, hashed_password, display_name, profile, icon)
+			VALUES ('2', 'mock', 'sechack365-dev.claustra01.net'. 'local', 'password', 'mock user', 'This is mock user', 'https://placehold.jp/150x150.png');
 		INSERT INTO ap_user_identifiers (user_id, inbox, outbox, public_key, private_key)
 			VALUES ('1', 'https://localhost/api/v1/actor/mock/inbox', 'https://localhost/api/v1/actor/mock/outbox', '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAykPAEF/84PZaGUc3b8GR
