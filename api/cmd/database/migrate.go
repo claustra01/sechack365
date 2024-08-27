@@ -53,8 +53,8 @@ func migrate(conn *sql.DB) {
 			is_accepted BOOLEAN DEFAULT FALSE,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			FOREIGN KEY (from) REFERENCES users(id),
-			FOREIGN KEY (to) REFERENCES users(id)
+			FOREIGN KEY (follower) REFERENCES users(id),
+			FOREIGN KEY (followee) REFERENCES users(id)
 		);
 	`)
 	if err != nil {
