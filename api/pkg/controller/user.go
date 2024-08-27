@@ -32,12 +32,12 @@ func (controller *UserController) FindByUsername(username string, host string) (
 	return controller.UserUsecase.FindByUsername(username, host)
 }
 
-func (controller *UserController) Insert(username string, password string, host string, display_name string, profile string) (*model.User, error) {
-	return controller.UserUsecase.Insert(username, password, host, display_name, profile)
+func (controller *UserController) Insert(username string, password string, host string, display_name string, profile string, icon string) (*model.User, error) {
+	return controller.UserUsecase.Insert(username, password, host, display_name, profile, icon)
 }
 
-func (controller *UserController) UpdateRemoteUser(username string, host string, display_name string, profile string) (*model.User, error) {
-	return controller.UserUsecase.UpdateRemoteUser(username, host, display_name, profile)
+func (controller *UserController) UpdateRemoteUser(username string, host string, display_name string, profile string, icon string) (*model.User, error) {
+	return controller.UserUsecase.UpdateRemoteUser(username, host, display_name, profile, icon)
 }
 
 type ApUserIdentifierController struct {
@@ -54,8 +54,8 @@ func NewApUserIdentifierController(conn model.ISqlHandler) *ApUserIdentifierCont
 	}
 }
 
-func (controller *ApUserIdentifierController) Insert(userId string, publicKey string) (*model.ApUserIdentifier, error) {
-	return controller.ApUserIdentifierUsecase.Insert(userId, publicKey)
+func (controller *ApUserIdentifierController) Insert(userId string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error) {
+	return controller.ApUserIdentifierUsecase.Insert(userId, inbox, outbox, publicKey)
 }
 
 type ApUserController struct {

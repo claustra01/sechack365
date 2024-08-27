@@ -18,7 +18,7 @@ func (repo *UserRepository) FindAll() ([]*model.User, error) {
 	defer row.Close()
 	for row.Next() {
 		var user model.User
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		users = append(users, &user)
@@ -34,7 +34,7 @@ func (repo *UserRepository) FindById(id string) (*model.User, error) {
 	defer row.Close()
 	if row.Next() {
 		var user = new(model.User)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		return user, nil
@@ -50,7 +50,7 @@ func (repo *UserRepository) FindByUsername(username string, host string) (*model
 	defer row.Close()
 	if row.Next() {
 		var user = new(model.User)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		return user, nil
@@ -58,7 +58,7 @@ func (repo *UserRepository) FindByUsername(username string, host string) (*model
 	return nil, nil
 }
 
-func (repo *UserRepository) Insert(username string, password string, host string, display_name string, profile string) (*model.User, error) {
+func (repo *UserRepository) Insert(username string, password string, host string, display_name string, profile string, icon string) (*model.User, error) {
 	uuid := util.NewUuid()
 	var hashedPassword string
 	if password != "" {
@@ -69,17 +69,17 @@ func (repo *UserRepository) Insert(username string, password string, host string
 		}
 	}
 	row, err := repo.SqlHandler.Query(`
-		INSERT INTO users (id, username, host, hashed_password, display_name, profile)
-		VALUES ($1, $2, $3, $4, $5, $6)
-		RETURNING id, username, host, hashed_password, display_name, profile, created_at, updated_at;
-	`, uuid, username, host, hashedPassword, display_name, profile)
+		INSERT INTO users (id, username, host, hashed_password, display_name, profile, icon)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		RETURNING id, username, host, hashed_password, display_name, profile, icon, created_at, updated_at;
+	`, uuid, username, host, hashedPassword, display_name, profile, icon)
 	if err != nil {
 		return nil, err
 	}
 	defer row.Close()
 	if row.Next() {
 		var user = new(model.User)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		return user, nil
@@ -87,19 +87,19 @@ func (repo *UserRepository) Insert(username string, password string, host string
 	return nil, nil
 }
 
-func (repo *UserRepository) UpdateRemoteUser(username string, host string, display_name string, profile string) (*model.User, error) {
+func (repo *UserRepository) UpdateRemoteUser(username string, host string, display_name string, profile string, icon string) (*model.User, error) {
 	row, err := repo.SqlHandler.Query(`
-		UPDATE users SET display_name = $1, profile = $2, updated_at = NOW()
-		WHERE username = $3 AND host = $4
-		RETURNING id, username, host, hashed_password, display_name, profile, created_at, updated_at;
-	`, display_name, profile, username, host)
+		UPDATE users SET display_name = $1, profile = $2, icon = $3, updated_at = NOW()
+		WHERE username = $4 AND host = $5
+		RETURNING id, username, host, hashed_password, display_name, profile, icon, created_at, updated_at;
+	`, display_name, profile, icon, username, host)
 	if err != nil {
 		return nil, err
 	}
 	defer row.Close()
 	if row.Next() {
 		var user = new(model.User)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		return user, nil
@@ -111,7 +111,7 @@ type ApUserIdentifierRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
-func (repo *ApUserIdentifierRepository) Insert(userId string, publicKey string) (*model.ApUserIdentifier, error) {
+func (repo *ApUserIdentifierRepository) Insert(userId string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error) {
 	var privateKey string
 	if publicKey == "" {
 		var err error
@@ -121,17 +121,17 @@ func (repo *ApUserIdentifierRepository) Insert(userId string, publicKey string) 
 		}
 	}
 	row, err := repo.SqlHandler.Query(`
-		INSERT INTO ap_user_identifiers (user_id, public_key, private_key)
-		VALUES ($1, $2, $3)
-		RETURNING user_id, public_key, private_key;
-	`, userId, publicKey, privateKey)
+		INSERT INTO ap_user_identifiers (user_id, inbox, outbox, public_key, private_key)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING user_id, inbox, outbox, public_key, private_key;
+	`, userId, inbox, outbox, publicKey, privateKey)
 	if err != nil {
 		return nil, err
 	}
 	defer row.Close()
 	if row.Next() {
 		var apUserIdentifier = new(model.ApUserIdentifier)
-		if err = row.Scan(&apUserIdentifier.UserId, &apUserIdentifier.PublicKey, &apUserIdentifier.PrivateKey); err != nil {
+		if err = row.Scan(&apUserIdentifier.UserId, apUserIdentifier.Inbox, apUserIdentifier.Outbox, &apUserIdentifier.PublicKey, &apUserIdentifier.PrivateKey); err != nil {
 			return nil, err
 		}
 		return apUserIdentifier, nil
@@ -145,7 +145,7 @@ type ApUserRepository struct {
 
 func (repo *ApUserRepository) FindByUsername(username string, host string) (*model.ApUser, error) {
 	row, err := repo.SqlHandler.Query(`
-		SELECT users.id, users.username, host, hashed_password, display_name, profile, public_key, private_key, users.created_at, users.updated_at
+		SELECT users.id, users.username, host, hashed_password, display_name, profile, icon, inbox, outbox, public_key, private_key, users.created_at, users.updated_at
 		FROM users, ap_user_identifiers WHERE users.username = $1 AND users.host = $2 AND users.id = ap_user_identifiers.user_id;
 	`, username, host)
 	if err != nil {
@@ -154,7 +154,7 @@ func (repo *ApUserRepository) FindByUsername(username string, host string) (*mod
 	defer row.Close()
 	if row.Next() {
 		var user = new(model.ApUser)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.PublicKey, &user.PrivateKey, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.Inbox, &user.Outbox, &user.PublicKey, &user.PrivateKey, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		return user, nil
