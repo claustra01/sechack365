@@ -33,11 +33,14 @@ func migrate(conn *sql.DB) {
 			hashed_password VARCHAR(255) NOT NULL,
 			display_name VARCHAR(255),
 			profile TEXT,
+			icon TEXT,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		);
 		CREATE TABLE ap_user_identifiers (
 			user_id VARCHAR(255) PRIMARY KEY,
+			inbox TEXT NOT NULL,
+			outbox TEXT NOT NULL,
 			public_key TEXT NOT NULL,
 			private_key TEXT,
 			FOREIGN KEY (user_id) REFERENCES users(id),
