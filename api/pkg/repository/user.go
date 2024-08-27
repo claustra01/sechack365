@@ -131,7 +131,7 @@ func (repo *ApUserIdentifierRepository) Insert(userId string, inbox string, outb
 	defer row.Close()
 	if row.Next() {
 		var apUserIdentifier = new(model.ApUserIdentifier)
-		if err = row.Scan(&apUserIdentifier.UserId, apUserIdentifier.Inbox, apUserIdentifier.Outbox, &apUserIdentifier.PublicKey, &apUserIdentifier.PrivateKey); err != nil {
+		if err = row.Scan(&apUserIdentifier.UserId, &apUserIdentifier.Inbox, &apUserIdentifier.Outbox, &apUserIdentifier.PublicKey, &apUserIdentifier.PrivateKey); err != nil {
 			return nil, err
 		}
 		return apUserIdentifier, nil
