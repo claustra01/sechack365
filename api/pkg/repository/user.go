@@ -18,7 +18,7 @@ func (repo *UserRepository) FindAll() ([]*model.User, error) {
 	defer row.Close()
 	for row.Next() {
 		var user model.User
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.Protocol, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		users = append(users, &user)
@@ -34,7 +34,7 @@ func (repo *UserRepository) FindById(id string) (*model.User, error) {
 	defer row.Close()
 	if row.Next() {
 		var user = new(model.User)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.Protocol, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		return user, nil
@@ -50,7 +50,7 @@ func (repo *UserRepository) FindByUsername(username string, host string) (*model
 	defer row.Close()
 	if row.Next() {
 		var user = new(model.User)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.Protocol, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		return user, nil
@@ -145,7 +145,7 @@ type ApUserRepository struct {
 
 func (repo *ApUserRepository) FindByUsername(username string, host string) (*model.ApUser, error) {
 	row, err := repo.SqlHandler.Query(`
-		SELECT users.id, users.username, host, hashed_password, display_name, profile, icon, inbox, outbox, public_key, private_key, users.created_at, users.updated_at
+		SELECT users.id, users.username, host, protocol, hashed_password, display_name, profile, icon, inbox, outbox, public_key, private_key, users.created_at, users.updated_at
 		FROM users, ap_user_identifiers WHERE users.username = $1 AND users.host = $2 AND users.id = ap_user_identifiers.user_id;
 	`, username, host)
 	if err != nil {
@@ -154,7 +154,7 @@ func (repo *ApUserRepository) FindByUsername(username string, host string) (*mod
 	defer row.Close()
 	if row.Next() {
 		var user = new(model.ApUser)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.Inbox, &user.Outbox, &user.PublicKey, &user.PrivateKey, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.Protocol, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.Inbox, &user.Outbox, &user.PublicKey, &user.PrivateKey, &user.CreatedAt, &user.UpdatedAt); err != nil {
 			return nil, err
 		}
 		return user, nil
