@@ -80,7 +80,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			}
 
 			// update cache
-			if _, err := c.Controllers.User.UpdateRemoteUser(username, host, actor.Name, actor.Summary); err != nil {
+			if _, err := c.Controllers.User.UpdateRemoteUser(username, host, actor.Name, actor.Summary, actor.Icon.Url); err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
@@ -114,12 +114,12 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				c.Logger.Error("Transaction Rollback Failed", err)
 			}
 		}()
-		resolvedUser, err := c.Controllers.User.Insert(actor.PreferredUsername, "", host, actor.Name, actor.Summary)
+		resolvedUser, err := c.Controllers.User.Insert(actor.PreferredUsername, "", host, actor.Name, actor.Summary, actor.Icon.Url)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		if _, err := c.Controllers.ApUserIdentifier.Insert(resolvedUser.Id, actor.PublicKey.PublicKeyPem); err != nil {
+		if _, err := c.Controllers.ApUserIdentifier.Insert(resolvedUser.Id, actor.Inbox, actor.Outbox, actor.PublicKey.PublicKeyPem); err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
