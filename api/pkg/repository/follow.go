@@ -22,7 +22,7 @@ func (repo *FollowRepository) Insert(follower string, followee string) (*model.F
 	defer row.Close()
 	if row.Next() {
 		var follow = new(model.Follow)
-		if err = row.Scan(&follow.Id, &follow.Follower, &follow.Followee, &follow.CreatedAt, &follow.UpdatedAt); err != nil {
+		if err = row.Scan(&follow.Id, &follow.Follower, &follow.Followee, &follow.IsAccepted, &follow.CreatedAt, &follow.UpdatedAt); err != nil {
 			return nil, err
 		}
 		return follow, nil

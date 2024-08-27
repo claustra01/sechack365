@@ -48,6 +48,7 @@ func migrate(conn *sql.DB) {
 			id VARCHAR(255) PRIMARY KEY,
 			follower VARCHAR(255) NOT NULL,
 			followee VARCHAR(255) NOT NULL,
+			is_accepted BOOLEAN DEFAULT FALSE,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 			FOREIGN KEY (from) REFERENCES users(id),
