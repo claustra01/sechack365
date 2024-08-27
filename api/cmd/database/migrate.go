@@ -44,6 +44,15 @@ func migrate(conn *sql.DB) {
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		);
+		CREATE TABLE follows (
+			id VARCHAR(255) PRIMARY KEY,
+			from VARCHAR(255) NOT NULL,
+			to VARCHAR(255) NOT NULL,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			FOREIGN KEY (from) REFERENCES users(id),
+			FOREIGN KEY (to) REFERENCES users(id)
+		);
 	`)
 	if err != nil {
 		panic(err)
