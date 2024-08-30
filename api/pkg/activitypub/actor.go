@@ -1,8 +1,6 @@
 package activitypub
 
 import (
-	"fmt"
-
 	"github.com/claustra01/sechack365/pkg/model"
 )
 
@@ -32,7 +30,7 @@ type Actor struct {
 }
 
 func BuildActorSchema(user model.ApUser) *Actor {
-	baseUrl := fmt.Sprintf("https://%s/api/v1/actor/%s", user.Host, user.Username)
+	baseUrl := BuildActorUrl(user.Host, user.Username)
 	actor := &Actor{
 		Context:           ApContext[:],
 		Type:              "Person",
