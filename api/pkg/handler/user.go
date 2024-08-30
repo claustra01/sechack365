@@ -120,7 +120,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		if _, err := c.Controllers.ApUserIdentifier.Insert(resolvedUser.Id, actor.Inbox, actor.Outbox, actor.PublicKey.PublicKeyPem); err != nil {
+		if _, err := c.Controllers.ApUserIdentifier.Insert(resolvedUser.Id, actor.Id, actor.Inbox, actor.Outbox, actor.PublicKey.PublicKeyPem); err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
