@@ -26,7 +26,7 @@ func GetAllUsers(c *framework.Context) http.HandlerFunc {
 func LookupUser(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		usernameWithHost := r.PathValue("username")
-		pattern := regexp.MustCompile(`^([a-zA-Z0-9_]+)@?([a-zA-Z0-9.]+)?$`)
+		pattern := regexp.MustCompile(`^([a-zA-Z0-9_]+)@?([a-zA-Z0-9-.]+)?$`)
 		matches := pattern.FindStringSubmatch(usernameWithHost)
 
 		if len(matches) != 3 {

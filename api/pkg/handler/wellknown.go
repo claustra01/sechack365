@@ -20,7 +20,7 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		resource := r.URL.Query().Get("resource")
 
-		pattern := regexp.MustCompile(`acct:(.+)@(.+)`)
+		pattern := regexp.MustCompile(`^acct:([a-zA-Z0-9_]+)@([a-zA-Z0-9-.]+)$`)
 		matches := pattern.FindStringSubmatch(resource)
 		if len(matches) != 3 || matches[2] != c.Config.Host {
 			returnBadRequest(w, c.Logger, cerror.ErrInvalidResourceQuery(resource))
