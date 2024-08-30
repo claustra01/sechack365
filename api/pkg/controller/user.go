@@ -72,6 +72,10 @@ func NewApUserController(conn model.ISqlHandler) *ApUserController {
 	}
 }
 
+func (controller *ApUserController) FindById(id string) (user *model.ApUser, err error) {
+	return controller.ApUserUsecase.FindById(id)
+}
+
 func (controller *ApUserController) FindByUsername(username string, host string) (user *model.ApUser, err error) {
 	return controller.ApUserUsecase.FindByUsername(username, host)
 }

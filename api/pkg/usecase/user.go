@@ -47,11 +47,16 @@ func (u *ApUserIdentifierUsecase) Insert(userId string, inbox string, outbox str
 }
 
 type IApUserRepository interface {
+	FindById(id string) (*model.ApUser, error)
 	FindByUsername(username string, host string) (*model.ApUser, error)
 }
 
 type ApUserUsecase struct {
 	ApUserRepository IApUserRepository
+}
+
+func (u *ApUserUsecase) FindById(id string) (*model.ApUser, error) {
+	return u.ApUserRepository.FindById(id)
 }
 
 func (u *ApUserUsecase) FindByUsername(username string, host string) (*model.ApUser, error) {

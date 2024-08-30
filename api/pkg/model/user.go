@@ -27,7 +27,6 @@ type ApUser struct {
 	Id             string `json:"id"`
 	Username       string `json:"username"`
 	Host           string `json:"host"`
-	Protocol       string `json:"protocol"`
 	HashedPassword string `json:"hashed_password"`
 	DisplayName    string `json:"display_name"`
 	Profile        string `json:"profile"`
