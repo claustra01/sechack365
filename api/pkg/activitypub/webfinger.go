@@ -29,7 +29,7 @@ func BuildWebfingerActorLinksSchema(name string, host string) *Webfinger {
 			{
 				Rel:  "self",
 				Type: "application/activity+json",
-				Href: fmt.Sprintf("https://%s/api/v1/actor/%s", host, name),
+				Href: BuildActorUrl(host, name),
 			},
 		},
 	}

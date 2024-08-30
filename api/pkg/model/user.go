@@ -15,6 +15,7 @@ type User struct {
 
 type ApUserIdentifier struct {
 	UserId     string `json:"user_id"`
+	BaseUrl    string `json:"base_url"`
 	Inbox      string `json:"inbox"`
 	Outbox     string `json:"outbox"`
 	PublicKey  string `json:"public_key"`
@@ -31,6 +32,7 @@ type ApUser struct {
 	DisplayName    string `json:"display_name"`
 	Profile        string `json:"profile"`
 	Icon           string `json:"icon"`
+	BaseUrl        string `json:"base_url"`
 	Inbox          string `json:"inbox"`
 	Outbox         string `json:"outbox"`
 	PublicKey      string `json:"public_key"`

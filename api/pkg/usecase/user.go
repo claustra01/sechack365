@@ -35,15 +35,15 @@ func (u *UserUsecase) UpdateRemoteUser(username string, host string, display_nam
 }
 
 type IApUserIdentifierRepository interface {
-	Insert(userId string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error)
+	Insert(userId string, baseUrl string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error)
 }
 
 type ApUserIdentifierUsecase struct {
 	ApUserIdentifierRepository IApUserIdentifierRepository
 }
 
-func (u *ApUserIdentifierUsecase) Insert(userId string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error) {
-	return u.ApUserIdentifierRepository.Insert(userId, inbox, outbox, publicKey)
+func (u *ApUserIdentifierUsecase) Insert(userId string, baseUrl string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error) {
+	return u.ApUserIdentifierRepository.Insert(userId, baseUrl, inbox, outbox, publicKey)
 }
 
 type IApUserRepository interface {

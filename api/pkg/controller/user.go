@@ -54,8 +54,8 @@ func NewApUserIdentifierController(conn model.ISqlHandler) *ApUserIdentifierCont
 	}
 }
 
-func (controller *ApUserIdentifierController) Insert(userId string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error) {
-	return controller.ApUserIdentifierUsecase.Insert(userId, inbox, outbox, publicKey)
+func (controller *ApUserIdentifierController) Insert(userId string, baseUrl string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error) {
+	return controller.ApUserIdentifierUsecase.Insert(userId, baseUrl, inbox, outbox, publicKey)
 }
 
 type ApUserController struct {

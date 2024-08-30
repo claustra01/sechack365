@@ -42,6 +42,7 @@ func migrate(conn *sql.DB) {
 		);
 		CREATE TABLE ap_user_identifiers (
 			user_id VARCHAR(255),
+			base_url TEXT NOT NULL,
 			inbox TEXT NOT NULL,
 			outbox TEXT NOT NULL,
 			public_key TEXT NOT NULL,
@@ -74,8 +75,8 @@ func insertMock(conn *sql.DB) {
 			VALUES ('1', 'mock', 'localhost', 'local', 'password', 'mock user', 'This is mock user', 'https://placehold.jp/150x150.png');
 		INSERT INTO users (id, username, host, protocol, hashed_password, display_name, profile, icon)
 			VALUES ('2', 'mock', 'sechack365-dev.claustra01.net', 'local', 'password', 'mock user', 'This is mock user', 'https://placehold.jp/150x150.png');
-		INSERT INTO ap_user_identifiers (user_id, inbox, outbox, public_key, private_key)
-			VALUES ('1', 'https://localhost/api/v1/actor/mock/inbox', 'https://localhost/api/v1/actor/mock/outbox', '-----BEGIN PUBLIC KEY-----
+		INSERT INTO ap_user_identifiers (user_id, base_url, inbox, outbox, public_key, private_key)
+			VALUES ('1', 'https://localhost/api/v1/actor/mock', 'https://localhost/api/v1/actor/mock/inbox', 'https://localhost/api/v1/actor/mock/outbox', '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAykPAEF/84PZaGUc3b8GR
 5df/COT+G8Mjm5/xw2Eyqo6zsbSTt7RyN4xAfl8i1yILUvCM0LkTIKjw+AAXWC+L
 gPpZVGESn1JqH/MrpwmVvkauMJtC9/h3DIAUOvVPbSgar4JUM90KmN9iZi2XIajp
@@ -112,8 +113,8 @@ cPTxUYECgYBwJmDbNKQTC833OQHW5sM+FwgDCxqutWnW1MyBAIOraVUzUgTZdARx
 Nr0I9tn7GcHnN/yryv7yAJ9WzGqKABIsucjxysnVpJVc30LfDUQ61Q==
 -----END RSA PRIVATE KEY-----
 ');
-		INSERT INTO ap_user_identifiers (user_id, inbox, outbox, public_key, private_key)
-			VALUES ('2', 'https://sechack365-dev.claustra01.net/api/v1/actor/mock/inbox', 'https://sechack365-dev.claustra01.net/api/v1/actor/mock/outbox', '-----BEGIN PUBLIC KEY-----
+		INSERT INTO ap_user_identifiers (user_id, base_url, inbox, outbox, public_key, private_key)
+			VALUES ('2', 'https://sechack365-dev.claustra01.net/api/v1/actor/mock', 'https://sechack365-dev.claustra01.net/api/v1/actor/mock/inbox', 'https://sechack365-dev.claustra01.net/api/v1/actor/mock/outbox', '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAykPAEF/84PZaGUc3b8GR
 5df/COT+G8Mjm5/xw2Eyqo6zsbSTt7RyN4xAfl8i1yILUvCM0LkTIKjw+AAXWC+L
 gPpZVGESn1JqH/MrpwmVvkauMJtC9/h3DIAUOvVPbSgar4JUM90KmN9iZi2XIajp
