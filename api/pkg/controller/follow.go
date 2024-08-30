@@ -20,6 +20,10 @@ func NewFollowController(conn model.ISqlHandler) *FollowController {
 	}
 }
 
-func (controller *FollowController) Insert(follower string, followee string) (*model.Follow, error) {
-	return controller.FollowUsecase.Insert(follower, followee)
+func (controller *FollowController) Insert(followerId string, followeeId string) (*model.Follow, error) {
+	return controller.FollowUsecase.Insert(followerId, followeeId)
+}
+
+func (controller *FollowController) UpdateAcceptFollow(followerId string, followeeId string) (*model.Follow, error) {
+	return controller.FollowUsecase.UpdateAcceptFollow(followerId, followeeId)
 }
