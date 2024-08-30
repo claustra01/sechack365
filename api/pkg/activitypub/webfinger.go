@@ -22,7 +22,7 @@ type WebfingerLink struct {
 	Href string `json:"href"`
 }
 
-func GetWebfingerActorLinks(name string, host string) *Webfinger {
+func BuildWebfingerActorLinksSchema(name string, host string) *Webfinger {
 	return &Webfinger{
 		Subject: fmt.Sprintf("acct:%s@%s", name, host),
 		Links: []WebfingerLink{
@@ -35,7 +35,7 @@ func GetWebfingerActorLinks(name string, host string) *Webfinger {
 	}
 }
 
-func GetNodeInfoLinks(host string) *NodeInfoWebfinger {
+func BuildNodeInfoLinksSchema(host string) *NodeInfoWebfinger {
 	return &NodeInfoWebfinger{
 		Links: []NodeInfoLink{
 			{

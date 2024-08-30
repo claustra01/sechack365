@@ -13,7 +13,7 @@ func Nodeinfo2_0(c *framework.Context) http.HandlerFunc {
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 		}
-		nodeinfo := activitypub.GetNodeInfo(len(users))
+		nodeinfo := activitypub.BuildNodeInfoSchema(len(users))
 		jsonResponse(w, nodeinfo)
 	}
 }

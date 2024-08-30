@@ -11,7 +11,7 @@ import (
 
 func NodeinfoLinks(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		nodeinfo := activitypub.GetNodeInfoLinks(c.Config.Host)
+		nodeinfo := activitypub.BuildNodeInfoLinksSchema(c.Config.Host)
 		jsonResponse(w, nodeinfo)
 	}
 }
@@ -37,7 +37,7 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		webfinger := activitypub.GetWebfingerActorLinks(user.Username, c.Config.Host)
+		webfinger := activitypub.BuildWebfingerActorLinksSchema(user.Username, c.Config.Host)
 		jsonCustomContentTypeResponse(w, webfinger, "application/jrd+json")
 	}
 }

@@ -20,7 +20,7 @@ func GetActor(c *framework.Context) http.HandlerFunc {
 			returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
 			return
 		}
-		actor := activitypub.GetActor(*user)
+		actor := activitypub.BuildActorSchema(*user)
 		jsonCustomContentTypeResponse(w, actor, "application/activity+json")
 	}
 }

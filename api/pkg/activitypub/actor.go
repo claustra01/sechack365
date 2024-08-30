@@ -31,7 +31,7 @@ type Actor struct {
 	PublicKey         PublicKey `json:"publicKey"`
 }
 
-func GetActor(user model.ApUser) *Actor {
+func BuildActorSchema(user model.ApUser) *Actor {
 	baseUrl := fmt.Sprintf("https://%s/api/v1/actor/%s", user.Host, user.Username)
 	actor := &Actor{
 		Context:           ApContext[:],
