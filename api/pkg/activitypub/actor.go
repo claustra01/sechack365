@@ -6,6 +6,11 @@ import (
 	"github.com/claustra01/sechack365/pkg/model"
 )
 
+type Image struct {
+	Type string `json:"type"`
+	Url  string `json:"url"`
+}
+
 type PublicKey struct {
 	Type         string `json:"type"`
 	Id           string `json:"id"`
@@ -22,11 +27,12 @@ type Actor struct {
 	PreferredUsername string    `json:"preferredUsername"`
 	Name              string    `json:"name"`
 	Summary           string    `json:"summary"`
+	Icon              Image     `json:"icon"`
 	PublicKey         PublicKey `json:"publicKey"`
 }
 
-func GetActor(user model.ApUser) *Actor {
-	baseUrl := fmt.Sprintf("https://%s/actor/%s", user.Host, user.Username)
+func BuildActorSchema(user model.ApUser) *Actor {
+	baseUrl := fmt.Sprintf("https://%s/api/v1/actor/%s", user.Host, user.Username)
 	actor := &Actor{
 		Context:           ApContext[:],
 		Type:              "Person",
@@ -36,6 +42,10 @@ func GetActor(user model.ApUser) *Actor {
 		PreferredUsername: user.Username,
 		Name:              user.DisplayName,
 		Summary:           user.Profile,
+		Icon: Image{
+			Type: "Image",
+			Url:  user.Icon,
+		},
 		PublicKey: PublicKey{
 			Type:         "Key",
 			Id:           baseUrl + "#main-key",

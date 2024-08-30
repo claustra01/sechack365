@@ -14,6 +14,8 @@ func setupRouter(r *framework.Router) error {
 
 	actor := api.Group("/actor/{username}")
 	actor.Get("", handler.GetActor)
+	actor.Post("/inbox", handler.ActorInbox)
+	actor.Post("/outbox", handler.ActorOutbox)
 
 	ni := api.Group("/nodeinfo")
 	ni.Get("/2.0", handler.Nodeinfo2_0)

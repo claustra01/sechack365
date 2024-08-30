@@ -31,7 +31,7 @@ type Services struct {
 type Metadata struct{}
 
 // TODO: usage should be included users, posts, and more
-func GetNodeInfo(usersUsage int) *NodeInfo {
+func BuildNodeInfoSchema(usersUsage int) *NodeInfo {
 	return &NodeInfo{
 		OpenRegistrations: false,
 		Protocols:         Protocols,

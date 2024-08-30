@@ -25,24 +25,41 @@ func migrate(conn *sql.DB) {
 	_, err := conn.Exec(`
 		DROP TABLE IF EXISTS users CASCADE;
 		DROP TABLE IF EXISTS ap_user_identifiers;
+		DROP TABLE IF EXISTS follows;
 
 		CREATE TABLE users (
-			id VARCHAR(255) PRIMARY KEY,
+			id VARCHAR(255),
 			username VARCHAR(255) NOT NULL,
 			host VARCHAR(255) NOT NULL,
+			protocol VARCHAR(255) NOT NULL,
 			hashed_password VARCHAR(255) NOT NULL,
 			display_name VARCHAR(255),
 			profile TEXT,
+			icon TEXT,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id)
 		);
 		CREATE TABLE ap_user_identifiers (
-			user_id VARCHAR(255) PRIMARY KEY,
+			user_id VARCHAR(255),
+			inbox TEXT NOT NULL,
+			outbox TEXT NOT NULL,
 			public_key TEXT NOT NULL,
 			private_key TEXT,
-			FOREIGN KEY (user_id) REFERENCES users(id),
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (user_id),
+			FOREIGN KEY (user_id) REFERENCES users(id)
+		);
+		CREATE TABLE follows (
+			follower VARCHAR(255),
+			followee VARCHAR(255),
+			is_accepted BOOLEAN DEFAULT FALSE,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (follower, followee),
+			FOREIGN KEY (follower) REFERENCES users(id),
+			FOREIGN KEY (followee) REFERENCES users(id)
 		);
 	`)
 	if err != nil {
@@ -53,12 +70,12 @@ func migrate(conn *sql.DB) {
 
 func insertMock(conn *sql.DB) {
 	conn.Exec(`
-		INSERT INTO users (id, username, host, hashed_password, display_name, profile)
-			VALUES ('1', 'mock', 'localhost', 'password', 'mock user', 'This is mock user');
-		INSERT INTO users (id, username, host, hashed_password, display_name, profile)
-			VALUES ('2', 'mock', 'sechack365-dev.claustra01.net', 'password', 'mock user', 'This is mock user');
-		INSERT INTO ap_user_identifiers (user_id, public_key, private_key)
-			VALUES ('1', '-----BEGIN PUBLIC KEY-----
+		INSERT INTO users (id, username, host, protocol, hashed_password, display_name, profile, icon)
+			VALUES ('1', 'mock', 'localhost', 'local', 'password', 'mock user', 'This is mock user', 'https://placehold.jp/150x150.png');
+		INSERT INTO users (id, username, host, protocol, hashed_password, display_name, profile, icon)
+			VALUES ('2', 'mock', 'sechack365-dev.claustra01.net', 'local', 'password', 'mock user', 'This is mock user', 'https://placehold.jp/150x150.png');
+		INSERT INTO ap_user_identifiers (user_id, inbox, outbox, public_key, private_key)
+			VALUES ('1', 'https://localhost/api/v1/actor/mock/inbox', 'https://localhost/api/v1/actor/mock/outbox', '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAykPAEF/84PZaGUc3b8GR
 5df/COT+G8Mjm5/xw2Eyqo6zsbSTt7RyN4xAfl8i1yILUvCM0LkTIKjw+AAXWC+L
 gPpZVGESn1JqH/MrpwmVvkauMJtC9/h3DIAUOvVPbSgar4JUM90KmN9iZi2XIajp
@@ -95,8 +112,8 @@ cPTxUYECgYBwJmDbNKQTC833OQHW5sM+FwgDCxqutWnW1MyBAIOraVUzUgTZdARx
 Nr0I9tn7GcHnN/yryv7yAJ9WzGqKABIsucjxysnVpJVc30LfDUQ61Q==
 -----END RSA PRIVATE KEY-----
 ');
-		INSERT INTO ap_user_identifiers (user_id, public_key, private_key)
-			VALUES ('2', '-----BEGIN PUBLIC KEY-----
+		INSERT INTO ap_user_identifiers (user_id, inbox, outbox, public_key, private_key)
+			VALUES ('2', 'https://sechack365-dev.claustra01.net/api/v1/actor/mock/inbox', 'https://sechack365-dev.claustra01.net/api/v1/actor/mock/outbox', '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAykPAEF/84PZaGUc3b8GR
 5df/COT+G8Mjm5/xw2Eyqo6zsbSTt7RyN4xAfl8i1yILUvCM0LkTIKjw+AAXWC+L
 gPpZVGESn1JqH/MrpwmVvkauMJtC9/h3DIAUOvVPbSgar4JUM90KmN9iZi2XIajp
