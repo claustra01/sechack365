@@ -98,7 +98,12 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
-			respBody, err := activitypub.SendActivity(followeeActor.Inbox, followActivity, keyId, privateKey)
+			signParams := activitypub.SignParms{
+				Host:       c.Config.Host,
+				KeyId:      keyId,
+				PrivateKey: privateKey,
+			}
+			respBody, err := activitypub.SendActivity(followeeActor.Inbox, followActivity, signParams)
 			if err != nil {
 				c.Logger.Error("Remote follow error", "ERROR", string(respBody))
 				returnInternalServerError(w, c.Logger, err)
