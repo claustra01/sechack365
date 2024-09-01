@@ -38,28 +38,46 @@ func GenerateKeyPair() (string, string, error) {
 	return string(publicKeyPEM), string(privateKeyPEM), nil
 }
 
-func ValidateKeyPair(publicKeyPEM, privateKeyPEM string) error {
+func DecodePublicKeyPem(publicKeyPEM string) (*rsa.PublicKey, error) {
 	block, _ := pem.Decode([]byte(publicKeyPEM))
 	if block == nil || block.Type != "PUBLIC KEY" {
-		return cerror.ErrDecodePublicKey
+		return nil, cerror.ErrDecodePublicKey
 	}
 
 	publicKey, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
-		return cerror.ErrDecodePublicKey
+		return nil, cerror.ErrDecodePublicKey
 	}
 
-	block, _ = pem.Decode([]byte(privateKeyPEM))
+	return publicKey.(*rsa.PublicKey), nil
+}
+
+func DecodePrivateKeyPem(privateKeyPEM string) (*rsa.PrivateKey, error) {
+	block, _ := pem.Decode([]byte(privateKeyPEM))
 	if block == nil || block.Type != "RSA PRIVATE KEY" {
-		return cerror.ErrDecodePrivateKey
+		return nil, cerror.ErrDecodePrivateKey
 	}
 
 	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		return cerror.ErrDecodePrivateKey
+		return nil, cerror.ErrDecodePrivateKey
 	}
 
-	if publicKey.(*rsa.PublicKey).N.Cmp(privateKey.PublicKey.N) != 0 || publicKey.(*rsa.PublicKey).E != privateKey.PublicKey.E {
+	return privateKey, nil
+}
+
+func ValidateKeyPair(publicKeyPEM, privateKeyPEM string) error {
+	publicKey, err := DecodePublicKeyPem(publicKeyPEM)
+	if err != nil {
+		return err
+	}
+
+	privateKey, err := DecodePrivateKeyPem(privateKeyPEM)
+	if err != nil {
+		return err
+	}
+
+	if publicKey.N.Cmp(privateKey.PublicKey.N) != 0 || publicKey.E != privateKey.PublicKey.E {
 		return cerror.ErrInvalidKeyPair
 	}
 
