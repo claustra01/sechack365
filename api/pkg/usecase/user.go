@@ -6,12 +6,20 @@ type IUserRepository interface {
 	FindAll() ([]*model.User, error)
 	FindById(id string) (*model.User, error)
 	FindByUsername(username string, host string) (*model.User, error)
-	Insert(username string, password string, host string, protocol string, display_name string, profile string, icon string) (*model.User, error)
-	UpdateRemoteUser(username string, host string, display_name string, profile string, icon string) (*model.User, error)
+	CreateRemoteUser(username, host, protocol, displayName, profile, icon string) (*model.User, error)
+	UpdateRemoteUser(username, host, displayName, profile, icon string) (*model.User, error)
 }
 
 type UserUsecase struct {
 	UserRepository IUserRepository
+}
+
+type IApUserIdentifierRepository interface {
+	FindById(id string) (*model.ApUserIdentifier, error)
+}
+
+type ApUserIdentifierUsecase struct {
+	ApUserIdentifierRepository IApUserIdentifierRepository
 }
 
 func (u *UserUsecase) FindAll() ([]*model.User, error) {
@@ -26,39 +34,14 @@ func (u *UserUsecase) FindByUsername(username string, host string) (*model.User,
 	return u.UserRepository.FindByUsername(username, host)
 }
 
-func (u *UserUsecase) Insert(username string, password string, host string, protocol string, display_name string, profile string, icon string) (*model.User, error) {
-	return u.UserRepository.Insert(username, password, host, protocol, display_name, profile, icon)
+func (u *UserUsecase) CreateRemoteUser(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
+	return u.UserRepository.CreateRemoteUser(username, host, protocol, displayName, profile, icon)
 }
 
-func (u *UserUsecase) UpdateRemoteUser(username string, host string, display_name string, profile string, icon string) (*model.User, error) {
-	return u.UserRepository.UpdateRemoteUser(username, host, display_name, profile, icon)
+func (u *UserUsecase) UpdateRemoteUser(username, host, displayName, profile, icon string) (*model.User, error) {
+	return u.UserRepository.UpdateRemoteUser(username, host, displayName, profile, icon)
 }
 
-type IApUserIdentifierRepository interface {
-	Insert(userId string, baseUrl string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error)
-}
-
-type ApUserIdentifierUsecase struct {
-	ApUserIdentifierRepository IApUserIdentifierRepository
-}
-
-func (u *ApUserIdentifierUsecase) Insert(userId string, baseUrl string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error) {
-	return u.ApUserIdentifierRepository.Insert(userId, baseUrl, inbox, outbox, publicKey)
-}
-
-type IApUserRepository interface {
-	FindById(id string) (*model.ApUser, error)
-	FindByUsername(username string, host string) (*model.ApUser, error)
-}
-
-type ApUserUsecase struct {
-	ApUserRepository IApUserRepository
-}
-
-func (u *ApUserUsecase) FindById(id string) (*model.ApUser, error) {
-	return u.ApUserRepository.FindById(id)
-}
-
-func (u *ApUserUsecase) FindByUsername(username string, host string) (*model.ApUser, error) {
-	return u.ApUserRepository.FindByUsername(username, host)
+func (u *ApUserIdentifierUsecase) FindById(id string) (*model.ApUserIdentifier, error) {
+	return u.ApUserIdentifierRepository.FindById(id)
 }

@@ -20,26 +20,6 @@ func NewUserController(conn model.ISqlHandler) *UserController {
 	}
 }
 
-func (controller *UserController) FindAll() (users []*model.User, err error) {
-	return controller.UserUsecase.FindAll()
-}
-
-func (controller *UserController) FindById(id string) (user *model.User, err error) {
-	return controller.UserUsecase.FindById(id)
-}
-
-func (controller *UserController) FindByUsername(username string, host string) (user *model.User, err error) {
-	return controller.UserUsecase.FindByUsername(username, host)
-}
-
-func (controller *UserController) Insert(username string, password string, host string, protocol string, display_name string, profile string, icon string) (*model.User, error) {
-	return controller.UserUsecase.Insert(username, password, host, protocol, display_name, profile, icon)
-}
-
-func (controller *UserController) UpdateRemoteUser(username string, host string, display_name string, profile string, icon string) (*model.User, error) {
-	return controller.UserUsecase.UpdateRemoteUser(username, host, display_name, profile, icon)
-}
-
 type ApUserIdentifierController struct {
 	ApUserIdentifierUsecase usecase.ApUserIdentifierUsecase
 }
@@ -54,28 +34,26 @@ func NewApUserIdentifierController(conn model.ISqlHandler) *ApUserIdentifierCont
 	}
 }
 
-func (controller *ApUserIdentifierController) Insert(userId string, baseUrl string, inbox string, outbox string, publicKey string) (*model.ApUserIdentifier, error) {
-	return controller.ApUserIdentifierUsecase.Insert(userId, baseUrl, inbox, outbox, publicKey)
+func (c *UserController) FindAll() ([]*model.User, error) {
+	return c.UserUsecase.FindAll()
 }
 
-type ApUserController struct {
-	ApUserUsecase usecase.ApUserUsecase
+func (c *UserController) FindById(id string) (*model.User, error) {
+	return c.UserUsecase.FindById(id)
 }
 
-func NewApUserController(conn model.ISqlHandler) *ApUserController {
-	return &ApUserController{
-		ApUserUsecase: usecase.ApUserUsecase{
-			ApUserRepository: &repository.ApUserRepository{
-				SqlHandler: conn,
-			},
-		},
-	}
+func (c *UserController) FindByUsername(username, host string) (*model.User, error) {
+	return c.UserUsecase.FindByUsername(username, host)
 }
 
-func (controller *ApUserController) FindById(id string) (user *model.ApUser, err error) {
-	return controller.ApUserUsecase.FindById(id)
+func (c *UserController) CreateRemoteUser(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
+	return c.UserUsecase.CreateRemoteUser(username, host, protocol, displayName, profile, icon)
 }
 
-func (controller *ApUserController) FindByUsername(username string, host string) (user *model.ApUser, err error) {
-	return controller.ApUserUsecase.FindByUsername(username, host)
+func (c *UserController) UpdateRemoteUser(username, host, displayName, profile, icon string) (*model.User, error) {
+	return c.UserUsecase.UpdateRemoteUser(username, host, displayName, profile, icon)
+}
+
+func (c *ApUserIdentifierController) FindById(id string) (*model.ApUserIdentifier, error) {
+	return c.ApUserIdentifierUsecase.FindById(id)
 }
