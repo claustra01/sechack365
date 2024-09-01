@@ -35,6 +35,7 @@ CREATE TABLE "follows" (
   "id" varchar(255) PRIMARY KEY,
   "follower_id" varchar(255) NOT NULL,
   "followee_id" varchar(255) NOT NULL,
+  "is_accepted" boolean NOT NULL DEFAULT false,
   "created_at" timestamp DEFAULT 'NOW()',
   "updated_at" timestamp DEFAULT 'NOW()'
 );

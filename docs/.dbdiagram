@@ -35,6 +35,7 @@ Table follows {
   id varchar(255) [pk]
   follower_id varchar(255) [not null, ref: > users.id]
   followee_id varchar(255) [not null, ref: > users.id]
+  is_accepted boolean [not null, default: false]
   created_at timestamp [default: "NOW()"]
   updated_at timestamp [default: "NOW()"]
 }
