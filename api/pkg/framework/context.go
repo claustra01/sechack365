@@ -18,7 +18,6 @@ type Controllers struct {
 	Transaction      *controller.TransactionController
 	User             *controller.UserController
 	ApUserIdentifier *controller.ApUserIdentifierController
-	ApUser           *controller.ApUserController
 	Follow           *controller.FollowController
 }
 
@@ -36,7 +35,6 @@ func NewControllers(conn model.ISqlHandler) *Controllers {
 		Transaction:      controller.NewTransactionController(conn),
 		User:             controller.NewUserController(conn),
 		ApUserIdentifier: controller.NewApUserIdentifierController(conn),
-		ApUser:           controller.NewApUserController(conn),
 		Follow:           controller.NewFollowController(conn),
 	}
 }
