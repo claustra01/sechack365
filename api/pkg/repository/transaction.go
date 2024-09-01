@@ -6,17 +6,17 @@ type TransactionRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
-func (repo *TransactionRepository) Begin() error {
-	_, err := repo.SqlHandler.Execute("BEGIN;")
+func (r *TransactionRepository) Begin() error {
+	_, err := r.SqlHandler.Execute("BEGIN;")
 	return err
 }
 
-func (repo *TransactionRepository) Commit() error {
-	_, err := repo.SqlHandler.Execute("COMMIT;")
+func (r *TransactionRepository) Commit() error {
+	_, err := r.SqlHandler.Execute("COMMIT;")
 	return err
 }
 
-func (repo *TransactionRepository) Rollback() error {
-	_, err := repo.SqlHandler.Execute("ROLLBACK;")
+func (r *TransactionRepository) Rollback() error {
+	_, err := r.SqlHandler.Execute("ROLLBACK;")
 	return err
 }

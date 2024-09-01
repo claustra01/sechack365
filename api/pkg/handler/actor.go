@@ -11,7 +11,7 @@ import (
 func GetActor(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		name := r.PathValue("username")
-		user, err := c.Controllers.ApUser.FindByUsername(name, c.Config.Host)
+		user, err := c.Controllers.User.FindByUsername(name, c.Config.Host)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
@@ -20,7 +20,12 @@ func GetActor(c *framework.Context) http.HandlerFunc {
 			returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
 			return
 		}
-		actor := activitypub.BuildActorSchema(*user)
+		identifier, err := c.Controllers.ApUserIdentifier.FindById(user.Id)
+		if err != nil {
+			returnInternalServerError(w, c.Logger, err)
+			return
+		}
+		actor := activitypub.BuildActorSchema(*user, *identifier)
 		jsonCustomContentTypeResponse(w, actor, "application/activity+json")
 	}
 }

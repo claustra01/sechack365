@@ -1,0 +1,34 @@
+Enum protocol {
+  local
+  activitypub
+}
+
+Table users {
+  id varchar(255) [pk]
+  username varchar(255) [not null]
+  host varchar(255) [not null]
+  protocol protocol [not null]
+  hashed_password varchar(255) [not null, default: ""]
+  display_name varchar(255)
+  profile text
+  icon varchar(255)
+  created_at timestamp [default: "NOW()"]
+  updated_at timestamp [default: "NOW()"]
+}
+
+Table ap_user_identifiers {
+  user_id varchar(255) [pk, ref: - users.id]
+  public_key text [not null]
+  private_key text [not null]
+  created_at timestamp [default: "NOW()"]
+  updated_at timestamp [default: "NOW()"]
+}
+
+Table follows {
+  id varchar(255) [pk]
+  follower_id varchar(255) [not null, ref: > users.id]
+  followee_id varchar(255) [not null, ref: > users.id]
+  is_accepted boolean [not null, default: false]
+  created_at timestamp [default: "NOW()"]
+  updated_at timestamp [default: "NOW()"]
+}
