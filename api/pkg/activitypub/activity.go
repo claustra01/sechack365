@@ -32,7 +32,7 @@ func SendActivity(url string, activity any, keyId string, privateKey *rsa.Privat
 		return nil, err
 	}
 
-	req.Header.Set("Accept", "application/activity+json")
+	req.Header.Set("Accept", "application/ld+json")
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
