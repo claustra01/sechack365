@@ -50,13 +50,13 @@ func SendActivity(url string, activity any, keyId string, privateKey *rsa.Privat
 	return body, nil
 }
 
-func BuildFollowActivitySchema(id, followerName, followerHost, followeeName, followeeHost string) *FollowActivity {
+func BuildFollowActivitySchema(id, followerName, followerHost, followeeUrl string) *FollowActivity {
 	// object is followee actor
 	return &FollowActivity{
 		Context: ApContext[:],
 		Type:    "Follow",
 		Id:      fmt.Sprintf("https://%s/follows/%s", followerHost, id),
 		Actor:   BuildActorUrl(followerHost, followerName),
-		Object:  BuildActorUrl(followeeHost, followeeName),
+		Object:  followeeUrl,
 	}
 }

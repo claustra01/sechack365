@@ -84,8 +84,15 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 				return
 			}
 
+			// get followee actor url
+			followeeUrl, err := activitypub.ResolveWebfinger(followee.Username, followee.Host)
+			if err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+
 			// send follow activity
-			followActivity := activitypub.BuildFollowActivitySchema(follow.Id, follower.Username, follower.Host, followee.Username, followee.Host)
+			followActivity := activitypub.BuildFollowActivitySchema(follow.Id, follower.Username, follower.Host, followeeUrl)
 			followeeActor, err := activitypub.ResolveRemoteActor(followActivity.Object)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
