@@ -12,6 +12,9 @@ func setupRouter(r *framework.Router) error {
 	users.Get("", handler.GetAllUsers)
 	users.Get("/{username}", handler.LookupUser)
 
+	follow := api.Group("/follows")
+	follow.Post("", handler.CreateFollow)
+
 	actor := api.Group("/actor/{username}")
 	actor.Get("", handler.GetActor)
 	actor.Post("/inbox", handler.ActorInbox)
