@@ -55,7 +55,7 @@ func SendActivity(url string, activity any, sigParams SignParms) ([]byte, error)
 
 	// TODO: このsigningStringを署名するのが正しいという認識だが理解が怪しいので後日実装する
 	// signingString := fmt.Sprintf("(request-target): post %s\nhost: %s\ndate: %s\ndigest: %s", url, sigParams.Host, signedDate, digestHeader)
-	signature, err := rsa.SignPKCS1v15(rand.Reader, sigParams.PrivateKey, crypto.SHA256, []byte(digest))
+	signature, err := rsa.SignPKCS1v15(rand.Reader, sigParams.PrivateKey, crypto.SHA256, hash[:])
 	if err != nil {
 		return nil, err
 	}
