@@ -1,8 +1,8 @@
-INSERT INTO users (id, username, host, protocol, display_name, profile)
-VALUES ('1', 'mock', 'localhost', 'local', 'mock user', 'This is mock user');
+INSERT INTO users (id, username, host, protocol, display_name, profile, icon)
+VALUES ('1', 'mock', 'localhost', 'local', 'mock user', 'This is mock user', 'https://placehold.jp/150x150.png');
 
-INSERT INTO users (id, username, host, protocol, display_name, profile)
-VALUES ('2', 'mock', 'sechack365-dev.claustra01.net', 'local', 'mock user', 'This is mock user');
+INSERT INTO users (id, username, host, protocol, display_name, profile, icon)
+VALUES ('2', 'mock', 'sechack365-dev.claustra01.net', 'local', 'mock user', 'This is mock user', 'https://placehold.jp/150x150.png');
 
 INSERT INTO ap_user_identifiers (user_id, public_key, private_key)
 VALUES ('1', '-----BEGIN PUBLIC KEY-----

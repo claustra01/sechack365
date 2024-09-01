@@ -8,7 +8,7 @@ CREATE TABLE "users" (
   "username" varchar(255) NOT NULL,
   "host" varchar(255) NOT NULL,
   "protocol" protocol NOT NULL,
-  "hashed_password" varchar(255),
+  "hashed_password" varchar(255) NOT NULL DEFAULT '',
   "display_name" varchar(255),
   "profile" text,
   "icon" varchar(255),
