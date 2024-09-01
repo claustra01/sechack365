@@ -113,7 +113,7 @@ type ApUserIdentifierRepository struct {
 func (r *ApUserIdentifierRepository) FindById(id string) (*model.ApUserIdentifier, error) {
 	row, err := r.SqlHandler.Query(`
 		SELECT * FROM ap_user_identifiers
-		WHERE id = $1;
+		WHERE user_id = $1;
 	`, id)
 	if err != nil {
 		return nil, err
