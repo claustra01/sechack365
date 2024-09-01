@@ -29,7 +29,7 @@ type Actor struct {
 	PublicKey         PublicKey `json:"publicKey"`
 }
 
-func BuildActorSchema(user model.ApUser) *Actor {
+func BuildActorSchema(user model.User, identifier model.ApUserIdentifier) *Actor {
 	baseUrl := BuildActorUrl(user.Host, user.Username)
 	actor := &Actor{
 		Context:           ApContext[:],
@@ -48,7 +48,7 @@ func BuildActorSchema(user model.ApUser) *Actor {
 			Type:         "Key",
 			Id:           baseUrl + "#main-key",
 			Owner:        baseUrl,
-			PublicKeyPem: user.PublicKey,
+			PublicKeyPem: identifier.PublicKey,
 		},
 	}
 	return actor

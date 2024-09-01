@@ -110,27 +110,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		defer func() {
-			if err := c.Controllers.Transaction.Rollback(); err != nil {
-				c.Logger.Error("Transaction Rollback Failed", err)
-			}
-		}()
-		resolvedUser, err := c.Controllers.User.Insert(actor.PreferredUsername, "", host, model.ProtocolActivityPub, actor.Name, actor.Summary, actor.Icon.Url)
-		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
-			return
-		}
-		if _, err := c.Controllers.ApUserIdentifier.Insert(resolvedUser.Id, actor.Id, actor.Inbox, actor.Outbox, actor.PublicKey.PublicKeyPem); err != nil {
-			returnInternalServerError(w, c.Logger, err)
-			return
-		}
-		if err := c.Controllers.Transaction.Commit(); err != nil {
-			returnInternalServerError(w, c.Logger, err)
-			return
-		}
-
-		// return
-		user, err := c.Controllers.User.FindByUsername(username, host)
+		user, err := c.Controllers.User.CreateRemoteUser(actor.PreferredUsername, host, model.ProtocolActivityPub, actor.Name, actor.Summary, actor.Icon.Url)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
