@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/claustra01/sechack365/pkg/model"
+	"github.com/claustra01/sechack365/pkg/util"
 )
 
 type FollowRepository struct {
@@ -9,11 +10,12 @@ type FollowRepository struct {
 }
 
 func (r *FollowRepository) Create(followerId, followeeId string) (*model.Follow, error) {
+	uuid := util.NewUuid()
 	row, err := r.SqlHandler.Query(`
-		INSERT INTO follows (follower_id, followee_id)
-		VALUES ($1, $2)
+		INSERT INTO follows (id, follower_id, followee_id)
+		VALUES ($1, $2, $3)
 		RETURNING *;
-	`, followerId, followeeId)
+	`, uuid, followerId, followeeId)
 	if err != nil {
 		return nil, err
 	}

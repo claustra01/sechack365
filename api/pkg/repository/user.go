@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/claustra01/sechack365/pkg/model"
+	"github.com/claustra01/sechack365/pkg/util"
 )
 
 type UserRepository struct {
@@ -64,11 +65,12 @@ func (r *UserRepository) FindByUsername(username, host string) (*model.User, err
 }
 
 func (r *UserRepository) CreateRemoteUser(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
+	uuid := util.NewUuid()
 	row, err := r.SqlHandler.Query(`
-		INSERT INTO users (username, host, protocol, display_name, profile, icon)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO users (id, username, host, protocol, display_name, profile, icon)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING *;
-	`, username, host, protocol, displayName, profile, icon)
+	`, uuid, username, host, protocol, displayName, profile, icon)
 	if err != nil {
 		return nil, err
 	}
