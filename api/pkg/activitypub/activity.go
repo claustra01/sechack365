@@ -2,14 +2,25 @@ package activitypub
 
 import (
 	"bytes"
+	"crypto"
+	"crypto/rand"
 	"crypto/rsa"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
 )
+
+type SignParms struct {
+	Host       string
+	KeyId      string
+	PrivateKey *rsa.PrivateKey
+}
 
 type FollowActivity struct {
 	Context any    `json:"@context"`
@@ -19,8 +30,7 @@ type FollowActivity struct {
 	Object  string `json:"object"`
 }
 
-// TODO: http signature
-func SendActivity(url string, activity any, keyId string, privateKey *rsa.PrivateKey) ([]byte, error) {
+func SendActivity(url string, activity any, sigParams SignParms) ([]byte, error) {
 	reqBody, err := json.Marshal(activity)
 	if err != nil {
 		return nil, err
@@ -32,7 +42,25 @@ func SendActivity(url string, activity any, keyId string, privateKey *rsa.Privat
 		return nil, err
 	}
 
+	signedDate := time.Now().Format(http.TimeFormat)
+
+	req.Header.Set("Host", sigParams.Host)
+	req.Header.Set("Date", signedDate)
 	req.Header.Set("Content-Type", "application/activity+json")
+
+	hash := sha256.Sum256(reqBody)
+	digest := base64.StdEncoding.EncodeToString(hash[:])
+	digestHeader := fmt.Sprintf("SHA-256=%x", digest)
+	req.Header.Set("Digest", digestHeader)
+
+	signingString := fmt.Sprintf("(request-target): post %s\nhost: %s\ndate: %s\ndigest: %s", url, sigParams.Host, signedDate, digestHeader)
+	signature, err := rsa.SignPKCS1v15(rand.Reader, sigParams.PrivateKey, crypto.SHA256, []byte(signingString))
+	if err != nil {
+		return nil, err
+	}
+	signatureHeader := fmt.Sprintf(`keyId="%s",algorithm="rsa-sha256",headers="(request-target) host date digest",signature="%s"`, sigParams.KeyId, signature)
+	req.Header.Set("Signature", signatureHeader)
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
