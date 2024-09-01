@@ -46,7 +46,7 @@ func BuildActorSchema(user model.User, identifier model.ApUserIdentifier) *Actor
 		},
 		PublicKey: PublicKey{
 			Type:         "Key",
-			Id:           baseUrl + "#main-key",
+			Id:           BuildKeyIdUrl(user.Host, user.Username),
 			Owner:        baseUrl,
 			PublicKeyPem: identifier.PublicKey,
 		},
