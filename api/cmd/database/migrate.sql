@@ -24,13 +24,6 @@ CREATE TABLE "ap_user_identifiers" (
   "updated_at" timestamp DEFAULT 'NOW()'
 );
 
-CREATE TABLE "assets" (
-  "id" varchar(255) PRIMARY KEY,
-  "url" varchar(255) NOT NULL,
-  "created_at" timestamp DEFAULT 'NOW()',
-  "updated_at" timestamp DEFAULT 'NOW()'
-);
-
 CREATE TABLE "follows" (
   "id" varchar(255) PRIMARY KEY,
   "follower_id" varchar(255) NOT NULL,
@@ -39,8 +32,6 @@ CREATE TABLE "follows" (
   "created_at" timestamp DEFAULT 'NOW()',
   "updated_at" timestamp DEFAULT 'NOW()'
 );
-
-ALTER TABLE "users" ADD FOREIGN KEY ("icon") REFERENCES "assets" ("id");
 
 ALTER TABLE "ap_user_identifiers" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
