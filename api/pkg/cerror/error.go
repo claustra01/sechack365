@@ -4,11 +4,11 @@ import "fmt"
 
 var ErrUserNotFound = fmt.Errorf("user not found")
 
+var ErrInvalidResourseQuery = fmt.Errorf("invalid resource query")
 var ErrResolveWebfinger = fmt.Errorf("failed to resolve webfinger")
 var ErrResolveRemoteActor = fmt.Errorf("failed to resolve remote actor")
 
 var ErrInvalidFollowRequest = fmt.Errorf("invalid follow request")
-
 var ErrPushActivity = fmt.Errorf("failed to push activity")
 
 var ErrGeneratePasswordHash = fmt.Errorf("failed to generate password hash")
@@ -19,7 +19,3 @@ var ErrDecodePublicKey = fmt.Errorf("failed to decode public key")
 var ErrDecodePrivateKey = fmt.Errorf("failed to decode private key")
 var ErrInvalidKeyPair = fmt.Errorf("invalid key pair")
 var ErrGenerateSignature = fmt.Errorf("failed to generate signature")
-
-func ErrInvalidResourceQuery(q string) error {
-	return fmt.Errorf("invalid resource query: %s", q)
-}
