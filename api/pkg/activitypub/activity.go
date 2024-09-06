@@ -50,7 +50,7 @@ func SendActivity(url string, activity any, sigParams SignParms) ([]byte, error)
 
 	hash := sha256.Sum256(reqBody)
 	digest := base64.StdEncoding.EncodeToString(hash[:])
-	digestHeader := fmt.Sprintf("SHA-256=%x", digest)
+	digestHeader := fmt.Sprintf("SHA-256=%s", digest)
 	req.Header.Set("Digest", digestHeader)
 
 	// TODO: このsigningStringを署名するのが正しいという認識だが理解が怪しいので後日実装する
