@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
+	"github.com/pkg/errors"
 )
 
 type SignParms struct {
@@ -33,13 +34,13 @@ type FollowActivity struct {
 func SendActivity(url string, activity any, sigParams SignParms) ([]byte, error) {
 	reqBody, err := json.Marshal(activity)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(cerror.ErrPushActivity, err.Error())
 	}
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBody))
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(cerror.ErrPushActivity, err.Error())
 	}
 
 	signedDate := time.Now().Format(http.TimeFormat)
@@ -57,7 +58,7 @@ func SendActivity(url string, activity any, sigParams SignParms) ([]byte, error)
 	// signingString := fmt.Sprintf("(request-target): post %s\nhost: %s\ndate: %s\ndigest: %s", url, sigParams.Host, signedDate, digestHeader)
 	rawSign, err := rsa.SignPKCS1v15(rand.Reader, sigParams.PrivateKey, crypto.SHA256, hash[:])
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(cerror.ErrPushActivity, err.Error())
 	}
 	encodedSign := base64.StdEncoding.EncodeToString(rawSign)
 	signatureHeader := fmt.Sprintf(`keyId="%s",algorithm="rsa-sha256",headers="(request-target) host date digest",signature="%s"`, sigParams.KeyId, encodedSign)
@@ -65,17 +66,17 @@ func SendActivity(url string, activity any, sigParams SignParms) ([]byte, error)
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(cerror.ErrPushActivity, err.Error())
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(cerror.ErrPushActivity, err.Error())
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return body, cerror.ErrPushActivity
+		return nil, errors.Wrap(cerror.ErrPushActivity, string(body))
 	}
 	return body, nil
 }
