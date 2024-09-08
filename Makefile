@@ -9,11 +9,7 @@ swagger:
 
 redocly:
 	npm install -g @redocly/cli
-	redocly build-docs openapi/generated.yaml -o openapi/generated.html
-
-openapi:
-	make swagger
-	make redocly
+	redocly build-docs openapi/generated.yaml -o openapi/index.html
 
 dev-cert:
 	sudo apt install mkcert -y
