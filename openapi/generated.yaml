@@ -14,6 +14,7 @@ paths:
                 properties:
                   openRegistrations:
                     type: boolean
+                    default: false
                   protocols:
                     type: array
                     items:
@@ -44,3 +45,4 @@ paths:
                     type: object
                   version:
                     type: string
+                    default: '2.0'

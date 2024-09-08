@@ -2,6 +2,7 @@ type: object
 properties:
   openRegistrations: 
     type: boolean
+    default: false
   protocols: 
     type: array
     items: 
@@ -32,3 +33,4 @@ properties:
     type: object
   version:
     type: string
+    default: '2.0'
