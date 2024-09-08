@@ -4,4 +4,4 @@ get:
       content:
         application/json:
           schema:
-            $ref: '../../components/.well-known/nodeinfo.yaml'
+            $ref: '../../components/schemas/.well-known/nodeinfo.yaml'
