@@ -3,6 +3,10 @@ migrate:
 	docker compose exec api sh -c "go run cmd/database/migrate.go"
 	docker compose down
 
+openapi:
+	npm install -g @redocly/cli
+	redocly build-docs openapi/all.yaml -o openapi/all.html
+
 dev-cert:
 	sudo apt install mkcert -y
 	mkcert -install
