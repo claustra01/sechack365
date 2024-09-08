@@ -3,26 +3,44 @@ info:
   title: My API
   version: 1.0.0
 paths:
-  /pets:
+  /api/v1/nodeinfo/2.0:
     get:
-      summary: List all pets
       responses:
         '200':
-          description: A list of pets
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-components:
-  schemas:
-    Pet:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        tag:
-          type: string
+                type: object
+                properties:
+                  openRegistrations:
+                    type: boolean
+                  protocols:
+                    type: array
+                    items:
+                      type: string
+                  software:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      version:
+                        type: string
+                  usage:
+                    type: object
+                    properties:
+                      users:
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                  services:
+                    type: object
+                    properties:
+                      inbound:
+                        type: object
+                      outbound:
+                        type: object
+                  metadata:
+                    type: object
+                  version:
+                    type: string

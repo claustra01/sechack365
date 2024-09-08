@@ -3,9 +3,5 @@ info:
   title: My API
   version: 1.0.0
 paths:
-  /pets:
-    $ref: './paths/pets.yaml'
-components:
-  schemas:
-    Pet:
-      $ref: './components/pet.yaml'
+  /api/v1/nodeinfo/2.0:
+    $ref: ./paths/api/v1/nodeinfo/2.0.yaml
