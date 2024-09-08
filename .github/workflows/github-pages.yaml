@@ -1,0 +1,22 @@
+name: github-pages
+on: 
+  push:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v4
+    
+    - name: upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./openapi
+
+    - name: deploy to github pages
+      uses: actions/deploy-pages@v4
+      id: deployment
+      with:
+        branch: ${{ github.head_ref }}
