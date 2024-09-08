@@ -7,13 +7,16 @@ properties:
     type: array
     items: 
       type: string
+      default: 'activitypub'
   software:
     type: object
     properties:
       name:
         type: string
+        default: 'sechack365'
       version:
         type: string
+        default: '0.1.0'
   usage:
     type: object
     properties:
