@@ -1,0 +1,11 @@
+get:
+  summary: List all pets
+  responses:
+    '200':
+      description: A list of pets
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../components/pet.yaml'

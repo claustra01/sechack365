@@ -3,9 +3,17 @@ migrate:
 	docker compose exec api sh -c "go run cmd/database/migrate.go"
 	docker compose down
 
-openapi:
+swagger:
+	npm install -g swagger-cli
+	swagger-cli bundle openapi/all.yaml --outfile openapi/generated.yaml --type yaml
+
+redocly:
 	npm install -g @redocly/cli
-	redocly build-docs openapi/all.yaml -o openapi/all.html
+	redocly build-docs openapi/generated.yaml -o openapi/generated.html
+
+openapi:
+	make swagger
+	make redocly
 
 dev-cert:
 	sudo apt install mkcert -y
