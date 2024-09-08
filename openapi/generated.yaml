@@ -49,3 +49,49 @@ paths:
                   version:
                     type: string
                     default: '2.0'
+  /.well-known/nodeinfo:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                          default: 'http://nodeinfo.diaspora.software/ns/schema/2.0'
+                        href:
+                          type: string
+                          default: 'https://localhost/api/v1/nodeinfo/2.0'
+  /.well-known/webfinger:
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                    default: 'acct:mock@localhost'
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rel:
+                          type: string
+                          default: self
+                        type:
+                          type: string
+                          default: application/activity+json
+                        href:
+                          type: string
+                          default: 'https:/localhost/api/v1/users/1'

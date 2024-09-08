@@ -1,0 +1,19 @@
+type: object
+properties:
+  subject:
+    type: string
+    default: 'acct:mock@localhost'
+  links:
+    type: array
+    items:
+      type: object
+      properties:
+        rel:
+          type: string
+          default: 'self'
+        type:
+          type: string
+          default: 'application/activity+json'
+        href:
+          type: string
+          default: 'https:/localhost/api/v1/users/1'

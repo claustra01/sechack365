@@ -3,5 +3,11 @@ info:
   title: My API
   version: 1.0.0
 paths:
+
   /api/v1/nodeinfo/2.0:
     $ref: ./paths/api/v1/nodeinfo/2.0.yaml
+  
+  /.well-known/nodeinfo:
+    $ref: ./paths/.well-known/nodeinfo.yaml
+  /.well-known/webfinger:
+    $ref: ./paths/.well-known/webfinger.yaml
