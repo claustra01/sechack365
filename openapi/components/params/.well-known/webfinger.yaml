@@ -1,0 +1,6 @@
+name: resource
+in: query
+required: true
+schema:
+  type: string
+  default: 'acct:mock@localhost'

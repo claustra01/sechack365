@@ -72,14 +72,12 @@ paths:
   /.well-known/webfinger:
     get:
       parameters:
-        - parameters:
-            nameQueryParam:
-              name: name
-              in: query
-              description: Name to greet
-              required: false
-              schema:
-                type: string
+        - name: resource
+          in: query
+          required: true
+          schema:
+            type: string
+            default: 'acct:mock@localhost'
       responses:
         '200':
           content:
