@@ -1,0 +1,8 @@
+type: object
+properties:
+  status_code:
+    type: integer
+    example: 404
+  error:
+    type: string
+    example: Not Found
