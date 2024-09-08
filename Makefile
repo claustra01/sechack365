@@ -4,15 +4,21 @@ migrate:
 	docker compose down
 
 swagger:
-	npm install -g swagger-cli
+	@if ! command -v swagger-cli > /dev/null 2>&1; then \
+		npm install -g swagger-cli; \
+	fi
 	swagger-cli bundle openapi/all.yaml --outfile openapi/generated.yaml --type yaml
 
 redocly:
-	npm install -g @redocly/cli
+	@if ! command -v redocly > /dev/null 2>&1; then \
+		npm install -g @redocly/cli; \
+	fi
 	redocly build-docs openapi/generated.yaml -o openapi/index.html
 
 dev-cert:
-	sudo apt install mkcert -y
+	@if ! command -v mkcert > /dev/null 2>&1; then \
+		sudo apt install mkcert -y; \
+	fi
 	mkcert -install
 	mkcert -cert-file ./nginx/default.crt -key-file ./nginx/default.key localhost
 
