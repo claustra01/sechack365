@@ -5,3 +5,18 @@ get:
         application/json:
           schema:
             $ref: '../../components/.well-known/webfinger.yaml'
+    '400':
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/errors/400.yaml'
+    '404':
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/errors/404.yaml'
+    '500':
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/errors/500.yaml'
