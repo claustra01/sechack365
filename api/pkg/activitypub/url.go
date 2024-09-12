@@ -2,8 +2,8 @@ package activitypub
 
 import "fmt"
 
-func BuildActorUrl(host string, name string) string {
-	return fmt.Sprintf("https://%s/api/v1/actor/%s", host, name)
+func BuildActorUrl(host, id string) string {
+	return fmt.Sprintf("https://%s/api/v1/users/%s", host, id)
 }
 
 func BuildKeyIdUrl(host string, name string) string {

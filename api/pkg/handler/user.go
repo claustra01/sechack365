@@ -23,6 +23,38 @@ func GetAllUsers(c *framework.Context) http.HandlerFunc {
 	}
 }
 
+func GetUser(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		header := r.Header.Get("Accept")
+
+		user, err := c.Controllers.User.FindById(id)
+		if err != nil {
+			returnInternalServerError(w, c.Logger, err)
+			return
+		}
+		if user == nil {
+			returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
+			return
+		}
+		identifier, err := c.Controllers.ApUserIdentifier.FindById(user.Id)
+		if err != nil {
+			returnInternalServerError(w, c.Logger, err)
+			return
+		}
+
+		switch header {
+		case "application/activity+json":
+			actor := activitypub.BuildActorSchema(*user, *identifier)
+			jsonCustomContentTypeResponse(w, actor, "application/activity+json")
+		case "application/json":
+			jsonResponse(w, user)
+		default:
+			returnBadRequest(w, c.Logger, cerror.ErrInvalidAcceptHeader)
+		}
+	}
+}
+
 func LookupUser(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		usernameWithHost := r.PathValue("username")

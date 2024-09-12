@@ -10,15 +10,14 @@ func setupRouter(r *framework.Router) error {
 
 	users := api.Group("/users")
 	users.Get("", handler.GetAllUsers)
-	users.Get("/{username}", handler.LookupUser)
+	users.Get("/{id}", handler.GetUser)
+	users.Post("/{id}/inbox", handler.ActorInbox)
+	users.Post("/{id}/outbox", handler.ActorOutbox)
 
 	follow := api.Group("/follows")
 	follow.Post("", handler.CreateFollow)
 
-	actor := api.Group("/actor/{username}")
-	actor.Get("", handler.GetActor)
-	actor.Post("/inbox", handler.ActorInbox)
-	actor.Post("/outbox", handler.ActorOutbox)
+	api.Get("/lookup/{username}", handler.LookupUser)
 
 	ni := api.Group("/nodeinfo")
 	ni.Get("/2.0", handler.Nodeinfo2_0)

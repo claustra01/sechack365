@@ -1,0 +1,14 @@
+get:
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../../components/schemas/user.yaml'
+    '500':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../components/schemas/errors/500.yaml'

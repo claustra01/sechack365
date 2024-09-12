@@ -4,6 +4,14 @@ info:
   version: 0.1.0
 paths:
 
+  /api/v1/users:
+    $ref: ./paths/api/v1/users.yaml
+  /api/v1/users/{id}:
+    $ref: ./paths/api/v1/users/{id}.yaml
+
+  /api/v1/lookup/{username}:
+    $ref: ./paths/api/v1/lookup/{username}.yaml
+
   /api/v1/nodeinfo/2.0:
     $ref: ./paths/api/v1/nodeinfo/2.0.yaml
   

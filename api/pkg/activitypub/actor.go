@@ -30,7 +30,7 @@ type Actor struct {
 }
 
 func BuildActorSchema(user model.User, identifier model.ApUserIdentifier) *Actor {
-	baseUrl := BuildActorUrl(user.Host, user.Username)
+	baseUrl := BuildActorUrl(user.Host, user.Id)
 	actor := &Actor{
 		Context:           ApContext[:],
 		Type:              "Person",

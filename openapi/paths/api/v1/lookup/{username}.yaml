@@ -1,0 +1,24 @@
+get:
+  parameters:
+    - $ref: '../../../../components/params/lookup/username.yaml'
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/user.yaml'
+    '400':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors/400.yaml'
+    '404':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors/404.yaml'
+    '500':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors/500.yaml'

@@ -92,13 +92,13 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 			}
 
 			// send follow activity
-			followActivity := activitypub.BuildFollowActivitySchema(follow.Id, follower.Username, follower.Host, followeeUrl)
+			followActivity := activitypub.BuildFollowActivitySchema(follow.Id, follower.Host, follower.Id, followeeUrl)
 			followeeActor, err := activitypub.ResolveRemoteActor(followActivity.Object)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
-			signParams := activitypub.SignParms{
+			signParams := activitypub.SignParams{
 				Host:       c.Config.Host,
 				KeyId:      keyId,
 				PrivateKey: privateKey,
