@@ -17,6 +17,11 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
     
+    - name: generate docs
+      run: |
+        make swagger
+        make redocly
+    
     - name: upload artifact
       uses: actions/upload-pages-artifact@v3
       with:

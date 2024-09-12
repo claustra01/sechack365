@@ -2,3 +2,6 @@
 
 nginx/*.crt
 nginx/*.key
+
+openapi/generated.yaml
+openapi/index.html
