@@ -3,4 +3,4 @@ in: path
 required: true
 schema:
   type: string
-  default: 'acct:mock@localhost'
+  example: 'acct:mock@localhost'
