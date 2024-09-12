@@ -11,6 +11,7 @@ var ErrUserNotFound = fmt.Errorf("user not found")
 var ErrInvalidResourseQuery = fmt.Errorf("invalid resource query")
 var ErrResolveWebfinger = fmt.Errorf("failed to resolve webfinger")
 var ErrResolveRemoteActor = fmt.Errorf("failed to resolve remote actor")
+var ErrInvalidAcceptHeader = fmt.Errorf("invalid accept header")
 
 var ErrInvalidFollowRequest = fmt.Errorf("invalid follow request")
 var ErrPushActivity = fmt.Errorf("failed to push activity")
