@@ -8,3 +8,18 @@ get:
         application/activity+json:
           schema:
             $ref: '../../../../components/schemas/actor.yaml'
+    '400':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors/400.yaml'
+    '404':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors/404.yaml'
+    '500':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors/500.yaml'
