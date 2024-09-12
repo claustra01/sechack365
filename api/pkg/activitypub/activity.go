@@ -16,7 +16,7 @@ import (
 	"github.com/claustra01/sechack365/pkg/cerror"
 )
 
-type SignParms struct {
+type SignParams struct {
 	Host       string
 	KeyId      string
 	PrivateKey *rsa.PrivateKey
@@ -30,7 +30,7 @@ type FollowActivity struct {
 	Object  string `json:"object"`
 }
 
-func SendActivity(url string, activity any, sigParams SignParms) ([]byte, error) {
+func SendActivity(url string, activity any, sigParams SignParams) ([]byte, error) {
 	reqBody, err := json.Marshal(activity)
 	if err != nil {
 		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
@@ -80,13 +80,13 @@ func SendActivity(url string, activity any, sigParams SignParms) ([]byte, error)
 	return body, nil
 }
 
-func BuildFollowActivitySchema(id, followerName, followerHost, followeeUrl string) *FollowActivity {
+func BuildFollowActivitySchema(id, host, followerId, followeeUrl string) *FollowActivity {
 	// object is followee actor
 	return &FollowActivity{
 		Context: ApContext[:],
 		Type:    "Follow",
-		Id:      fmt.Sprintf("https://%s/follows/%s", followerHost, id),
-		Actor:   BuildActorUrl(followerHost, followerName),
+		Id:      fmt.Sprintf("https://%s/follows/%s", host, id),
+		Actor:   BuildActorUrl(host, followerId),
 		Object:  followeeUrl,
 	}
 }

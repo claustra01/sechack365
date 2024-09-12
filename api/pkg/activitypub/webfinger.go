@@ -22,14 +22,14 @@ type WebfingerLink struct {
 	Href string `json:"href"`
 }
 
-func BuildWebfingerActorLinksSchema(name string, host string) *Webfinger {
+func BuildWebfingerActorLinksSchema(host, id, name string) *Webfinger {
 	return &Webfinger{
 		Subject: fmt.Sprintf("acct:%s@%s", name, host),
 		Links: []WebfingerLink{
 			{
 				Rel:  "self",
 				Type: "application/activity+json",
-				Href: BuildActorUrl(host, name),
+				Href: BuildActorUrl(host, id),
 			},
 		},
 	}
