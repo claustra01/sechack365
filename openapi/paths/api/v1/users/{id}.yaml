@@ -1,0 +1,10 @@
+get:
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/user.yaml'
+        application/activity+json:
+          schema:
+            $ref: '../../../../components/schemas/actor.yaml'
