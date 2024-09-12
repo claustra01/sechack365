@@ -10,7 +10,6 @@ import (
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/util"
-	"github.com/pkg/errors"
 )
 
 func GetAllUsers(c *framework.Context) http.HandlerFunc {
@@ -31,7 +30,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 		matches := pattern.FindStringSubmatch(usernameWithHost)
 
 		if len(matches) != 3 {
-			returnBadRequest(w, c.Logger, errors.Wrap(cerror.ErrInvalidResourseQuery, usernameWithHost))
+			returnBadRequest(w, c.Logger, cerror.Wrap(cerror.ErrInvalidResourseQuery, usernameWithHost))
 			return
 		}
 

@@ -7,7 +7,6 @@ import (
 	"github.com/claustra01/sechack365/pkg/activitypub"
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
-	"github.com/pkg/errors"
 )
 
 func NodeinfoLinks(c *framework.Context) http.HandlerFunc {
@@ -24,7 +23,7 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 		pattern := regexp.MustCompile(`^acct:([a-zA-Z0-9_]+)@([a-zA-Z0-9-.]+)$`)
 		matches := pattern.FindStringSubmatch(resource)
 		if len(matches) != 3 || matches[2] != c.Config.Host {
-			returnBadRequest(w, c.Logger, errors.Wrap(cerror.ErrInvalidResourseQuery, resource))
+			returnBadRequest(w, c.Logger, cerror.Wrap(cerror.ErrInvalidResourseQuery, resource))
 			return
 		}
 

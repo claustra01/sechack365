@@ -1,6 +1,10 @@
 package cerror
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/pkg/errors"
+)
 
 var ErrUserNotFound = fmt.Errorf("user not found")
 
@@ -19,3 +23,7 @@ var ErrDecodePublicKey = fmt.Errorf("failed to decode public key")
 var ErrDecodePrivateKey = fmt.Errorf("failed to decode private key")
 var ErrInvalidKeyPair = fmt.Errorf("invalid key pair")
 var ErrGenerateSignature = fmt.Errorf("failed to generate signature")
+
+func Wrap(err error, msg string) error {
+	return errors.Wrap(err, msg)
+}
