@@ -21,6 +21,7 @@ func main() {
 
 	// Nostr Relay Connection
 	// TODO: 接続するRelayを自由に設定できるようにする
+	// FIXME: たまにbroken pipeが発生する、この時ユーザーのcacheロジックがぶっ壊れる
 	ws, err := infrastructure.NewWsHandler([]string{"wss://yabu.me"})
 	if err != nil {
 		panic(err)
