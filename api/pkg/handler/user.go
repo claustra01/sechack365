@@ -55,6 +55,7 @@ func GetUser(c *framework.Context) http.HandlerFunc {
 	}
 }
 
+// FIXME: nostrユーザーの捜索は本来hashではなくnpub...の文字列で行うべき
 func LookupUser(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		usernameWithHost := r.PathValue("username")
@@ -100,6 +101,34 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				return
 			}
 
+			// nostr
+			if host == "nostr" {
+				// fetch from remote
+				profile, err := c.Controllers.Nostr.GetUserProfile(username)
+				if err != nil {
+					returnInternalServerError(w, c.Logger, err)
+					return
+				}
+				if profile == nil {
+					returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
+					return
+				}
+
+				// update cache
+				if _, err := c.Controllers.User.UpdateRemoteUser(username, host, profile.DisplayName, profile.About, profile.Picture); err != nil {
+					returnInternalServerError(w, c.Logger, err)
+					return
+				}
+				user, err := c.Controllers.User.FindByUsername(username, host)
+				if err != nil {
+					returnInternalServerError(w, c.Logger, err)
+					return
+				}
+				jsonResponse(w, user)
+				return
+			}
+
+			// activitypub
 			// fetch from remote
 			link, err := activitypub.ResolveWebfinger(username, host)
 			if err != nil {
@@ -125,6 +154,30 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			jsonResponse(w, user)
 		}
 
+		// nostr
+		if host == "nostr" {
+			// fetch from remote
+			profile, err := c.Controllers.Nostr.GetUserProfile(username)
+			if err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+			if profile == nil {
+				returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
+				return
+			}
+
+			// save cache
+			user, err := c.Controllers.User.CreateRemoteUser(username, host, model.ProtocolNostr, profile.DisplayName, profile.About, profile.Picture)
+			if err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+			jsonResponse(w, user)
+			return
+		}
+
+		// activitypub
 		// fetch from remote
 		link, err := activitypub.ResolveWebfinger(username, host)
 		if err != nil {
@@ -138,10 +191,6 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 		}
 
 		// save cache
-		if err := c.Controllers.Transaction.Begin(); err != nil {
-			returnInternalServerError(w, c.Logger, err)
-			return
-		}
 		user, err := c.Controllers.User.CreateRemoteUser(actor.PreferredUsername, host, model.ProtocolActivityPub, actor.Name, actor.Summary, actor.Icon.Url)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)

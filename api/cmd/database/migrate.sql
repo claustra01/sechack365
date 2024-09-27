@@ -1,6 +1,7 @@
 CREATE TYPE "protocol" AS ENUM (
   'local',
-  'activitypub'
+  'activitypub',
+  'nostr'
 );
 
 CREATE TABLE "users" (
