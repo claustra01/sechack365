@@ -55,6 +55,7 @@ func GetUser(c *framework.Context) http.HandlerFunc {
 	}
 }
 
+// FIXME: nostrユーザーの捜索は本来hashではなくnpub...の文字列で行うべき
 func LookupUser(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		usernameWithHost := r.PathValue("username")
