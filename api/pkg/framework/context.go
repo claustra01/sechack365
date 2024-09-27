@@ -19,22 +19,24 @@ type Controllers struct {
 	User             *controller.UserController
 	ApUserIdentifier *controller.ApUserIdentifierController
 	Follow           *controller.FollowController
+	Nostr            *controller.NostrController
 }
 
-func NewContext(logger model.ILogger, conn model.ISqlHandler) *Context {
+func NewContext(logger model.ILogger, conn model.ISqlHandler, ws model.IWsHandler) *Context {
 	return &Context{
 		Ctx:         context.Background(),
 		Logger:      logger,
 		Config:      NewConfig(logger),
-		Controllers: NewControllers(conn),
+		Controllers: NewControllers(conn, ws),
 	}
 }
 
-func NewControllers(conn model.ISqlHandler) *Controllers {
+func NewControllers(conn model.ISqlHandler, ws model.IWsHandler) *Controllers {
 	return &Controllers{
 		Transaction:      controller.NewTransactionController(conn),
 		User:             controller.NewUserController(conn),
 		ApUserIdentifier: controller.NewApUserIdentifierController(conn),
 		Follow:           controller.NewFollowController(conn),
+		Nostr:            controller.NewNostrController(ws),
 	}
 }
