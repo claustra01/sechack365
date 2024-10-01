@@ -12,6 +12,8 @@ services:
       - POSTGRES_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable
     depends_on:
       - db
+    volumes:
+      - ./api:/opt/app
     
   db:
     image: postgres:14-alpine
