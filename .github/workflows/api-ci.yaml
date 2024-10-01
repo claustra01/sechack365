@@ -22,6 +22,7 @@ jobs:
         run: make lint-api
     
   build:
+    needs: lint
     runs-on: ubuntu-latest
     steps:
 
@@ -34,4 +35,4 @@ jobs:
           go-version: 1.22.1
 
       - name: build
-        run: cd api && go build ./cmd/main.go
+        run: cd api && go build ./cmd/server/main.go
