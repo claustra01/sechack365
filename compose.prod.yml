@@ -2,7 +2,7 @@ services:
   api:
     build:
       context: ./api
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     ports:
       - "127.0.0.1:${API_PORT}:${API_PORT}"
     environment:
@@ -40,6 +40,7 @@ services:
     depends_on:
       - api
       - frontend
+    network_mode: host
 
 volumes:
   dbdata:
