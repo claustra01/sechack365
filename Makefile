@@ -1,3 +1,9 @@
+lint-api:
+	@if ! command -v $$(go env GOPATH)/bin/golangci-lint > /dev/null 2>&1; then \
+		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
+	fi
+	cd api && $$(go env GOPATH)/bin/golangci-lint run ./...
+
 migrate:
 	docker compose -f compose.dev.yml up -d --build
 	docker compose exec api sh -c "go run cmd/database/migrate.go"

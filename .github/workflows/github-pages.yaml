@@ -14,20 +14,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: checkout
+    - name: Checkout
       uses: actions/checkout@v4
     
-    - name: generate docs
+    - name: Generate docs
       run: |
         make swagger
         make redocly
     
-    - name: upload artifact
+    - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
         path: ./openapi
 
-    - name: deploy to github pages
+    - name: Deploy to github pages
       uses: actions/deploy-pages@v4
       id: deployment
       with:

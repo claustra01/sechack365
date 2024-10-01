@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -25,7 +24,7 @@ func main() {
 }
 
 func drop(conn *sql.DB) {
-	migrateSql, err := ioutil.ReadFile("cmd/database/drop.sql")
+	migrateSql, err := os.ReadFile("cmd/database/drop.sql")
 	if err != nil {
 		log.Fatalf("failed to read SQL file: %v", err)
 	}
@@ -36,7 +35,7 @@ func drop(conn *sql.DB) {
 }
 
 func migrate(conn *sql.DB) {
-	migrateSql, err := ioutil.ReadFile("cmd/database/migrate.sql")
+	migrateSql, err := os.ReadFile("cmd/database/migrate.sql")
 	if err != nil {
 		log.Fatalf("failed to read SQL file: %v", err)
 	}
@@ -47,7 +46,7 @@ func migrate(conn *sql.DB) {
 }
 
 func insertMock(conn *sql.DB) {
-	migrateSql, err := ioutil.ReadFile("cmd/database/mock.sql")
+	migrateSql, err := os.ReadFile("cmd/database/mock.sql")
 	if err != nil {
 		log.Fatalf("failed to read SQL file: %v", err)
 	}
