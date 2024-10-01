@@ -1,0 +1,25 @@
+name: frontend-ci
+on:
+  push:
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-ci.yaml'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v4
+        
+      - name: setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      
+      - name: static check
+        run: |
+          cd frontend
+          npm install
+          npm run check:ci
