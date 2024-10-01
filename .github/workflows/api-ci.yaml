@@ -19,5 +19,5 @@ jobs:
           go-version: 1.22.1
 
       - name: static check
-        run: make api-lint
+        run: make lint-api
       
