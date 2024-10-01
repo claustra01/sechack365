@@ -22,7 +22,6 @@ jobs:
         run: make lint-api
     
   build:
-    needs: lint
     runs-on: ubuntu-latest
     steps:
 
