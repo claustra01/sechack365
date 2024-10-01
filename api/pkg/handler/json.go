@@ -18,7 +18,10 @@ func jsonResponse(w http.ResponseWriter, data any) {
 		panic(err)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(body)
+	if _, err := w.Write(body); err != nil {
+		// NOTE: err should be nil
+		panic(err)
+	}
 }
 
 func jsonCustomContentTypeResponse(w http.ResponseWriter, data any, contentType string) {
@@ -27,7 +30,10 @@ func jsonCustomContentTypeResponse(w http.ResponseWriter, data any, contentType 
 		panic(err)
 	}
 	w.Header().Set("Content-Type", contentType)
-	w.Write(body)
+	if _, err := w.Write(body); err != nil {
+		// NOTE: err should be nil
+		panic(err)
+	}
 }
 
 func jsonErrorResponse(w http.ResponseWriter, code int, message string) {

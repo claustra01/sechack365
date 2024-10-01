@@ -23,7 +23,10 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 		// parse request body
 		var followRequestBody FollowRequestBody
 		body := make([]byte, r.ContentLength)
-		r.Body.Read(body)
+		if _, err := r.Body.Read(body); err != nil {
+			// NOTE: err should be nil
+			panic(err)
+		}
 		err := json.Unmarshal(body, &followRequestBody)
 		if err != nil {
 			returnBadRequest(w, c.Logger, err)
