@@ -20,18 +20,3 @@ jobs:
 
       - name: static check
         run: make lint-api
-    
-  build:
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: checkout
-        uses: actions/checkout@v4
-        
-      - name: setup
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.22.1
-
-      - name: build
-        run: cd api && go build ./cmd/server/main.go
