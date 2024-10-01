@@ -1,0 +1,23 @@
+name: api-ci
+on:
+  push:
+    paths:
+      - 'api/**'
+      - '.github/workflows/api-ci.yaml'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v4
+        
+      - name: setup
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22.1
+
+      - name: static check
+        run: make api-lint
+      
