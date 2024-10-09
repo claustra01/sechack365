@@ -11,18 +11,12 @@ migrate:
 	docker compose exec api sh -c "go run cmd/database/migrate.go"
 	docker compose down
 
-# generate openapi yaml
-swagger:
-	@if ! command -v swagger-cli > /dev/null 2>&1; then \
-		npm install -g swagger-cli; \
-	fi
-	swagger-cli bundle openapi/all.yaml --outfile openapi/generated.yaml --type yaml
-
-# generate openapi html docs
+# generate openapi docs
 redocly:
 	@if ! command -v redocly > /dev/null 2>&1; then \
 		npm install -g @redocly/cli; \
 	fi
+	redocly bundle openapi/all.yaml -o openapi/generated.yaml
 	redocly build-docs openapi/generated.yaml -o openapi/index.html
 
 # generate schema code from openapi
@@ -30,7 +24,7 @@ oapi-codegen:
 	@if ! command -v $$(go env GOPATH)/bin/oapi-codegen > /dev/null 2>&1; then \
 		go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest; \
 	fi
-	cd api && $$(go env GOPATH)/bin/oapi-codegen -generate types -o ./pkg/openapi/types.gen.go ../openapi/all.yaml
+	cd api && $$(go env GOPATH)/bin/oapi-codegen -generate types -package openapi -o ./pkg/openapi/types.gen.go ../openapi/all.yaml
 
 # generate certificate for localhost
 dev-cert:
