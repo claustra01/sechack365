@@ -1,0 +1,41 @@
+wellknown-nodeinfo:
+  type: object
+  properties:
+    links:
+      type: array
+      items:
+        $ref: '#/wellknown-nodeinfo-link'
+
+wellknown-nodeinfo-link:
+  type: object
+  properties:
+    rel:
+      type: string
+      default: 'http://nodeinfo.diaspora.software/ns/schema/2.0'
+    href:
+      type: string
+      default: 'https://localhost/api/v1/nodeinfo/2.0'
+
+wellknown-webfinger:
+  type: object
+  properties:
+    subject:
+      type: string
+      default: 'acct:mock@localhost'
+    links:
+      type: array
+      items:
+        $ref: '#/wellknown-webfinger-link'
+
+wellknown-webfinger-link:
+  type: object
+  properties:
+    rel:
+      type: string
+      default: 'self'
+    type:
+      type: string
+      default: 'application/activity+json'
+    href:
+      type: string
+      default: 'https:/localhost/api/v1/users/1'

@@ -1,40 +1,47 @@
-type: object
-properties:
-  \@context:
-    oneOf:
-      - type: string
-      - type: array
-        items:
-          type: string
-  type:
-    type: string
-  id:
-    type: string
-  inbox:
-    type: string
-  outbox:
-    type: string
-  prefferedUsername:
-    type: string
-  name:
-    type: string
-  summary:
-    type: string
-  icon:
-    type: object
-    properties:
-      type:
-        type: string
-      url:
-        type: string
-  publicKey:
-    type: object
-    properties:
-      type:
-        type: string
-      id:
-        type: string
-      owner:
-        type: string
-      publicKeyPem:
-        type: string
+actor:
+  type: object
+  properties:
+    \@context:
+      oneOf:
+        - type: string
+        - type: array
+          items:
+            type: string
+    type:
+      type: string
+    id:
+      type: string
+    inbox:
+      type: string
+    outbox:
+      type: string
+    prefferedUsername:
+      type: string
+    name:
+      type: string
+    summary:
+      type: string
+    icon:
+      $ref: '#/actor-icon'
+    publicKey:
+      $ref: '#/actor-publicKey'
+
+actor-icon:
+  type: object
+  properties:
+    type:
+      type: string
+    url:
+      type: string
+
+actor-publicKey:
+  type: object
+  properties:
+    type:
+      type: string
+    id:
+      type: string
+    owner:
+      type: string
+    publicKeyPem:
+      type: string

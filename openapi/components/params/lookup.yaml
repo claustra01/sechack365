@@ -1,0 +1,7 @@
+username:
+  name: username
+  in: path
+  required: true
+  schema:
+    type: string
+    example: 'mock@localhost'

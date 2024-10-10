@@ -1,39 +1,52 @@
-type: object
-properties:
-  openRegistrations: 
-    type: boolean
-    default: false
-  protocols: 
-    type: array
-    items: 
+nodeinfo:
+  type: object
+  properties:
+    openRegistrations: 
+      type: boolean
+      default: false
+    protocols: 
+      type: array
+      items: 
+        type: string
+        default: 'activitypub'
+    software:
+      $ref: '#/nodeinfo-software'
+    usage:
+      $ref: '#/nodeinfo-usage'
+    services:
+      $ref: '#/nodeinfo-service'
+    metadata:
+      $ref: '#/nodeinfo-metadata'
+    version:
       type: string
-      default: 'activitypub'
-  software:
-    type: object
-    properties:
-      name:
-        type: string
-        default: 'sechack365'
-      version:
-        type: string
-        default: '0.1.0'
-  usage:
-    type: object
-    properties:
-      users:
-        type: object
-        properties:
-          total:
-            type: integer
-  services:
-    type: object
-    properties:
-      inbound:
-        type: object
-      outbound:
-        type: object
-  metadata:
-    type: object
-  version:
-    type: string
-    default: '2.0'
+      default: '2.0'
+
+nodeinfo-software:
+  type: object
+  properties:
+    name:
+      type: string
+      default: 'sechack365'
+    version:
+      type: string
+      default: '0.1.0'
+
+nodeinfo-usage:
+  type: object
+  properties:
+    users:
+      type: object
+      properties:
+        total:
+          type: integer
+
+nodeinfo-service:
+  type: object
+  properties:
+    inbound:
+      type: object
+    outbound:
+      type: object
+
+nodeinfo-metadata:
+  type: object

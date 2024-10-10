@@ -1,24 +1,24 @@
 get:
   parameters:
-    - $ref: '../../components/params/.well-known/webfinger.yaml'
+    - $ref: '../../components/params/.well-known.yaml#/webfinger'
   responses:
     '200':
       content:
         application/json:
           schema:
-            $ref: '../../components/schemas/.well-known/webfinger.yaml'
+            $ref: '../../components/schemas/.well-known.yaml#/wellknown-webfinger'
     '400':
       content:
         application/json:
           schema:
-            $ref: '../../components/schemas/errors/400.yaml'
+            $ref: '../../components/schemas/errors.yaml#/error-400'
     '404':
       content:
         application/json:
           schema:
-            $ref: '../../components/schemas/errors/404.yaml'
+            $ref: '../../components/schemas/errors.yaml#/error-404'
     '500':
       content:
         application/json:
           schema:
-            $ref: '../../components/schemas/errors/500.yaml'
+            $ref: '../../components/schemas/errors.yaml#/error-500'
