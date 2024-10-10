@@ -20,24 +20,16 @@ import (
 
 // Actor defines model for actor.
 type Actor struct {
-	Context *Actor_Context `json:"\@context,omitempty"`
-	Icon    *struct {
-		Type *string `json:"type,omitempty"`
-		Url  *string `json:"url,omitempty"`
-	} `json:"icon,omitempty"`
-	Id                *string `json:"id,omitempty"`
-	Inbox             *string `json:"inbox,omitempty"`
-	Name              *string `json:"name,omitempty"`
-	Outbox            *string `json:"outbox,omitempty"`
-	PrefferedUsername *string `json:"prefferedUsername,omitempty"`
-	PublicKey         *struct {
-		Id           *string `json:"id,omitempty"`
-		Owner        *string `json:"owner,omitempty"`
-		PublicKeyPem *string `json:"publicKeyPem,omitempty"`
-		Type         *string `json:"type,omitempty"`
-	} `json:"publicKey,omitempty"`
-	Summary *string `json:"summary,omitempty"`
-	Type    *string `json:"type,omitempty"`
+	Context           *Actor_Context  `json:"\@context,omitempty"`
+	Icon              *ActorIcon      `json:"icon,omitempty"`
+	Id                *string         `json:"id,omitempty"`
+	Inbox             *string         `json:"inbox,omitempty"`
+	Name              *string         `json:"name,omitempty"`
+	Outbox            *string         `json:"outbox,omitempty"`
+	PrefferedUsername *string         `json:"prefferedUsername,omitempty"`
+	PublicKey         *ActorPublicKey `json:"publicKey,omitempty"`
+	Summary           *string         `json:"summary,omitempty"`
+	Type              *string         `json:"type,omitempty"`
 }
 
 // ActorContext0 defines model for .
@@ -49,6 +41,20 @@ type ActorContext1 = []string
 // Actor_Context defines model for Actor.Context.
 type Actor_Context struct {
 	union json.RawMessage
+}
+
+// ActorIcon defines model for actor-icon.
+type ActorIcon struct {
+	Type *string `json:"type,omitempty"`
+	Url  *string `json:"url,omitempty"`
+}
+
+// ActorPublicKey defines model for actor-publicKey.
+type ActorPublicKey struct {
+	Id           *string `json:"id,omitempty"`
+	Owner        *string `json:"owner,omitempty"`
+	PublicKeyPem *string `json:"publicKeyPem,omitempty"`
+	Type         *string `json:"type,omitempty"`
 }
 
 // Error400 defines model for error-400.
@@ -78,16 +84,22 @@ type Nodeinfo struct {
 		Inbound  *map[string]interface{} `json:"inbound,omitempty"`
 		Outbound *map[string]interface{} `json:"outbound,omitempty"`
 	} `json:"services,omitempty"`
-	Software *struct {
-		Name    *string `json:"name,omitempty"`
-		Version *string `json:"version,omitempty"`
-	} `json:"software,omitempty"`
-	Usage *struct {
-		Users *struct {
-			Total *int `json:"total,omitempty"`
-		} `json:"users,omitempty"`
-	} `json:"usage,omitempty"`
+	Software *NodeinfoSoftware `json:"software,omitempty"`
+	Usage    *NodeinfoUsage    `json:"usage,omitempty"`
+	Version  *string           `json:"version,omitempty"`
+}
+
+// NodeinfoSoftware defines model for nodeinfo-software.
+type NodeinfoSoftware struct {
+	Name    *string `json:"name,omitempty"`
 	Version *string `json:"version,omitempty"`
+}
+
+// NodeinfoUsage defines model for nodeinfo-usage.
+type NodeinfoUsage struct {
+	Users *struct {
+		Total *int `json:"total,omitempty"`
+	} `json:"users,omitempty"`
 }
 
 // User defines model for user.
@@ -106,20 +118,26 @@ type User struct {
 
 // WellknownNodeinfo defines model for wellknown-nodeinfo.
 type WellknownNodeinfo struct {
-	Links *[]struct {
-		Href *string `json:"href,omitempty"`
-		Rel  *string `json:"rel,omitempty"`
-	} `json:"links,omitempty"`
+	Links *[]WellknownNodeinfoLink `json:"links,omitempty"`
+}
+
+// WellknownNodeinfoLink defines model for wellknown-nodeinfo-link.
+type WellknownNodeinfoLink struct {
+	Href *string `json:"href,omitempty"`
+	Rel  *string `json:"rel,omitempty"`
 }
 
 // WellknownWebfinger defines model for wellknown-webfinger.
 type WellknownWebfinger struct {
-	Links *[]struct {
-		Href *string `json:"href,omitempty"`
-		Rel  *string `json:"rel,omitempty"`
-		Type *string `json:"type,omitempty"`
-	} `json:"links,omitempty"`
-	Subject *string `json:"subject,omitempty"`
+	Links   *[]WellknownWebfingerLink `json:"links,omitempty"`
+	Subject *string                   `json:"subject,omitempty"`
+}
+
+// WellknownWebfingerLink defines model for wellknown-webfinger-link.
+type WellknownWebfingerLink struct {
+	Href *string `json:"href,omitempty"`
+	Rel  *string `json:"rel,omitempty"`
+	Type *string `json:"type,omitempty"`
 }
 
 // Id defines model for id.
@@ -201,24 +219,25 @@ func (t *Actor_Context) UnmarshalJSON(b []byte) error {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xYTY/bNhD9Kwu2t2otb2L3oFNaoB+LFGmRYJtDEixoamQzpjhccmSvYei/F6Is2Ypo",
-	"W252c0oOQWwOOY/DN++Ns2UCc4MaNDmWbJnhludAYP0nmfq/NUuY4bRgEdM8B5ZUCxGz8FBICylLyBYQ",
-	"MScWkPNqB21MFeXISj1nZRmxwoGt9wbPa5dPnQqPPDeqCs9RLF8pFFwt0BGLAgnXMMuknoNtMz4UYDf7",
-	"lBYcFlYMTcmFoORs3rLZ7MvHBaHPbywasCTBf/3x4yuBmuCRqk+o4e+MJR96VYu2TBLkLlDQNjG3lm9Y",
-	"+amMmBSo+7nquMABhVXhl9p9g7PPIKiKrEnQO0DqGT4GV5p37i1gQcf2GAtZBhbSuwOi9KOKmZLiNWz6",
-	"Fz2CEte6psDxs/6B/ESJB5XIFXnO7eZrjwFr0V5PxuP+9fxSl5G/8vTqLTwUEGJixBxxKty9wBQ6+ybj",
-	"cRstNUHVIifRTAaheYN09TsWOr0My+QSLNOBlbnVVJFIXb0DuwJ79ZsPuQDXdGiNNKYgdYZ9WDkQTzkd",
-	"yuF+GxrQb2EuHVlOErXfkULGC0Usybhy0CabISrgum4SJBSoasI32tDuq/RGriRtTDEL3barGRFzYFdS",
-	"1HC/aCY9808ZxF41cXgx2BqY0Zpb6CdpunyP34FYcLF8+fM0BH8F1sla4/ZbxqOb0ThoAD0khePzAIzK",
-	"egIlICR+qJAnaBBKFgT7YjhUCPiGsMAJ7rm3jQxtXv2LpZzgmqT3zl7NUumM4pv7o4q64G4B6b3hzq3R",
-	"hjXUe13QAnaW019Ij4g8ZlLBsTXP7bBZmfTSmxfHfSRU8TUotdS41tfHW1pJvey2Xnd9YSHrPviCyLgk",
-	"jtuRIeZGxqubuEkSBylRTSSqf1ISt/tGqeTOoOWjpr9i7eJ69IgH06wrCKfL0pmnnqguvbL4XoxvBlXE",
-	"gcqOq1xHFo1RUnihjRuJ/OmzQ/1/qlSZfb30hfQOGQ/70uEHqZpsJMm71zsQf7Yq2OrITul25sGNZAl7",
-	"ORr7p65maV/peFQ92LV/sfiQyHOoZ00DteHcpixhfwC9B6VeV9FvmuCq0s6gdvXbvagt18+r2p9xWE1f",
-	"xGR7MDD/6N+a/RDvf1bsaOniQI+V9Z+oi7zDtbPQ37fRUefny4cwmn3IQZ7y0ze590FCf+vJE2bZD4/N",
-	"2ZMnP3uyO3v65LinO9w1GXZyoBCXhYm3jZaXp/jwi5H/3vzld9ztf01eRojWNJ6VD97dvxNgAAE6Nnnu",
-	"7RsJezF+ThELSNeheZ1FeeejvhJga7TnadZz+W/4fLWdb2VaDivLbXpxx8r00l7tTgCDr1n/X051u++N",
-	"/1zMKcv/AgAA//+j6nhsjxQAAA==",
+	"H4sIAAAAAAAC/+xYy27bOBd+lYD/vxvZclJnFlp1BphL0EFn0CLTRVsENHlks6ZIhqTsGIbefUDKulWU",
+	"LaFJV90EsXku3/nOjfQREZkpKUBYg5IjUljjDCxo/4lR/1egBClsNyhCAmeAEncQIQ2POdNAUWJ1DhEy",
+	"ZAMZdhr2oJyUsZqJNSqKCOUGdKkbtFcfn7MKTzhT3Ilnkmxfc0kw30hjURRwuIdVysQadO3xMQd9aFxq",
+	"MDLXZKxLTIhNLvotKmVPHyZWev9KSwXaMvBff/r0mkhh4cm6T1LA3ylKPvZYi46IWchMgNDaMdYaH1Dx",
+	"uYgQI1I40f9rSFGC/hc3iY1PmGIPaOYlnQYNmmZiJZ+CJ1UCewcyt0M6SkOaggZ636qAvlS+4oy8gcO4",
+	"CBpxR3ieZVgfztAUKsjTN3L1BYh1oi1uehkbMBOhXPNJ5jtxdn0MZEPuRVnDw5z9A9m3Bg9aSz1bLhZ9",
+	"XP6o2wu/Ynr1Dh5zCPVAhIzFNjcPRFLo6C0Xi1qaCQuuOc+iWY5C81baq99lLug0LMspWG5HMnMnrKty",
+	"fvUe9A701W9eZAKu27EcCUmBiVT2YWVgMcW2PYgbNalAvIM1M1Zjy6TwGhRSnHOLkhRzA7WzlZQcsCi7",
+	"WFpJJC8rtZpKtZ6rbrZj9qDyVSja7rSKkAG9Y6SE+1UXiJVPZRC7mzLhwxBDRqZ2jzVcGikVk7Nawe8r",
+	"vB6vWUoXEdqBNqycIA05N/NFcEUN5nTWht7lp5qgjXUDZIPJ9tXPtyHmg4AW8+vJkGpCunjc4g6k0UqL",
+	"25PxTCmHvDqrfaNEA7bwgP3aTKXO3H+IYgszy/zdoRc+ZUZxfHgYXDwbbDZAHxQ2Zi91eAT7XR/clKdl",
+	"0T+gA7tQpozD0JnvsPCaUXRq5Pnwug0xvgfOt0LuxWx4sHAmtt0BcK45+hZnzkB/HIyDUyr3MG08gnZx",
+	"b6xVJonj+poWY8Xi3XXdrXGwH90tkPctJXGtN6cMGyU1nlftGYsq3Hh0jzeRdW6oz8N0bXKAandZKpF8",
+	"Nb3H3G3HBTM1T700+YkSX4/KkAGeDu+bTohKcUb8yourZfXTFyPFmEALfysuW8Iy6zf9eyB/1mO3nrKn",
+	"0XpatFgxlKBX84UvDvfi8VzEc8fbzBMXt9ttDeWLQEG5nO8oStAfYD8A52+c9NtK2HFhlBSmZPemvJ74",
+	"V4XwNtrx+jCTY+tZM61vHQGFJ6GDvFO/F6F/qKWjziPzYxhNI9LyU3z+LnG3HPqol8/opbloV7aXz257",
+	"ebJ9++y4b0+4y2I4NSyXcpur+FhtnOJcPfyi2L/Xf3mN++bNP60g6tX2ovXg7yA/CmBEAXQW66XcVyPs",
+	"ZvGSQywwutrr5SLKey/1jQBHLe+yzHp3ou+YvnLhHhktxtFyRyd3LKNTe7W7o0eHWf7i5qL70fgvVTlF",
+	"8V8AAAD//xZ0lzw1FgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

@@ -4,14 +4,18 @@ wellknown-nodeinfo:
     links:
       type: array
       items:
-        type: object
-        properties:
-          rel:
-            type: string
-            default: 'http://nodeinfo.diaspora.software/ns/schema/2.0'
-          href:
-            type: string
-            default: 'https://localhost/api/v1/nodeinfo/2.0'
+        $ref: '#/wellknown-nodeinfo-link'
+
+wellknown-nodeinfo-link:
+  type: object
+  properties:
+    rel:
+      type: string
+      default: 'http://nodeinfo.diaspora.software/ns/schema/2.0'
+    href:
+      type: string
+      default: 'https://localhost/api/v1/nodeinfo/2.0'
+
 wellknown-webfinger:
   type: object
   properties:
@@ -21,14 +25,17 @@ wellknown-webfinger:
     links:
       type: array
       items:
-        type: object
-        properties:
-          rel:
-            type: string
-            default: 'self'
-          type:
-            type: string
-            default: 'application/activity+json'
-          href:
-            type: string
-            default: 'https:/localhost/api/v1/users/1'
+        $ref: '#/wellknown-webfinger-link'
+
+wellknown-webfinger-link:
+  type: object
+  properties:
+    rel:
+      type: string
+      default: 'self'
+    type:
+      type: string
+      default: 'application/activity+json'
+    href:
+      type: string
+      default: 'https:/localhost/api/v1/users/1'

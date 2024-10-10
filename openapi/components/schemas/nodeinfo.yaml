@@ -10,22 +10,9 @@ nodeinfo:
         type: string
         default: 'activitypub'
     software:
-      type: object
-      properties:
-        name:
-          type: string
-          default: 'sechack365'
-        version:
-          type: string
-          default: '0.1.0'
+      $ref: '#/nodeinfo-software'
     usage:
-      type: object
-      properties:
-        users:
-          type: object
-          properties:
-            total:
-              type: integer
+      $ref: '#/nodeinfo-usage'
     services:
       type: object
       properties:
@@ -38,3 +25,22 @@ nodeinfo:
     version:
       type: string
       default: '2.0'
+
+nodeinfo-software:
+  type: object
+  properties:
+    name:
+      type: string
+      default: 'sechack365'
+    version:
+      type: string
+      default: '0.1.0'
+
+nodeinfo-usage:
+  type: object
+  properties:
+    users:
+      type: object
+      properties:
+        total:
+          type: integer
