@@ -35,5 +35,5 @@ jobs:
 
       - name: OpenAPI check
         run: |
-          make openapi
+          make oapi-codegen
           git diff --exit-code
