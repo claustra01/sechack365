@@ -19,7 +19,6 @@ jobs:
     
     - name: Generate docs
       run: |
-        make swagger
         make redocly
     
     - name: Upload artifact
