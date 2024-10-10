@@ -16,15 +16,15 @@ redocly:
 	@if ! command -v redocly > /dev/null 2>&1; then \
 		npm install -g @redocly/cli; \
 	fi
-	redocly bundle openapi/all.yaml -o openapi/generated.yaml
-	redocly build-docs openapi/generated.yaml -o openapi/index.html
+	redocly bundle openapi/all.yaml -o openapi/all.gen.yaml
+	redocly build-docs openapi/all.gen.yaml -o openapi/index.html
 
 # generate schema code from openapi
 oapi-codegen:
 	@if ! command -v $$(go env GOPATH)/bin/oapi-codegen > /dev/null 2>&1; then \
 		go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest; \
 	fi
-	cd api && $$(go env GOPATH)/bin/oapi-codegen -generate types -package openapi -o ./pkg/openapi/types.gen.go ../openapi/all.yaml
+	cd api && $$(go env GOPATH)/bin/oapi-codegen -generate types,spec -package openapi -o ./pkg/openapi/types.gen.go ../openapi/all.gen.yaml
 
 # generate certificate for localhost
 dev-cert:

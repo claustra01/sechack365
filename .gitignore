@@ -5,5 +5,5 @@ api/tmp
 nginx/*.crt
 nginx/*.key
 
-openapi/generated.yaml
+openapi/all.gen.yaml
 openapi/index.html
