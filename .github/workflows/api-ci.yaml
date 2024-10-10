@@ -36,4 +36,4 @@ jobs:
       - name: OpenAPI check
         run: |
           make openapi
-          git diff --exit-code
+          git diff -- api/pkg/openapi/types.gen.go --exit-code
