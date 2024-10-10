@@ -14,14 +14,9 @@ nodeinfo:
     usage:
       $ref: '#/nodeinfo-usage'
     services:
-      type: object
-      properties:
-        inbound:
-          type: object
-        outbound:
-          type: object
+      $ref: '#/nodeinfo-service'
     metadata:
-      type: object
+      $ref: '#/nodeinfo-metadata'
     version:
       type: string
       default: '2.0'
@@ -44,3 +39,14 @@ nodeinfo-usage:
       properties:
         total:
           type: integer
+
+nodeinfo-service:
+  type: object
+  properties:
+    inbound:
+      type: object
+    outbound:
+      type: object
+
+nodeinfo-metadata:
+  type: object
