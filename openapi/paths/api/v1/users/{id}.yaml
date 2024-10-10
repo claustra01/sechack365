@@ -1,6 +1,6 @@
 get:
   parameters:
-    - $ref: '../../../../components/params/users/id.yaml'
+    - $ref: '../../../../components/params/users.yaml#/id'
   responses:
     '200':
       content:

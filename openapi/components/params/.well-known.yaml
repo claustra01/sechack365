@@ -1,0 +1,7 @@
+webfinger:
+  name: resource
+  in: query
+  required: true
+  schema:
+    type: string
+    example: 'acct:mock@localhost'

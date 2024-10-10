@@ -1,6 +1,6 @@
 get:
   parameters:
-    - $ref: '../../components/params/.well-known/webfinger.yaml'
+    - $ref: '../../components/params/.well-known.yaml#/webfinger'
   responses:
     '200':
       content:
