@@ -26,6 +26,9 @@ oapi-codegen:
 	fi
 	cd api && $$(go env GOPATH)/bin/oapi-codegen -generate types,spec -package openapi -o ./pkg/openapi/types.gen.go ../openapi/all.gen.yaml
 
+# generate all openapi files
+openapi: redocly oapi-codegen
+
 # generate certificate for localhost
 dev-cert:
 	@if ! command -v mkcert > /dev/null 2>&1; then \
