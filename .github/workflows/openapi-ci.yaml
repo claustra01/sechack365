@@ -6,7 +6,7 @@ on:
       - '.github/workflows/openapi-ci.yaml'
 
 jobs:
-  openapi:
+  codegen:
     runs-on: ubuntu-latest
     steps:
 
