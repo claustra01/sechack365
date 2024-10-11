@@ -9,8 +9,6 @@ user:
       type: string
     protocol:
       type: string
-    hashed_password:
-      type: string
     display_name:
       type: string
     profile:
@@ -28,7 +26,6 @@ user:
     - username
     - host
     - protocol
-    - hashed_password
     - display_name
     - profile
     - icon
