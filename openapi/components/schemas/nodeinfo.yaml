@@ -46,12 +46,17 @@ nodeinfo-usage:
   type: object
   properties:
     users:
-      type: object
-      properties:
-        total:
-          type: integer
+      $ref: '#/nodeinfo-usage-users'
   required:
     - users
+
+nodeinfo-usage-users:
+  type: object
+  properties:
+    total:
+      type: integer
+  required:
+    - total
 
 nodeinfo-service:
   type: object
