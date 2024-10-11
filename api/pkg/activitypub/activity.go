@@ -83,10 +83,10 @@ func SendActivity(url string, activity any, sigParams SignParams) ([]byte, error
 func BuildFollowActivitySchema(id, host, followerId, followeeUrl string) *FollowActivity {
 	// object is followee actor
 	return &FollowActivity{
-		Context: ApContext[:],
-		Type:    "Follow",
-		Id:      fmt.Sprintf("https://%s/follows/%s", host, id),
-		Actor:   BuildActorUrl(host, followerId),
-		Object:  followeeUrl,
+		// Context: ApContext[:],
+		Type:   "Follow",
+		Id:     fmt.Sprintf("https://%s/follows/%s", host, id),
+		Actor:  BuildActorUrl(host, followerId),
+		Object: followeeUrl,
 	}
 }

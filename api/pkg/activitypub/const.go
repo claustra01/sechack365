@@ -1,8 +1,13 @@
 package activitypub
 
-var ApContext = []string{
-	"https://www.w3.org/ns/activitystreams",
-	"https://w3id.org/security/v1",
+import (
+	"encoding/json"
+
+	"github.com/claustra01/sechack365/pkg/openapi"
+)
+
+var ApContext = openapi.Actor_Context{
+	union: json.RawMessage(`["https://www.w3.org/ns/activitystreams","https://w3id.org/security/v1"]`),
 }
 
 var Protocols = []string{

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
+	"github.com/claustra01/sechack365/pkg/openapi"
 )
 
 func ResolveWebfinger(username string, host string) (string, error) {
@@ -33,7 +34,7 @@ func ResolveWebfinger(username string, host string) (string, error) {
 		return "", cerror.Wrap(cerror.ErrResolveWebfinger, string(body))
 	}
 
-	var data Webfinger
+	var data openapi.WellknownWebfinger
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		return "", cerror.Wrap(cerror.ErrResolveWebfinger, err.Error())
@@ -54,7 +55,7 @@ func ResolveWebfinger(username string, host string) (string, error) {
 	return link, nil
 }
 
-func ResolveRemoteActor(link string) (*Actor, error) {
+func ResolveRemoteActor(link string) (*openapi.Actor, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", link, nil)
 	if err != nil {
@@ -77,7 +78,7 @@ func ResolveRemoteActor(link string) (*Actor, error) {
 		return nil, cerror.Wrap(cerror.ErrResolveRemoteActor, string(body))
 	}
 
-	var actor Actor
+	var actor openapi.Actor
 	if err := json.Unmarshal(body, &actor); err != nil {
 		return nil, cerror.Wrap(cerror.ErrResolveRemoteActor, err.Error())
 	}
