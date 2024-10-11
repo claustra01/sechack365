@@ -3,6 +3,7 @@ package usecase
 import "github.com/claustra01/sechack365/pkg/model"
 
 type IUserRepository interface {
+	Create(username, host, protocol, displayName, profile, icon string) (*model.User, error)
 	FindAll() ([]*model.User, error)
 	FindById(id string) (*model.User, error)
 	FindByUsername(username string, host string) (*model.User, error)
@@ -20,6 +21,10 @@ type IApUserIdentifierRepository interface {
 
 type ApUserIdentifierUsecase struct {
 	ApUserIdentifierRepository IApUserIdentifierRepository
+}
+
+func (u *UserUsecase) Create(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
+	return u.UserRepository.Create(username, host, protocol, displayName, profile, icon)
 }
 
 func (u *UserUsecase) FindAll() ([]*model.User, error) {

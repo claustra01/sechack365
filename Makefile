@@ -5,10 +5,16 @@ lint-api:
 	fi
 	cd api && $$(go env GOPATH)/bin/golangci-lint run ./...
 
+# db drop
+drop:
+	docker compose up -d
+	docker compose exec api sh -c "go run cmd/database/migrate.go drop"
+	docker compose down
+
 # db migration
 migrate:
-	docker compose -f compose.dev.yml up -d --build
-	docker compose exec api sh -c "go run cmd/database/migrate.go"
+	docker compose up -d
+	docker compose exec api sh -c "go run cmd/database/migrate.go migrate"
 	docker compose down
 
 # generate openapi docs
@@ -36,12 +42,6 @@ dev-cert:
 	fi
 	mkcert -install
 	mkcert -cert-file ./nginx/default.crt -key-file ./nginx/default.key localhost
-
-# db migration with mock data
-dev-mock:
-	docker compose -f compose.dev.yml up -d --build
-	docker compose exec api sh -c "go run cmd/database/migrate.go mock"
-	docker compose down
 
 # kill postgres process
 dev-port-clean:

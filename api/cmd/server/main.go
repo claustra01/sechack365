@@ -32,7 +32,7 @@ func main() {
 	router := server.Router
 
 	router.Use(framework.LoggingMiddleware(logger), framework.RecoverMiddleware(logger))
-	if err := setupRouter(router); err != nil {
+	if err := setupRouter(router, logger); err != nil {
 		panic(err)
 	}
 
