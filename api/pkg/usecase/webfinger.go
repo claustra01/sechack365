@@ -2,13 +2,13 @@ package usecase
 
 import "github.com/claustra01/sechack365/pkg/openapi"
 
-type IWebfingerUsecase interface {
+type IWebfingerService interface {
 	NewWebfingerActorLinks(host, id, name string) *openapi.WellknownWebfinger
 	NewNodeInfoLinks(host string) *openapi.WellknownNodeinfo
 }
 
 type WebfingerUsecase struct {
-	WebfingerService IWebfingerUsecase
+	WebfingerService IWebfingerService
 }
 
 func (u *WebfingerUsecase) NewWebfingerActorLinks(host, id, name string) *openapi.WellknownWebfinger {
