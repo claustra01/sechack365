@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/claustra01/sechack365/pkg/openapi"
+	"github.com/claustra01/sechack365/pkg/service"
 	"github.com/claustra01/sechack365/pkg/usecase"
 )
 
@@ -11,7 +12,9 @@ type WebfingerController struct {
 
 func NewWebfingerController() *WebfingerController {
 	return &WebfingerController{
-		WebfingerUsecase: usecase.WebfingerUsecase{},
+		WebfingerUsecase: usecase.WebfingerUsecase{
+			WebfingerService: &service.WebfingerService{},
+		},
 	}
 }
 

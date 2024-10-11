@@ -5,6 +5,7 @@ import (
 
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
+	"github.com/claustra01/sechack365/pkg/service"
 	"github.com/claustra01/sechack365/pkg/usecase"
 )
 
@@ -14,7 +15,9 @@ type ActivityPubController struct {
 
 func NewActivityPubController() *ActivityPubController {
 	return &ActivityPubController{
-		ActivityPubUsecase: usecase.ActivityPubUsecase{},
+		ActivityPubUsecase: usecase.ActivityPubUsecase{
+			ActivityPubService: &service.ActivitypubService{},
+		},
 	}
 }
 
