@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/claustra01/sechack365/pkg/activitypub"
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/model"
@@ -72,7 +71,7 @@ func GetUser(c *framework.Context) http.HandlerFunc {
 
 		switch header {
 		case "application/activity+json":
-			actor := activitypub.BuildActorSchema(*user, *identifier)
+			actor := c.Controllers.ActivityPub.NewActor(*user, *identifier)
 			jsonCustomContentTypeResponse(w, actor, "application/activity+json")
 		case "application/json":
 			omittedUser := OmitUser(user)

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
 	"github.com/claustra01/sechack365/pkg/usecase"
 )
@@ -13,6 +14,10 @@ func NewActivityPubController() *ActivityPubController {
 	return &ActivityPubController{
 		ActivityPubUsecase: usecase.ActivityPubUsecase{},
 	}
+}
+
+func (c *ActivityPubController) NewActor(user model.User, identifier model.ApUserIdentifier) *openapi.Actor {
+	return c.ActivityPubUsecase.NewActor(user, identifier)
 }
 
 func (c *ActivityPubController) NewActorUrl(host, id string) string {

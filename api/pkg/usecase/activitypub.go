@@ -1,10 +1,12 @@
 package usecase
 
 import (
+	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
 )
 
 type IActivityPubService interface {
+	NewActor(user model.User, identifier model.ApUserIdentifier) *openapi.Actor
 	NewActorUrl(host, id string) string
 	NewKeyIdUrl(host string, name string) string
 	NewNodeInfo(userUsage int) *openapi.Nodeinfo
@@ -14,6 +16,10 @@ type IActivityPubService interface {
 
 type ActivityPubUsecase struct {
 	ActivityPubService IActivityPubService
+}
+
+func (u *ActivityPubUsecase) NewActor(user model.User, identifier model.ApUserIdentifier) *openapi.Actor {
+	return u.ActivityPubService.NewActor(user, identifier)
 }
 
 func (u *ActivityPubUsecase) NewActorUrl(host, id string) string {

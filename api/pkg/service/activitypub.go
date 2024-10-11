@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
+	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
 )
 
@@ -34,6 +35,31 @@ const SoftWareVersion = "0.1.0"
 const NodeInfoVersion = "2.0"
 
 // NOTE: const values: end
+
+func (s *ActivitypubService) NewActor(user model.User, identifier model.ApUserIdentifier) *openapi.Actor {
+	baseUrl := s.NewActorUrl(user.Host, user.Id)
+	actor := &openapi.Actor{
+		Context:           ApContext,
+		Type:              "Person",
+		Id:                baseUrl,
+		Inbox:             baseUrl + "/inbox",
+		Outbox:            baseUrl + "/outbox",
+		PreferredUsername: user.Username,
+		Name:              user.DisplayName,
+		Summary:           user.Profile,
+		Icon: openapi.ActorIcon{
+			Type: "Image",
+			Url:  user.Icon,
+		},
+		PublicKey: openapi.ActorPublicKey{
+			Type:         "Key",
+			Id:           s.NewActorUrl(user.Host, user.Username),
+			Owner:        baseUrl,
+			PublicKeyPem: identifier.PublicKey,
+		},
+	}
+	return actor
+}
 
 func (s *ActivitypubService) NewActorUrl(host, id string) string {
 	return fmt.Sprintf("https://%s/api/v1/users/%s", host, id)
