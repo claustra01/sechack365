@@ -3,9 +3,10 @@ package main
 import (
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/handler"
+	"github.com/claustra01/sechack365/pkg/model"
 )
 
-func setupRouter(r *framework.Router) error {
+func setupRouter(r *framework.Router, lg model.ILogger) error {
 	api := r.Group("/api/v1")
 
 	users := api.Group("/users")
@@ -41,6 +42,11 @@ func setupRouter(r *framework.Router) error {
 		return err
 	}
 	if err := wk.Get("/webfinger", handler.WebfingerLinks); err != nil {
+		return err
+	}
+
+	dev := api.Group("/dev", framework.DevApiMiddleware(lg))
+	if err := dev.Get("/mock", handler.GenerateMock); err != nil {
 		return err
 	}
 
