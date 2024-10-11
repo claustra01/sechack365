@@ -5,12 +5,8 @@ import (
 	"net/http"
 
 	"github.com/claustra01/sechack365/pkg/model"
+	"github.com/claustra01/sechack365/pkg/openapi"
 )
-
-type ErrorResponse struct {
-	StatusCode int    `json:"status_code"`
-	Message    string `json:"message"`
-}
 
 func jsonResponse(w http.ResponseWriter, data any) {
 	body, err := json.Marshal(data)
@@ -36,10 +32,11 @@ func jsonCustomContentTypeResponse(w http.ResponseWriter, data any, contentType 
 	}
 }
 
-func jsonErrorResponse(w http.ResponseWriter, code int, message string) {
-	resp := &ErrorResponse{
-		StatusCode: code,
-		Message:    message,
+func returnBadRequest(w http.ResponseWriter, logger model.ILogger, errInput error) {
+	logger.Warn("Bad Request", "Error", errInput)
+	resp := &openapi.Error400{
+		StatusCode: http.StatusBadRequest,
+		Message:    "Bad Request",
 	}
 	body, err := json.Marshal(resp)
 	if err != nil {
@@ -49,17 +46,30 @@ func jsonErrorResponse(w http.ResponseWriter, code int, message string) {
 	http.Error(w, string(body), http.StatusInternalServerError)
 }
 
-func returnBadRequest(w http.ResponseWriter, logger model.ILogger, errInput error) {
-	logger.Warn("Bad Request", "Error", errInput)
-	jsonErrorResponse(w, http.StatusBadRequest, "Bad Request")
-}
-
 func returnNotFound(w http.ResponseWriter, logger model.ILogger, errInput error) {
 	logger.Warn("Not Found", "Error", errInput)
-	jsonErrorResponse(w, http.StatusNotFound, "Not Found")
+	resp := &openapi.Error404{
+		StatusCode: http.StatusNotFound,
+		Message:    "Not Found",
+	}
+	body, err := json.Marshal(resp)
+	if err != nil {
+		panic(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	http.Error(w, string(body), http.StatusInternalServerError)
 }
 
 func returnInternalServerError(w http.ResponseWriter, logger model.ILogger, errInput error) {
 	logger.Error("Internal Server Error", "Error", errInput)
-	jsonErrorResponse(w, http.StatusInternalServerError, "Internal Server Error")
+	resp := &openapi.Error400{
+		StatusCode: http.StatusInternalServerError,
+		Message:    "Internal Server Error",
+	}
+	body, err := json.Marshal(resp)
+	if err != nil {
+		panic(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	http.Error(w, string(body), http.StatusInternalServerError)
 }
