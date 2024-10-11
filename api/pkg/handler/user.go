@@ -30,8 +30,8 @@ func OmitUser(user *model.User) *openapi.User {
 		DisplayName: user.DisplayName,
 		Profile:     user.Profile,
 		Icon:        user.Icon,
-		CreatedAt:   &createdAt,
-		UpdatedAt:   &updatedAt,
+		CreatedAt:   createdAt,
+		UpdatedAt:   updatedAt,
 	}
 }
 
