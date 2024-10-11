@@ -1,4 +1,4 @@
-package activitypub
+package service
 
 import (
 	"fmt"
@@ -6,20 +6,23 @@ import (
 	"github.com/claustra01/sechack365/pkg/openapi"
 )
 
-func BuildWebfingerActorLinksSchema(host, id, name string) *openapi.WellknownWebfinger {
+type WebfingerService struct{}
+
+func (s *WebfingerService) NewWebfingerActorLinks(host, id, name string) *openapi.WellknownWebfinger {
+	var apService ActivitypubService
 	return &openapi.WellknownWebfinger{
 		Subject: fmt.Sprintf("acct:%s@%s", name, host),
 		Links: []openapi.WellknownWebfingerLink{
 			{
 				Rel:  "self",
 				Type: "application/activity+json",
-				Href: BuildActorUrl(host, id),
+				Href: apService.NewActorUrl(host, id),
 			},
 		},
 	}
 }
 
-func BuildNodeInfoLinksSchema(host string) *openapi.WellknownNodeinfo {
+func (s *WebfingerService) NewNodeInfoLinks(host string) *openapi.WellknownNodeinfo {
 	return &openapi.WellknownNodeinfo{
 		Links: []openapi.WellknownNodeinfoLink{
 			{
