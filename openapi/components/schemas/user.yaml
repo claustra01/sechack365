@@ -23,3 +23,14 @@ user:
     update_at:
       type: string
       format: date-time
+  required:
+    - id
+    - username
+    - host
+    - protocol
+    - hashed_password
+    - display_name
+    - profile
+    - icon
+    - create_at
+    - update_at

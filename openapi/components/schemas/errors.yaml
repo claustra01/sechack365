@@ -7,6 +7,10 @@ error-400:
     error:
       type: string
       example: Bad Request
+  required:
+    - status_code
+    - error
+
 error-404:
   type: object
   properties:
@@ -16,6 +20,10 @@ error-404:
     error:
       type: string
       example: Not Found
+  required:
+    - status_code
+    - error
+
 error-500:
   type: object
   properties:
@@ -25,3 +33,6 @@ error-500:
     error:
       type: string
       example: Internal Server Error
+  required:
+    - status_code
+    - error
