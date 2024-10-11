@@ -40,6 +40,7 @@ func returnBadRequest(w http.ResponseWriter, logger model.ILogger, errInput erro
 	}
 	body, err := json.Marshal(resp)
 	if err != nil {
+		// NOTE: err should be nil
 		panic(err)
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -54,6 +55,7 @@ func returnNotFound(w http.ResponseWriter, logger model.ILogger, errInput error)
 	}
 	body, err := json.Marshal(resp)
 	if err != nil {
+		// NOTE: err should be nil
 		panic(err)
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -68,6 +70,7 @@ func returnInternalServerError(w http.ResponseWriter, logger model.ILogger, errI
 	}
 	body, err := json.Marshal(resp)
 	if err != nil {
+		// NOTE: err should be nil
 		panic(err)
 	}
 	w.Header().Set("Content-Type", "application/json")
