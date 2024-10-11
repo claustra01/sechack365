@@ -160,12 +160,12 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 
 			// activitypub
 			// fetch from remote
-			link, err := activitypub.ResolveWebfinger(username, host)
+			link, err := c.Controllers.ActivityPub.ResolveWebfinger(username, host)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
-			actor, err := activitypub.ResolveRemoteActor(link)
+			actor, err := c.Controllers.ActivityPub.ResolveRemoteActor(link)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
@@ -211,12 +211,12 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 
 		// activitypub
 		// fetch from remote
-		link, err := activitypub.ResolveWebfinger(username, host)
+		link, err := c.Controllers.ActivityPub.ResolveWebfinger(username, host)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		actor, err := activitypub.ResolveRemoteActor(link)
+		actor, err := c.Controllers.ActivityPub.ResolveRemoteActor(link)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
