@@ -15,10 +15,10 @@ user:
       type: string
     icon:
       type: string
-    create_at:
+    created_at:
       type: string
       format: date-time
-    update_at:
+    updated_at:
       type: string
       format: date-time
   required:
