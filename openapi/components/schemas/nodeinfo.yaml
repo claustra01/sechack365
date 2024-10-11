@@ -20,6 +20,14 @@ nodeinfo:
     version:
       type: string
       default: '2.0'
+  required:
+    - openRegistrations
+    - protocols
+    - software
+    - usage
+    - services
+    - metadata
+    - version
 
 nodeinfo-software:
   type: object
@@ -30,15 +38,25 @@ nodeinfo-software:
     version:
       type: string
       default: '0.1.0'
+  required:
+    - name
+    - version
 
 nodeinfo-usage:
   type: object
   properties:
     users:
-      type: object
-      properties:
-        total:
-          type: integer
+      $ref: '#/nodeinfo-usage-users'
+  required:
+    - users
+
+nodeinfo-usage-users:
+  type: object
+  properties:
+    total:
+      type: integer
+  required:
+    - total
 
 nodeinfo-service:
   type: object
@@ -47,6 +65,9 @@ nodeinfo-service:
       type: object
     outbound:
       type: object
+  required:
+    - inbound
+    - outbound
 
 nodeinfo-metadata:
   type: object

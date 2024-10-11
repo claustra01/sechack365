@@ -2,37 +2,13 @@ package activitypub
 
 import (
 	"github.com/claustra01/sechack365/pkg/model"
+	"github.com/claustra01/sechack365/pkg/openapi"
 )
 
-type Image struct {
-	Type string `json:"type"`
-	Url  string `json:"url"`
-}
-
-type PublicKey struct {
-	Type         string `json:"type"`
-	Id           string `json:"id"`
-	Owner        string `json:"owner"`
-	PublicKeyPem string `json:"publicKeyPem"`
-}
-
-type Actor struct {
-	Context           any       `json:"@context"`
-	Type              string    `json:"type"`
-	Id                string    `json:"id"`
-	Inbox             string    `json:"inbox"`
-	Outbox            string    `json:"outbox"`
-	PreferredUsername string    `json:"preferredUsername"`
-	Name              string    `json:"name"`
-	Summary           string    `json:"summary"`
-	Icon              Image     `json:"icon"`
-	PublicKey         PublicKey `json:"publicKey"`
-}
-
-func BuildActorSchema(user model.User, identifier model.ApUserIdentifier) *Actor {
+func BuildActorSchema(user model.User, identifier model.ApUserIdentifier) *openapi.Actor {
 	baseUrl := BuildActorUrl(user.Host, user.Id)
-	actor := &Actor{
-		Context:           ApContext[:],
+	actor := &openapi.Actor{
+		Context:           ApContext,
 		Type:              "Person",
 		Id:                baseUrl,
 		Inbox:             baseUrl + "/inbox",
@@ -40,11 +16,11 @@ func BuildActorSchema(user model.User, identifier model.ApUserIdentifier) *Actor
 		PreferredUsername: user.Username,
 		Name:              user.DisplayName,
 		Summary:           user.Profile,
-		Icon: Image{
+		Icon: openapi.ActorIcon{
 			Type: "Image",
 			Url:  user.Icon,
 		},
-		PublicKey: PublicKey{
+		PublicKey: openapi.ActorPublicKey{
 			Type:         "Key",
 			Id:           BuildKeyIdUrl(user.Host, user.Username),
 			Owner:        baseUrl,

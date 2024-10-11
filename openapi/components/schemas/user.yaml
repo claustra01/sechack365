@@ -9,17 +9,25 @@ user:
       type: string
     protocol:
       type: string
-    hashed_password:
-      type: string
     display_name:
       type: string
     profile:
       type: string
     icon:
       type: string
-    create_at:
+    created_at:
       type: string
       format: date-time
-    update_at:
+    updated_at:
       type: string
       format: date-time
+  required:
+    - id
+    - username
+    - host
+    - protocol
+    - display_name
+    - profile
+    - icon
+    - create_at
+    - update_at

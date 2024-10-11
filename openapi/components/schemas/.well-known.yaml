@@ -5,6 +5,8 @@ wellknown-nodeinfo:
       type: array
       items:
         $ref: '#/wellknown-nodeinfo-link'
+  required:
+    - links
 
 wellknown-nodeinfo-link:
   type: object
@@ -15,6 +17,9 @@ wellknown-nodeinfo-link:
     href:
       type: string
       default: 'https://localhost/api/v1/nodeinfo/2.0'
+  required:
+    - rel
+    - href
 
 wellknown-webfinger:
   type: object
@@ -26,6 +31,9 @@ wellknown-webfinger:
       type: array
       items:
         $ref: '#/wellknown-webfinger-link'
+  required:
+    - subject
+    - links
 
 wellknown-webfinger-link:
   type: object
@@ -39,3 +47,7 @@ wellknown-webfinger-link:
     href:
       type: string
       default: 'https:/localhost/api/v1/users/1'
+  required:
+    - rel
+    - type
+    - href

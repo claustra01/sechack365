@@ -1,7 +1,7 @@
 actor:
   type: object
   properties:
-    \@context:
+    '@context':
       oneOf:
         - type: string
         - type: array
@@ -15,7 +15,7 @@ actor:
       type: string
     outbox:
       type: string
-    prefferedUsername:
+    preferredUsername:
       type: string
     name:
       type: string
@@ -25,6 +25,17 @@ actor:
       $ref: '#/actor-icon'
     publicKey:
       $ref: '#/actor-publicKey'
+  required:
+    - '@context'
+    - type
+    - id
+    - inbox
+    - outbox
+    - preferredUsername
+    - name
+    - summary
+    - icon
+    - publicKey
 
 actor-icon:
   type: object
@@ -33,6 +44,9 @@ actor-icon:
       type: string
     url:
       type: string
+  required:
+    - type
+    - url
 
 actor-publicKey:
   type: object
@@ -45,3 +59,8 @@ actor-publicKey:
       type: string
     publicKeyPem:
       type: string
+  required:
+    - type
+    - id
+    - owner
+    - publicKeyPem

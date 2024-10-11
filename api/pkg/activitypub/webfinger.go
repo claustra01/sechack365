@@ -1,31 +1,15 @@
 package activitypub
 
-import "fmt"
+import (
+	"fmt"
 
-type NodeInfoWebfinger struct {
-	Links []NodeInfoLink `json:"links"`
-}
+	"github.com/claustra01/sechack365/pkg/openapi"
+)
 
-type NodeInfoLink struct {
-	Rel  string `json:"rel"`
-	Href string `json:"href"`
-}
-
-type Webfinger struct {
-	Subject string          `json:"subject"`
-	Links   []WebfingerLink `json:"links"`
-}
-
-type WebfingerLink struct {
-	Rel  string `json:"rel"`
-	Type string `json:"type"`
-	Href string `json:"href"`
-}
-
-func BuildWebfingerActorLinksSchema(host, id, name string) *Webfinger {
-	return &Webfinger{
+func BuildWebfingerActorLinksSchema(host, id, name string) *openapi.WellknownWebfinger {
+	return &openapi.WellknownWebfinger{
 		Subject: fmt.Sprintf("acct:%s@%s", name, host),
-		Links: []WebfingerLink{
+		Links: []openapi.WellknownWebfingerLink{
 			{
 				Rel:  "self",
 				Type: "application/activity+json",
@@ -35,9 +19,9 @@ func BuildWebfingerActorLinksSchema(host, id, name string) *Webfinger {
 	}
 }
 
-func BuildNodeInfoLinksSchema(host string) *NodeInfoWebfinger {
-	return &NodeInfoWebfinger{
-		Links: []NodeInfoLink{
+func BuildNodeInfoLinksSchema(host string) *openapi.WellknownNodeinfo {
+	return &openapi.WellknownNodeinfo{
+		Links: []openapi.WellknownNodeinfoLink{
 			{
 				Rel:  "http://nodeinfo.diaspora.software/ns/schema/2.0",
 				Href: fmt.Sprintf("https://%s/api/v1/nodeinfo/2.0", host),
