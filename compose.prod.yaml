@@ -40,7 +40,6 @@ services:
     depends_on:
       - api
       - frontend
-    network_mode: host
 
 volumes:
   dbdata:
