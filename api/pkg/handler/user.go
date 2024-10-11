@@ -9,8 +9,31 @@ import (
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/model"
+	"github.com/claustra01/sechack365/pkg/openapi"
 	"github.com/claustra01/sechack365/pkg/util"
 )
+
+func OmitUser(user *model.User) *openapi.User {
+	createdAt, err := util.StrToTime(user.CreatedAt)
+	if err != nil {
+		panic(err)
+	}
+	updatedAt, err := util.StrToTime(user.UpdatedAt)
+	if err != nil {
+		panic(err)
+	}
+	return &openapi.User{
+		Id:          user.Id,
+		Username:    user.Username,
+		Host:        user.Host,
+		Protocol:    user.Protocol,
+		DisplayName: user.DisplayName,
+		Profile:     user.Profile,
+		Icon:        user.Icon,
+		CreatedAt:   &createdAt,
+		UpdatedAt:   &updatedAt,
+	}
+}
 
 func GetAllUsers(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +42,11 @@ func GetAllUsers(c *framework.Context) http.HandlerFunc {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		jsonResponse(w, users)
+		var omittedUsers []*openapi.User
+		for _, user := range users {
+			omittedUsers = append(omittedUsers, OmitUser(user))
+		}
+		jsonResponse(w, omittedUsers)
 	}
 }
 
@@ -48,7 +75,8 @@ func GetUser(c *framework.Context) http.HandlerFunc {
 			actor := activitypub.BuildActorSchema(*user, *identifier)
 			jsonCustomContentTypeResponse(w, actor, "application/activity+json")
 		case "application/json":
-			jsonResponse(w, user)
+			omittedUser := OmitUser(user)
+			jsonResponse(w, omittedUser)
 		default:
 			returnBadRequest(w, c.Logger, cerror.ErrInvalidAcceptHeader)
 		}
@@ -82,7 +110,8 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
 				return
 			}
-			jsonResponse(w, user)
+			omittedUser := OmitUser(user)
+			jsonResponse(w, omittedUser)
 			return
 		}
 
@@ -124,7 +153,8 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 					returnInternalServerError(w, c.Logger, err)
 					return
 				}
-				jsonResponse(w, user)
+				omittedUser := OmitUser(user)
+				jsonResponse(w, omittedUser)
 				return
 			}
 
@@ -151,7 +181,8 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
-			jsonResponse(w, user)
+			omittedUser := OmitUser(user)
+			jsonResponse(w, omittedUser)
 		}
 
 		// nostr
@@ -173,7 +204,8 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
-			jsonResponse(w, user)
+			omittedUser := OmitUser(user)
+			jsonResponse(w, omittedUser)
 			return
 		}
 
@@ -196,6 +228,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		jsonResponse(w, user)
+		omittedUser := OmitUser(user)
+		jsonResponse(w, omittedUser)
 	}
 }
