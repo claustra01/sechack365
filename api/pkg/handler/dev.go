@@ -13,12 +13,18 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 			panic(err)
 		}
 		if len(users) > 0 {
-			w.Write([]byte("Mock Data Already Exists"))
+			if _, err := w.Write([]byte("Mock Data Already Exists")); err != nil {
+				// NOTE: err should be nil
+				panic(err)
+			}
 			return
 		}
 		if _, err := c.Controllers.User.Create("mock", c.Config.Host, "local", "Mock User", "This is mock user", "https://placehold.jp/150x150.png"); err != nil {
 			panic(err)
 		}
-		w.Write([]byte("Mock Data Created"))
+		if _, err := w.Write([]byte("Mock Data Created")); err != nil {
+			// NOTE: err should be nil
+			panic(err)
+		}
 	}
 }
