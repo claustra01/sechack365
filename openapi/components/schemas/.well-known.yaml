@@ -13,10 +13,10 @@ wellknown-nodeinfo-link:
   properties:
     rel:
       type: string
-      default: 'http://nodeinfo.diaspora.software/ns/schema/2.0'
+      example: 'http://nodeinfo.diaspora.software/ns/schema/2.0'
     href:
       type: string
-      default: 'https://localhost/api/v1/nodeinfo/2.0'
+      example: 'https://localhost/api/v1/nodeinfo/2.0'
   required:
     - rel
     - href
@@ -26,7 +26,7 @@ wellknown-webfinger:
   properties:
     subject:
       type: string
-      default: 'acct:mock@localhost'
+      example: 'acct:mock@localhost'
     links:
       type: array
       items:
@@ -40,13 +40,13 @@ wellknown-webfinger-link:
   properties:
     rel:
       type: string
-      default: 'self'
+      example: 'self'
     type:
       type: string
-      default: 'application/activity+json'
+      example: 'application/activity+json'
     href:
       type: string
-      default: 'https:/localhost/api/v1/users/1'
+      example: 'https:/localhost/api/v1/users/1'
   required:
     - rel
     - type
