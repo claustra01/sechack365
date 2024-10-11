@@ -1,14 +1,18 @@
 package activitypub
 
 import (
-	"encoding/json"
-
 	"github.com/claustra01/sechack365/pkg/openapi"
 )
 
-var ApContext = openapi.Actor_Context{
-	union: json.RawMessage(`["https://www.w3.org/ns/activitystreams","https://w3id.org/security/v1"]`),
+func NewApContext() openapi.Actor_Context {
+	var ApContext openapi.Actor_Context
+	if err := ApContext.FromActorContext1([]string{"https://www.w3.org/ns/activitystreams", "https://w3id.org/security/v1"}); err != nil {
+		panic(err)
+	}
+	return ApContext
 }
+
+var ApContext = NewApContext()
 
 var Protocols = []string{
 	"activitypub",
