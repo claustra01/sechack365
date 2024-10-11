@@ -15,11 +15,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	drop(conn)
-	migrate(conn)
 
-	if len(os.Args) > 1 && os.Args[1] == "mock" {
-		insertMock(conn)
+	if len(os.Args) != 2 {
+		panic("invalid argument")
+	}
+	switch os.Args[1] {
+	case "drop":
+		drop(conn)
+	case "migrate":
+		migrate(conn)
 	}
 }
 
@@ -42,16 +46,5 @@ func migrate(conn *sql.DB) {
 	if _, err = conn.Exec(string(migrateSql)); err != nil {
 		panic(err)
 	}
-	fmt.Println("migration success")
-}
-
-func insertMock(conn *sql.DB) {
-	migrateSql, err := os.ReadFile("cmd/database/mock.sql")
-	if err != nil {
-		log.Fatalf("failed to read SQL file: %v", err)
-	}
-	if _, err = conn.Exec(string(migrateSql)); err != nil {
-		panic(err)
-	}
-	fmt.Println("mock inserted")
+	fmt.Println("migration successed")
 }
