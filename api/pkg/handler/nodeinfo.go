@@ -3,7 +3,6 @@ package handler
 import (
 	"net/http"
 
-	"github.com/claustra01/sechack365/pkg/activitypub"
 	"github.com/claustra01/sechack365/pkg/framework"
 )
 
@@ -13,7 +12,7 @@ func Nodeinfo2_0(c *framework.Context) http.HandlerFunc {
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 		}
-		nodeinfo := activitypub.BuildNodeInfoSchema(len(users))
+		nodeinfo := c.Controllers.ActivityPub.NewNodeInfo(len(users))
 		jsonResponse(w, nodeinfo)
 	}
 }

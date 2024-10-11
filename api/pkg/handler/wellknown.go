@@ -4,14 +4,13 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/claustra01/sechack365/pkg/activitypub"
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
 )
 
 func NodeinfoLinks(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		nodeinfo := activitypub.BuildNodeInfoLinksSchema(c.Config.Host)
+		nodeinfo := c.Controllers.Webfinger.NewNodeInfoLinks(c.Config.Host)
 		jsonResponse(w, nodeinfo)
 	}
 }
@@ -37,7 +36,7 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		webfinger := activitypub.BuildWebfingerActorLinksSchema(c.Config.Host, user.Id, user.Username)
+		webfinger := c.Controllers.Webfinger.NewWebfingerActorLinks(c.Config.Host, user.Id, user.Username)
 		jsonCustomContentTypeResponse(w, webfinger, "application/jrd+json")
 	}
 }

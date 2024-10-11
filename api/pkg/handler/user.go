@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/claustra01/sechack365/pkg/activitypub"
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/model"
@@ -72,7 +71,7 @@ func GetUser(c *framework.Context) http.HandlerFunc {
 
 		switch header {
 		case "application/activity+json":
-			actor := activitypub.BuildActorSchema(*user, *identifier)
+			actor := c.Controllers.ActivityPub.NewActor(*user, *identifier)
 			jsonCustomContentTypeResponse(w, actor, "application/activity+json")
 		case "application/json":
 			omittedUser := OmitUser(user)
@@ -160,12 +159,12 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 
 			// activitypub
 			// fetch from remote
-			link, err := activitypub.ResolveWebfinger(username, host)
+			link, err := c.Controllers.ActivityPub.ResolveWebfinger(username, host)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
-			actor, err := activitypub.ResolveRemoteActor(link)
+			actor, err := c.Controllers.ActivityPub.ResolveRemoteActor(link)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
@@ -211,12 +210,12 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 
 		// activitypub
 		// fetch from remote
-		link, err := activitypub.ResolveWebfinger(username, host)
+		link, err := c.Controllers.ActivityPub.ResolveWebfinger(username, host)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		actor, err := activitypub.ResolveRemoteActor(link)
+		actor, err := c.Controllers.ActivityPub.ResolveRemoteActor(link)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
