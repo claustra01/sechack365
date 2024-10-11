@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/claustra01/sechack365/pkg/activitypub"
 	"github.com/claustra01/sechack365/pkg/util"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
@@ -95,18 +94,13 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 			}
 
 			// send follow activity
-			followActivity := activitypub.BuildFollowActivitySchema(follow.Id, follower.Host, follower.Id, followeeUrl)
+			followActivity := c.Controllers.ActivityPub.NewFollowActivity(follow.Id, follower.Host, follower.Id, followeeUrl)
 			followeeActor, err := c.Controllers.ActivityPub.ResolveRemoteActor(followActivity.Object)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
-			signParams := activitypub.SignParams{
-				Host:       c.Config.Host,
-				KeyId:      keyId,
-				PrivateKey: privateKey,
-			}
-			respBody, err := activitypub.SendActivity(followeeActor.Inbox, followActivity, signParams)
+			respBody, err := c.Controllers.ActivityPub.SendActivity(followeeActor.Inbox, followActivity, c.Config.Host, keyId, privateKey)
 			if err != nil {
 				c.Logger.Error("Remote follow error", "ERROR", string(respBody))
 				returnInternalServerError(w, c.Logger, err)
