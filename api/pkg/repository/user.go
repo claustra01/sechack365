@@ -9,6 +9,37 @@ type UserRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
+func (r *UserRepository) Create(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
+	uuid := util.NewUuid()
+	pubKey, prvKey, err := util.GenerateKeyPair()
+	if err != nil {
+		return nil, err
+	}
+	row, err := r.SqlHandler.Query(`
+		INSERT INTO users (id, username, host, protocol, display_name, profile, icon)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		RETURNING *;
+	`, uuid, username, host, protocol, displayName, profile, icon)
+	if err != nil {
+		return nil, err
+	}
+	defer row.Close()
+	if _, err = r.SqlHandler.Query(`
+		INSERT INTO ap_user_identifiers (user_id, public_key, private_key)
+		VALUES ($1, $2, $3);
+	`, uuid, pubKey, prvKey); err != nil {
+		return nil, err
+	}
+	if row.Next() {
+		var user = new(model.User)
+		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.Protocol, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
+			return nil, err
+		}
+		return user, nil
+	}
+	return nil, nil
+}
+
 func (r *UserRepository) FindAll() ([]*model.User, error) {
 	row, err := r.SqlHandler.Query("SELECT * FROM users;")
 	if err != nil {
