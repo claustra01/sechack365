@@ -27,7 +27,9 @@ services:
       - dbdata:/var/lib/postgresql/data
 
   reverse-proxy:
-    build: ./nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.dev
     ports:
       - "${REVERSE_PROXY_PORT}:443"
     depends_on:

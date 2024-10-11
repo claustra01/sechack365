@@ -1,0 +1,7 @@
+FROM nginx:1.27.0-alpine-slim
+
+COPY ./nginx.prod.conf /etc/nginx/nginx.conf
+COPY ./default.crt /etc/nginx/ssl/
+COPY ./default.key /etc/nginx/ssl/
+
+EXPOSE 80 443
