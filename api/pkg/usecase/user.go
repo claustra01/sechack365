@@ -16,6 +16,7 @@ type UserUsecase struct {
 }
 
 type IApUserIdentifierRepository interface {
+	Create(id string) (*model.ApUserIdentifier, error)
 	FindById(id string) (*model.ApUserIdentifier, error)
 }
 
@@ -45,6 +46,10 @@ func (u *UserUsecase) CreateRemoteUser(username, host, protocol, displayName, pr
 
 func (u *UserUsecase) UpdateRemoteUser(username, host, displayName, profile, icon string) (*model.User, error) {
 	return u.UserRepository.UpdateRemoteUser(username, host, displayName, profile, icon)
+}
+
+func (u *ApUserIdentifierUsecase) Create(id string) (*model.ApUserIdentifier, error) {
+	return u.ApUserIdentifierRepository.Create(id)
 }
 
 func (u *ApUserIdentifierUsecase) FindById(id string) (*model.ApUserIdentifier, error) {

@@ -58,6 +58,10 @@ func (c *UserController) UpdateRemoteUser(username, host, displayName, profile, 
 	return c.UserUsecase.UpdateRemoteUser(username, host, displayName, profile, icon)
 }
 
+func (c *ApUserIdentifierController) Create(id string) (*model.ApUserIdentifier, error) {
+	return c.ApUserIdentifierUsecase.Create(id)
+}
+
 func (c *ApUserIdentifierController) FindById(id string) (*model.ApUserIdentifier, error) {
 	return c.ApUserIdentifierUsecase.FindById(id)
 }
