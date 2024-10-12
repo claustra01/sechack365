@@ -50,6 +50,10 @@ func (c *UserController) FindByUsername(username, host string) (*model.User, err
 	return c.UserUsecase.FindByUsername(username, host)
 }
 
+func (c *UserController) DeleteById(id string) error {
+	return c.UserUsecase.DeleteById(id)
+}
+
 func (c *UserController) CreateRemoteUser(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
 	return c.UserUsecase.CreateRemoteUser(username, host, protocol, displayName, profile, icon)
 }
@@ -64,4 +68,8 @@ func (c *ApUserIdentifierController) Create(id string) (*model.ApUserIdentifier,
 
 func (c *ApUserIdentifierController) FindById(id string) (*model.ApUserIdentifier, error) {
 	return c.ApUserIdentifierUsecase.FindById(id)
+}
+
+func (c *ApUserIdentifierController) DeleteById(id string) error {
+	return c.ApUserIdentifierUsecase.DeleteById(id)
 }

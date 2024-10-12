@@ -85,6 +85,17 @@ func (r *UserRepository) FindByUsername(username, host string) (*model.User, err
 	return nil, nil
 }
 
+func (r *UserRepository) DeleteById(id string) error {
+	_, err := r.SqlHandler.Query(`
+		DELETE FROM users
+		WHERE id = $1;
+	`, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *UserRepository) CreateRemoteUser(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
 	uuid := util.NewUuid()
 	row, err := r.SqlHandler.Query(`
@@ -171,4 +182,15 @@ func (r *ApUserIdentifierRepository) FindById(id string) (*model.ApUserIdentifie
 		return apUserIdentifier, nil
 	}
 	return nil, nil
+}
+
+func (r *ApUserIdentifierRepository) DeleteById(id string) error {
+	_, err := r.SqlHandler.Query(`
+		DELETE FROM ap_user_identifiers
+		WHERE user_id = $1;
+	`, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
