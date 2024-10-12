@@ -1,7 +1,6 @@
 package framework
 
 import (
-	"log"
 	"net/http"
 	"strings"
 
@@ -45,7 +44,6 @@ func RecoverMiddleware(logger model.ILogger) MiddlewareFunc {
 func DevApiMiddleware(logger model.ILogger) MiddlewareFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			log.Println(r.Host)
 			if !strings.HasPrefix(r.Host, "localhost") {
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 				return
