@@ -1,3 +1,11 @@
+# start
+up:
+	docker compose -f compose.prod.yaml up -d --build
+
+# stop
+down:
+	docker compose down
+
 # backend static analysis
 lint-api:
 	@if ! command -v $$(go env GOPATH)/bin/golangci-lint > /dev/null 2>&1; then \

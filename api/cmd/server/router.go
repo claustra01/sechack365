@@ -49,6 +49,9 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 	if err := dev.Get("/mock", handler.GenerateMock); err != nil {
 		return err
 	}
+	if err := dev.Get("/reset", handler.ResetMock); err != nil {
+		return err
+	}
 
 	return nil
 }
