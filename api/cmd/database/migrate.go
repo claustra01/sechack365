@@ -1,14 +1,13 @@
 package main
 
 import (
-	"crypto/sha256"
 	"database/sql"
-	"encoding/hex"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
+	"github.com/claustra01/sechack365/pkg/util"
 	_ "github.com/lib/pq"
 )
 
@@ -59,7 +58,11 @@ func mock(conn *sql.DB) {
 	if err != nil {
 		log.Fatalf("failed to read SQL file: %v", err)
 	}
-	replacedMockSql := strings.ReplaceAll(string(mockSql), "$hashed_password$", hex.EncodeToString(sha256.New().Sum([]byte("password"))))
+	hashedPassword, err := util.GenerateHash("password")
+	if err != nil {
+		panic(err)
+	}
+	replacedMockSql := strings.ReplaceAll(string(mockSql), "$hashed_password$", hashedPassword)
 	if _, err = conn.Exec(replacedMockSql); err != nil {
 		panic(err)
 	}
