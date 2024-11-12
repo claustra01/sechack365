@@ -1,4 +1,7 @@
 get:
+  tags:
+    - posts
+  summary: Get Timeline
   responses:
     '200':
       content:

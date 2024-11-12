@@ -1,4 +1,7 @@
 get:
+  tags:
+    - users
+  summary: Lookup (Remote/Local) User
   parameters:
     - $ref: '../../../../components/params/lookup.yaml#/username'
   responses:

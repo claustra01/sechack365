@@ -1,4 +1,7 @@
 post:
+  tags:
+    - auth
+  summary: Logout
   responses:
     '200':
       content:

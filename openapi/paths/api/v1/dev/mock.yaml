@@ -1,0 +1,20 @@
+get:
+  tags:
+    - dev (localhost only)
+  summary: Generate Mock
+  responses:
+    '200':
+      content:
+        application/json:
+          schema:
+            type: object
+    '404':
+      content:
+        application/json:
+          schema:
+            type: object
+    '500':
+      content:
+        application/json:
+          schema:
+            type: object

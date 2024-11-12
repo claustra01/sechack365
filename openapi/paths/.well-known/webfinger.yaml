@@ -1,4 +1,7 @@
 get:
+  tags:
+    - .well-known
+  summary: WebFinger
   parameters:
     - $ref: '../../components/params/.well-known.yaml#/webfinger'
   responses:

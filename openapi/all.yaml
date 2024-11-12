@@ -48,3 +48,8 @@ paths:
     $ref: ./paths/.well-known/nodeinfo.yaml
   /.well-known/webfinger:
     $ref: ./paths/.well-known/webfinger.yaml
+
+  /api/v1/dev/mock:
+    $ref: ./paths/api/v1/dev/mock.yaml
+  /api/v1/dev/reset:
+    $ref: ./paths/api/v1/dev/reset.yaml

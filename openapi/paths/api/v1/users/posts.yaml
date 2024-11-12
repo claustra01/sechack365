@@ -1,4 +1,7 @@
 get:
+  tags:
+    - users
+  summary: Get Latest Posts of User
   parameters:
     - $ref: '../../../../components/params/users.yaml#/id'
   responses:

@@ -1,4 +1,7 @@
 post:
+  tags:
+    - posts
+  summary: Create Post
   requestBody:
     required: true
     content:

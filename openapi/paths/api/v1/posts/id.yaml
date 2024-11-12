@@ -1,4 +1,7 @@
 get:
+  tags:
+    - posts
+  summary: Get Post by ID
   parameters:
     - $ref: '../../../../components/params/posts.yaml#/id'
   responses:

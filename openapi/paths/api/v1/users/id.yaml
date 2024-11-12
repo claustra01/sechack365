@@ -1,4 +1,7 @@
 get:
+  tags:
+    - users
+  summary: Get User by ID
   parameters:
     - $ref: '../../../../components/params/users.yaml#/id'
   responses:

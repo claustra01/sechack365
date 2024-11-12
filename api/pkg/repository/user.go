@@ -9,13 +9,17 @@ type UserRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
-func (r *UserRepository) Create(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
+func (r *UserRepository) Create(username, host, protocol, password, displayName, profile, icon string) (*model.User, error) {
 	uuid := util.NewUuid()
+	hashedPassword, err := util.GenerateHash(password)
+	if err != nil {
+		return nil, err
+	}
 	row, err := r.SqlHandler.Query(`
-		INSERT INTO users (id, username, host, protocol, display_name, profile, icon)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO users (id, username, host, protocol, hashed_password, display_name, profile, icon)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING *;
-	`, uuid, username, host, protocol, displayName, profile, icon)
+	`, uuid, username, host, protocol, hashedPassword, displayName, profile, icon)
 	if err != nil {
 		return nil, err
 	}

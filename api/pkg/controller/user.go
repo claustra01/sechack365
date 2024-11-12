@@ -34,8 +34,8 @@ func NewApUserIdentifierController(conn model.ISqlHandler) *ApUserIdentifierCont
 	}
 }
 
-func (c *UserController) Create(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
-	return c.UserUsecase.Create(username, host, protocol, displayName, profile, icon)
+func (c *UserController) Create(username, host, protocol, password, displayName, profile, icon string) (*model.User, error) {
+	return c.UserUsecase.Create(username, host, protocol, password, displayName, profile, icon)
 }
 
 func (c *UserController) FindAll() ([]*model.User, error) {
