@@ -1,0 +1,30 @@
+post:
+  type: object
+  properties:
+    id:
+      type: string
+    user:
+      $ref: './user.yaml#/user'
+    text:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+  required:
+    - id
+    - user
+    - text
+    - created_at
+    - updated_at
+
+newpost:
+  type: object
+  properties:
+    text:
+      type: string
+  required:
+    - text
+    

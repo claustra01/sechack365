@@ -6,9 +6,9 @@ get:
           schema:
             type: array
             items:
-              $ref: '../../../components/schemas/user.yaml#/user'
+              $ref: '../../../../components/schemas/user.yaml#/user'
     '500':
       content:
         application/json:
           schema:
-            $ref: '../../../components/schemas/errors.yaml#/error-500'
+            $ref: '../../../../components/schemas/errors.yaml#/error-500'

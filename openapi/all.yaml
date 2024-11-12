@@ -4,13 +4,42 @@ info:
   version: 0.1.0
 paths:
 
+  /api/v1/auth/login:
+    $ref: ./paths/api/v1/auth/login.yaml
+  /api/v1/auth/logout:
+    $ref: ./paths/api/v1/auth/logout.yaml
+
+  # NOTE: 将来的に消すかも
   /api/v1/users:
-    $ref: ./paths/api/v1/users.yaml
+    $ref: ./paths/api/v1/users/all.yaml
+
+  # NOTE: 実質的に外部インスタンスからのリクエスト用?
   /api/v1/users/{id}:
-    $ref: ./paths/api/v1/users/{id}.yaml
+    $ref: ./paths/api/v1/users/id.yaml
+
+  /api/v1/users/me:
+    $ref: ./paths/api/v1/users/me.yaml
+  /api/v1/users/{id}/follows:
+    $ref: ./paths/api/v1/users/follows.yaml
+  /api/v1/users/{id}/followers:
+    $ref: ./paths/api/v1/users/followers.yaml
+  /api/v1/users/{id}/posts:
+    $ref: ./paths/api/v1/users/posts.yaml
 
   /api/v1/lookup/{username}:
     $ref: ./paths/api/v1/lookup/{username}.yaml
+  
+  # /api/v1/follows:
+  #   $ref: ./paths/api/v1/follow.yaml
+  # /api/v1/unfollows:
+  #   $ref: ./paths/api/v1/unfollow.yaml
+
+  /api/v1/posts:
+    $ref: ./paths/api/v1/posts/new.yaml
+  /api/v1/posts/{id}:
+    $ref: ./paths/api/v1/posts/id.yaml
+  /api/v1/timeline:
+    $ref: ./paths/api/v1/posts/timeline.yaml
 
   /api/v1/nodeinfo/2.0:
     $ref: ./paths/api/v1/nodeinfo/2.0.yaml

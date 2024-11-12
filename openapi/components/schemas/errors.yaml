@@ -11,6 +11,19 @@ error-400:
     - status_code
     - message
 
+error-401:
+  type: object
+  properties:
+    status_code:
+      type: integer
+      example: 401
+    message:
+      type: string
+      example: Unauthorized
+  required:
+    - status_code
+    - message
+
 error-404:
   type: object
   properties:
