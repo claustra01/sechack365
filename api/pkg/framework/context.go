@@ -2,7 +2,10 @@ package framework
 
 import (
 	"context"
+	"net/http"
+	"time"
 
+	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/controller"
 	"github.com/claustra01/sechack365/pkg/model"
 )
@@ -43,4 +46,21 @@ func NewControllers(conn model.ISqlHandler, ws model.IWsHandler) *Controllers {
 		Nostr:            controller.NewNostrController(ws),
 		Webfinger:        controller.NewWebfingerController(),
 	}
+}
+
+func (c *Context) CurrentUser(r *http.Request) (*model.User, error) {
+	cookie, err := r.Cookie("session")
+	if err != nil || cookie.Value == "" {
+		return nil, cerror.ErrUserNotFound
+	}
+	sessionId := cookie.Value
+	session, ok := Sessions[sessionId]
+	if !ok || session.ExpiredAt.Before(time.Now()) {
+		return nil, cerror.ErrUserNotFound
+	}
+	user, err := c.Controllers.User.FindById(session.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
