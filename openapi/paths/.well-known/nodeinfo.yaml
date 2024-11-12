@@ -1,4 +1,7 @@
 get:
+  tags:
+    - .well-known
+  summary: NodeInfo
   responses:
     '200':
       content:

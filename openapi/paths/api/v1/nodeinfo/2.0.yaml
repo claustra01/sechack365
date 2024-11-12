@@ -1,4 +1,7 @@
 get:
+  tags:
+    - nodeinfo
+  summary: NodeInfo 2.0
   responses:
     '200':
       content:

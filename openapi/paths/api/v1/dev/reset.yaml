@@ -1,4 +1,7 @@
 get:
+  tags:
+    - dev (localhost only)
+  summary: Reset Database
   responses:
     '200':
       content:

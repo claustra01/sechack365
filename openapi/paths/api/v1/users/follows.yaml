@@ -1,4 +1,7 @@
 get:
+  tags:
+    - users
+  summary: Get Follows of User
   parameters:
     - $ref: '../../../../components/params/users.yaml#/id'
   responses:

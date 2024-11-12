@@ -1,4 +1,7 @@
 get:
+  tags:
+    - dev (localhost only)
+  summary: Generate Mock
   responses:
     '200':
       content:

@@ -1,4 +1,7 @@
 get:
+  tags:
+    - users
+  summary: Get All Users (for debug)
   responses:
     '200':
       content:

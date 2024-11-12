@@ -1,4 +1,7 @@
 post:
+  tags:
+    - auth
+  summary: Login
   requestBody:
     required: true
     content:

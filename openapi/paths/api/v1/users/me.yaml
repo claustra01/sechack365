@@ -1,4 +1,7 @@
 get:
+  tags:
+    - users
+  summary: Get Current User
   responses:
     '200':
       content:
