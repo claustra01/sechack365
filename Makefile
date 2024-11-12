@@ -13,16 +13,22 @@ lint-api:
 	fi
 	cd api && $$(go env GOPATH)/bin/golangci-lint run ./...
 
+# db migration
+migrate:
+	docker compose up -d
+	docker compose exec api sh -c "go run cmd/database/migrate.go migrate"
+	docker compose down
+
 # db drop
 drop:
 	docker compose up -d
 	docker compose exec api sh -c "go run cmd/database/migrate.go drop"
 	docker compose down
 
-# db migration
-migrate:
+# db mock
+mock:
 	docker compose up -d
-	docker compose exec api sh -c "go run cmd/database/migrate.go migrate"
+	docker compose exec api sh -c "go run cmd/database/migrate.go mock"
 	docker compose down
 
 # generate openapi docs
