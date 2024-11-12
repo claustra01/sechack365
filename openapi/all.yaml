@@ -4,10 +4,10 @@ info:
   version: 0.1.0
 paths:
 
-  # /api/v1/auth/login:
-  #   $ref: ./paths/api/v1/auth/login.yaml
-  # /api/v1/auth/logout:
-  #   $ref: ./paths/api/v1/auth/logout.yaml
+  /api/v1/auth/login:
+    $ref: ./paths/api/v1/auth/login.yaml
+  /api/v1/auth/logout:
+    $ref: ./paths/api/v1/auth/logout.yaml
 
   # NOTE: 将来的に消すかも
   /api/v1/users:
