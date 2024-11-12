@@ -53,6 +53,14 @@ schema:
 	fi
 	dbml2sql dbdocs/schema.dbml --postgres > api/cmd/database/schema.sql
 
+# generate dbdocs token
+dbdocs-token:
+	@if ! command -v dbdocs > /dev/null 2>&1; then \
+		npm install -g dbdocs; \
+	fi
+	dbdocs login
+	dbdocs token -g
+
 # generate certificate for localhost
 dev-cert:
 	@if ! command -v mkcert > /dev/null 2>&1; then \
