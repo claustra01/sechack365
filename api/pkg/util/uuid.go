@@ -2,8 +2,6 @@ package util
 
 import "github.com/google/uuid"
 
-type Uuid = uuid.UUID
-
-func NewUuid() Uuid {
+func NewUuid() uuid.UUID {
 	return uuid.Must(uuid.NewV7())
 }
