@@ -9,7 +9,7 @@ CREATE TABLE "users" (
   "username" varchar(255) NOT NULL,
   "host" varchar(255) NOT NULL,
   "protocol" protocol NOT NULL,
-  "hashed_password" varchar(255) NOT NULL DEFAULT '',
+  "hashed_password" varchar(255) NOT NULL,
   "display_name" varchar(255),
   "profile" text,
   "icon" varchar(255),
@@ -35,8 +35,18 @@ CREATE TABLE "follows" (
   PRIMARY KEY ("follower_id", "followee_id")
 );
 
+CREATE TABLE "posts" (
+  "id" varchar(255) PRIMARY KEY,
+  "user_id" varchar(255),
+  "content" text NOT NULL,
+  "created_at" timestamp DEFAULT 'NOW()',
+  "updated_at" timestamp DEFAULT 'NOW()'
+);
+
 ALTER TABLE "ap_user_identifiers" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "follows" ADD FOREIGN KEY ("follower_id") REFERENCES "users" ("id");
 
 ALTER TABLE "follows" ADD FOREIGN KEY ("followee_id") REFERENCES "users" ("id");
+
+ALTER TABLE "posts" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
