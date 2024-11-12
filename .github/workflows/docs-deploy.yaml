@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/workflows/docs-deploy.yaml'
 
 permissions:
   contents: read
@@ -10,7 +12,8 @@ permissions:
   pages: write
 
 jobs:
-  deploy:
+
+  openapi-deploy:
     runs-on: ubuntu-latest
     steps:
 
@@ -31,3 +34,26 @@ jobs:
       id: deployment
       with:
         branch: ${{ github.head_ref }}
+
+  dbdocs-deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Instal dbdocs
+      run: npm install -g dbdocs
+
+    - name: Check dbdocs
+      run: dbdocs
+
+    - name: Update dbdocs project
+      env:
+        DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
+      run: dbdocs build ./dbdocs/schema.dbml --project Ecommerce
