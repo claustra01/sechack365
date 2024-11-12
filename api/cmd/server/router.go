@@ -21,6 +21,9 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 	if err := users.Get("", handler.GetAllUsers); err != nil {
 		return err
 	}
+	if err := users.Get("/me", handler.GetCurrentUser, framework.AuthMiddleware(lg)); err != nil {
+		return err
+	}
 	if err := users.Get("/{id}", handler.GetUser); err != nil {
 		return err
 	}

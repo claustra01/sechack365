@@ -82,6 +82,18 @@ func GetUser(c *framework.Context) http.HandlerFunc {
 	}
 }
 
+func GetCurrentUser(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user, err := c.CurrentUser(r)
+		if err != nil {
+			returnInternalServerError(w, c.Logger, err)
+			return
+		}
+		omittedUser := OmitUser(user)
+		jsonResponse(w, omittedUser)
+	}
+}
+
 // FIXME: nostrユーザーの捜索は本来hashではなくnpub...の文字列で行うべき
 func LookupUser(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
