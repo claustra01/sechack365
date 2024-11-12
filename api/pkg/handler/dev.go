@@ -30,7 +30,7 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 				panic(err)
 			}
 		}()
-		user, err := c.Controllers.User.Create("mock", c.Config.Host, "local", "Mock User", "This is mock user", "https://placehold.jp/150x150.png")
+		user, err := c.Controllers.User.Create("mock", c.Config.Host, "local", "password", "Mock User", "This is mock user", "https://placehold.jp/150x150.png")
 		if err != nil {
 			panic(err)
 		}
