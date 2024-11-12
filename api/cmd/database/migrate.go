@@ -1,10 +1,13 @@
 package main
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	_ "github.com/lib/pq"
 )
@@ -24,6 +27,8 @@ func main() {
 		drop(conn)
 	case "migrate":
 		migrate(conn)
+	case "mock":
+		mock(conn)
 	}
 }
 
@@ -47,4 +52,16 @@ func migrate(conn *sql.DB) {
 		panic(err)
 	}
 	fmt.Println("migration successed")
+}
+
+func mock(conn *sql.DB) {
+	mockSql, err := os.ReadFile("cmd/database/mock.sql")
+	if err != nil {
+		log.Fatalf("failed to read SQL file: %v", err)
+	}
+	replacedMockSql := strings.ReplaceAll(string(mockSql), "$hashed_password$", hex.EncodeToString(sha256.New().Sum([]byte("password"))))
+	if _, err = conn.Exec(replacedMockSql); err != nil {
+		panic(err)
+	}
+	fmt.Println("mock data inserted")
 }
