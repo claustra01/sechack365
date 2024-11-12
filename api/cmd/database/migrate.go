@@ -39,7 +39,7 @@ func drop(conn *sql.DB) {
 }
 
 func migrate(conn *sql.DB) {
-	migrateSql, err := os.ReadFile("cmd/database/migrate.sql")
+	migrateSql, err := os.ReadFile("cmd/database/schema.sql")
 	if err != nil {
 		log.Fatalf("failed to read SQL file: %v", err)
 	}

@@ -46,6 +46,21 @@ oapi-codegen:
 # generate all openapi files
 openapi: redocly oapi-codegen
 
+# generate sql from dbdocs
+schema:
+	@if ! command -v dbml2sql > /dev/null 2>&1; then \
+		npm install -g @dbml/cli; \
+	fi
+	dbml2sql dbdocs/schema.dbml --postgres > api/cmd/database/schema.sql
+
+# generate dbdocs token
+dbdocs-token:
+	@if ! command -v dbdocs > /dev/null 2>&1; then \
+		npm install -g dbdocs; \
+	fi
+	dbdocs login
+	dbdocs token -g
+
 # generate certificate for localhost
 dev-cert:
 	@if ! command -v mkcert > /dev/null 2>&1; then \

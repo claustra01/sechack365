@@ -1,0 +1,24 @@
+name: dbdocs-ci
+on:
+  push:
+    paths:
+      - 'dbdocs/**'
+      - '.github/workflows/dbdocs-ci.yaml'
+
+jobs:
+  sqlgen:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: dbdocs check
+        run: |
+          make dbdocs
+          git diff -- api/cmd/database/schema.sql --exit-code

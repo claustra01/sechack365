@@ -7,3 +7,5 @@ nginx/*.key
 
 openapi/all.gen.yaml
 openapi/index.html
+
+dbml-error.log

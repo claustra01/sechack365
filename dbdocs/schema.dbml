@@ -1,6 +1,7 @@
 Enum protocol {
   local
   activitypub
+  nostr
 }
 
 Table users {
@@ -8,7 +9,7 @@ Table users {
   username varchar(255) [not null]
   host varchar(255) [not null]
   protocol protocol [not null]
-  hashed_password varchar(255) [not null, default: ""]
+  hashed_password varchar(255) [not null]
   display_name varchar(255)
   profile text
   icon varchar(255)
@@ -29,6 +30,14 @@ Table follows {
   follower_id varchar(255) [pk, ref: > users.id]
   followee_id varchar(255) [pk, ref: > users.id]
   is_accepted boolean [not null, default: false]
+  created_at timestamp [default: "NOW()"]
+  updated_at timestamp [default: "NOW()"]
+}
+
+Table posts {
+  id varchar(255) [pk]
+  user_id varchar(255) [ref: > users.id]
+  content text [not null]
   created_at timestamp [default: "NOW()"]
   updated_at timestamp [default: "NOW()"]
 }
