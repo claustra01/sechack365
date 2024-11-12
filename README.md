@@ -4,3 +4,6 @@ SecHack365'24 開発駆動コース仲山ゼミ
 
 ## OpenAPI Docs
 https://claustra01.github.io/sechack365/
+
+## DBDocs
+https://dbdocs.io/shinya430.g/sechack365
