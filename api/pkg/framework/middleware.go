@@ -62,7 +62,7 @@ func AuthMiddleware(logger model.ILogger) MiddlewareFunc {
 			}
 			sessionId := cookie.Value
 			session, ok := Sessions[sessionId]
-			if ok && session.ExpiredAt.After(time.Now()) {
+			if !ok || session.ExpiredAt.Before(time.Now()) {
 				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 				return
 			}
