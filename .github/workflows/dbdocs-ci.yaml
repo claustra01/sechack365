@@ -6,7 +6,7 @@ on:
       - '.github/workflows/dbdocs-ci.yaml'
 
 jobs:
-  codegen:
+  sqlgen:
     runs-on: ubuntu-latest
     steps:
 
