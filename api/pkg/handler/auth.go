@@ -10,16 +10,6 @@ import (
 	"github.com/claustra01/sechack365/pkg/util"
 )
 
-// TODO: save session to database or cache
-type Session struct {
-	Id        util.Uuid
-	UserId    string
-	CreatedAt time.Time
-	ExpiredAt time.Time
-}
-
-var sessions = make(map[util.Uuid]Session)
-
 func Login(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var authRequestBody openapi.Auth
@@ -48,15 +38,15 @@ func Login(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		for _, session := range sessions {
+		for _, session := range framework.Sessions {
 			if session.UserId == user.Id {
-				delete(sessions, session.Id)
+				delete(framework.Sessions, session.Id)
 				break
 			}
 		}
 
-		sessionId := util.NewUuid()
-		sessions[sessionId] = Session{
+		sessionId := util.NewUuid().String()
+		framework.Sessions[sessionId] = framework.Session{
 			Id:        sessionId,
 			UserId:    user.Id,
 			CreatedAt: time.Now(),
@@ -64,13 +54,23 @@ func Login(c *framework.Context) http.HandlerFunc {
 		}
 		http.SetCookie(w, &http.Cookie{
 			Name:     "session",
-			Value:    sessionId.String(),
+			Value:    sessionId,
 			HttpOnly: true,
 			Secure:   true,
-			Expires:  sessions[sessionId].ExpiredAt,
+			Expires:  framework.Sessions[sessionId].ExpiredAt,
 		})
 
 		omittedUser := OmitUser(user)
 		jsonResponse(w, omittedUser)
+	}
+}
+
+func Logout(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// NOTE: cookie is checked in AuthMiddleware
+		cookie, _ := r.Cookie("session")
+		sessionId := cookie.Value
+		delete(framework.Sessions, sessionId)
+		jsonResponse(w, nil)
 	}
 }
