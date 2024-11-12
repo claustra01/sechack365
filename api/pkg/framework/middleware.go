@@ -3,11 +3,22 @@ package framework
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/claustra01/sechack365/pkg/model"
 )
 
 type MiddlewareFunc func(http.HandlerFunc) http.HandlerFunc
+
+// TODO: save session to database or cache
+type Session struct {
+	Id        string
+	UserId    string
+	CreatedAt time.Time
+	ExpiredAt time.Time
+}
+
+var Sessions = make(map[string]Session)
 
 func chain(middleware ...MiddlewareFunc) MiddlewareFunc {
 	return func(handler http.HandlerFunc) http.HandlerFunc {
@@ -36,6 +47,24 @@ func RecoverMiddleware(logger model.ILogger) MiddlewareFunc {
 					http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 				}
 			}()
+			next(w, r)
+		}
+	}
+}
+
+func AuthMiddleware(logger model.ILogger) MiddlewareFunc {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			cookie, err := r.Cookie("session")
+			if err != nil || cookie.Value == "" {
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
+			sessionId := cookie.Value
+			if _, ok := Sessions[sessionId]; !ok {
+				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+				return
+			}
 			next(w, r)
 		}
 	}

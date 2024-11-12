@@ -31,6 +31,9 @@ mock:
 	docker compose exec api sh -c "go run cmd/database/migrate.go mock"
 	docker compose down
 
+# refresh db mock
+refresh-mock: drop migrate mock
+
 # generate openapi docs
 redocly:
 	@if ! command -v redocly > /dev/null 2>&1; then \

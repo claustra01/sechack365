@@ -47,6 +47,21 @@ func returnBadRequest(w http.ResponseWriter, logger model.ILogger, errInput erro
 	http.Error(w, string(body), http.StatusInternalServerError)
 }
 
+func returnUnauthorized(w http.ResponseWriter, logger model.ILogger, errInput error) {
+	logger.Warn("Unauthorized", "Error", errInput)
+	resp := &openapi.Error401{
+		StatusCode: http.StatusUnauthorized,
+		Message:    "Unauthorized",
+	}
+	body, err := json.Marshal(resp)
+	if err != nil {
+		// NOTE: err should be nil
+		panic(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	http.Error(w, string(body), http.StatusInternalServerError)
+}
+
 func returnNotFound(w http.ResponseWriter, logger model.ILogger, errInput error) {
 	logger.Warn("Not Found", "Error", errInput)
 	resp := &openapi.Error404{

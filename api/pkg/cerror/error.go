@@ -7,6 +7,7 @@ import (
 )
 
 var ErrUserNotFound = fmt.Errorf("user not found")
+var ErrInvalidPassword = fmt.Errorf("invalid password")
 
 var ErrInvalidResourseQuery = fmt.Errorf("invalid resource query")
 var ErrResolveWebfinger = fmt.Errorf("failed to resolve webfinger")
