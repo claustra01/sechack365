@@ -27,3 +27,11 @@ func (c *FollowController) Create(followerId, followeeId string) (*model.Follow,
 func (c *FollowController) UpdateAcceptFollow(followerId, followeeId string) (*model.Follow, error) {
 	return c.FollowUsecase.UpdateAcceptFollow(followerId, followeeId)
 }
+
+func (c *FollowController) FindFollowsByUserId(userId string) ([]*model.User, error) {
+	return c.FollowUsecase.FindFollowsByUserId(userId)
+}
+
+func (c *FollowController) FindFollowersByUserId(userId string) ([]*model.User, error) {
+	return c.FollowUsecase.FindFollowersByUserId(userId)
+}
