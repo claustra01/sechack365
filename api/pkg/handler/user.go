@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"regexp"
 	"time"
@@ -91,6 +92,40 @@ func GetCurrentUser(c *framework.Context) http.HandlerFunc {
 		}
 		omittedUser := OmitUser(user)
 		jsonResponse(w, omittedUser)
+	}
+}
+
+func GetUserFollows(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		follows, err := c.Controllers.Follow.FindFollowsByUserId(id)
+		if err != nil {
+			returnInternalServerError(w, c.Logger, err)
+			return
+		}
+		var omittedFollows []*openapi.User
+		for _, user := range follows {
+			omittedFollows = append(omittedFollows, OmitUser(user))
+		}
+		log.Println(omittedFollows)
+		jsonResponse(w, omittedFollows)
+	}
+}
+
+func GetUserFollowers(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		followers, err := c.Controllers.Follow.FindFollowersByUserId(id)
+		if err != nil {
+			returnInternalServerError(w, c.Logger, err)
+			return
+		}
+		var omittedFollowers []*openapi.User
+		for _, user := range followers {
+			omittedFollowers = append(omittedFollowers, OmitUser(user))
+		}
+		log.Println(omittedFollowers)
+		jsonResponse(w, omittedFollowers)
 	}
 }
 

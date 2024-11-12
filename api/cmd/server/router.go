@@ -33,6 +33,12 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 	if err := users.Post("/{id}/outbox", handler.ActorOutbox); err != nil {
 		return err
 	}
+	if err := users.Get("/{id}/follows", handler.GetUserFollows); err != nil {
+		return err
+	}
+	if err := users.Get("/{id}/followers", handler.GetUserFollowers); err != nil {
+		return err
+	}
 
 	follow := api.Group("/follows")
 	if err := follow.Post("", handler.CreateFollow); err != nil {
