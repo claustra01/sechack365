@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
-	"github.com/claustra01/sechack365/pkg/util"
 	_ "github.com/lib/pq"
 )
 
@@ -26,8 +24,6 @@ func main() {
 		drop(conn)
 	case "migrate":
 		migrate(conn)
-	case "mock":
-		mock(conn)
 	}
 }
 
@@ -51,20 +47,4 @@ func migrate(conn *sql.DB) {
 		panic(err)
 	}
 	fmt.Println("migration successed")
-}
-
-func mock(conn *sql.DB) {
-	mockSql, err := os.ReadFile("cmd/database/mock.sql")
-	if err != nil {
-		log.Fatalf("failed to read SQL file: %v", err)
-	}
-	hashedPassword, err := util.GenerateHash("password")
-	if err != nil {
-		panic(err)
-	}
-	replacedMockSql := strings.ReplaceAll(string(mockSql), "$hashed_password$", hashedPassword)
-	if _, err = conn.Exec(replacedMockSql); err != nil {
-		panic(err)
-	}
-	fmt.Println("mock data inserted")
 }

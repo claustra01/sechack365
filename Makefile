@@ -25,14 +25,8 @@ drop:
 	docker compose exec api sh -c "go run cmd/database/migrate.go drop"
 	docker compose down
 
-# db mock
-mock:
-	docker compose up -d
-	docker compose exec api sh -c "go run cmd/database/migrate.go mock"
-	docker compose down
-
-# refresh db mock
-refresh-mock: drop migrate mock
+# refresh tables
+refresh-tables: drop migrate
 
 # generate openapi docs
 redocly:
