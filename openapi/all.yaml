@@ -23,6 +23,8 @@ paths:
     $ref: ./paths/api/v1/users/follows.yaml
   /api/v1/users/{id}/followers:
     $ref: ./paths/api/v1/users/followers.yaml
+  /api/v1/users/{id}/posts:
+    $ref: ./paths/api/v1/users/posts.yaml
 
   /api/v1/lookup/{username}:
     $ref: ./paths/api/v1/lookup/{username}.yaml
@@ -32,12 +34,12 @@ paths:
   # /api/v1/unfollows:
   #   $ref: ./paths/api/v1/unfollow.yaml
 
-  # /api/v1/posts:
-  #   $ref: ./paths/api/v1/posts.yaml
-  # /api/v1/posts/{id}:
-  #   $ref: ./paths/api/v1/posts_id.yaml
-  # /api/v1/timeline:
-  #   $ref: ./paths/api/v1/timeline.yaml
+  /api/v1/posts:
+    $ref: ./paths/api/v1/posts/new.yaml
+  /api/v1/posts/{id}:
+    $ref: ./paths/api/v1/posts/id.yaml
+  /api/v1/timeline:
+    $ref: ./paths/api/v1/posts/timeline.yaml
 
   /api/v1/nodeinfo/2.0:
     $ref: ./paths/api/v1/nodeinfo/2.0.yaml
