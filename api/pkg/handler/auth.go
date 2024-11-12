@@ -48,6 +48,13 @@ func Login(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
+		for _, session := range sessions {
+			if session.UserId == user.Id {
+				delete(sessions, session.Id)
+				break
+			}
+		}
+
 		sessionId := util.NewUuid()
 		sessions[sessionId] = Session{
 			Id:        sessionId,
