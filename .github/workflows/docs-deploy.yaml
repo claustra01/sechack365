@@ -1,6 +1,10 @@
 name: github-pages
 on: 
   push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/docs-deploy.yaml'
 
 permissions:
   contents: read
@@ -52,4 +56,4 @@ jobs:
     - name: Update dbdocs project
       env:
         DBDOCS_TOKEN: ${{ secrets.DBDOCS_TOKEN }}
-      run: dbdocs build ./dbdocs/schema.dbml --project Ecommerce
+      run: dbdocs build ./dbdocs/schema.dbml --project sechack365
