@@ -39,7 +39,7 @@ func Login(c *framework.Context) http.HandlerFunc {
 		}
 
 		for _, session := range framework.Sessions {
-			if session.UserId == user.Id {
+			if session.UserId == user.Id && session.ExpiredAt.Before(time.Now()) {
 				delete(framework.Sessions, session.Id)
 				break
 			}
