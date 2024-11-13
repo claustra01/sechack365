@@ -49,6 +49,11 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 		return err
 	}
 
+	post := api.Group("/posts")
+	if err := post.Post("", handler.CreatePost, framework.AuthMiddleware(lg)); err != nil {
+		return err
+	}
+
 	ni := api.Group("/nodeinfo")
 	if err := ni.Get("/2.0", handler.Nodeinfo2_0); err != nil {
 		return err
