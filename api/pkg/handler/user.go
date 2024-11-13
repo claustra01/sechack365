@@ -129,6 +129,32 @@ func GetUserFollowers(c *framework.Context) http.HandlerFunc {
 	}
 }
 
+func GetUserTimeline(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userId := r.PathValue("id")
+		createdAtStr := r.URL.Query().Get("created_at")
+		var createdAt time.Time
+		if createdAtStr != "" {
+			var err error
+			createdAt, err = util.StrToTime(createdAtStr)
+			if err != nil {
+				returnBadRequest(w, c.Logger, err)
+				return
+			}
+		} else {
+			createdAt = time.Now()
+		}
+
+		posts, err := c.Controllers.Post.FindUserTimeline(userId, createdAt, TimelineLimit)
+		if err != nil {
+			returnInternalServerError(w, c.Logger, err)
+			return
+		}
+
+		jsonResponse(w, posts)
+	}
+}
+
 // FIXME: nostrユーザーの捜索は本来hashではなくnpub...の文字列で行うべき
 func LookupUser(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
