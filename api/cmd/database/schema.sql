@@ -13,16 +13,16 @@ CREATE TABLE "users" (
   "display_name" varchar(255),
   "profile" text,
   "icon" varchar(255),
-  "created_at" timestamp DEFAULT 'NOW()',
-  "updated_at" timestamp DEFAULT 'NOW()'
+  "created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "ap_user_identifiers" (
   "user_id" varchar(255) PRIMARY KEY,
   "public_key" text NOT NULL,
   "private_key" text NOT NULL,
-  "created_at" timestamp DEFAULT 'NOW()',
-  "updated_at" timestamp DEFAULT 'NOW()'
+  "created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "follows" (
@@ -30,8 +30,8 @@ CREATE TABLE "follows" (
   "follower_id" varchar(255),
   "followee_id" varchar(255),
   "is_accepted" boolean NOT NULL DEFAULT false,
-  "created_at" timestamp DEFAULT 'NOW()',
-  "updated_at" timestamp DEFAULT 'NOW()',
+  "created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY ("follower_id", "followee_id")
 );
 
@@ -39,8 +39,8 @@ CREATE TABLE "posts" (
   "id" varchar(255) PRIMARY KEY,
   "user_id" varchar(255),
   "content" text NOT NULL,
-  "created_at" timestamp DEFAULT 'NOW()',
-  "updated_at" timestamp DEFAULT 'NOW()'
+  "created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE "ap_user_identifiers" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");

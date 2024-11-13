@@ -13,16 +13,16 @@ Table users {
   display_name varchar(255)
   profile text
   icon varchar(255)
-  created_at timestamp [default: "NOW()"]
-  updated_at timestamp [default: "NOW()"]
+  created_at timestamp [default: "CURRENT_TIMESTAMP"]
+  updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }
 
 Table ap_user_identifiers {
   user_id varchar(255) [pk, ref: - users.id]
   public_key text [not null]
   private_key text [not null]
-  created_at timestamp [default: "NOW()"]
-  updated_at timestamp [default: "NOW()"]
+  created_at timestamp [default: "CURRENT_TIMESTAMP"]
+  updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }
 
 Table follows {
@@ -30,14 +30,14 @@ Table follows {
   follower_id varchar(255) [pk, ref: > users.id]
   followee_id varchar(255) [pk, ref: > users.id]
   is_accepted boolean [not null, default: false]
-  created_at timestamp [default: "NOW()"]
-  updated_at timestamp [default: "NOW()"]
+  created_at timestamp [default: "CURRENT_TIMESTAMP"]
+  updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }
 
 Table posts {
   id varchar(255) [pk]
   user_id varchar(255) [ref: > users.id]
   content text [not null]
-  created_at timestamp [default: "NOW()"]
-  updated_at timestamp [default: "NOW()"]
+  created_at timestamp [default: "CURRENT_TIMESTAMP"]
+  updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }
