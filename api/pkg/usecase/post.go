@@ -6,8 +6,6 @@ import (
 	"github.com/claustra01/sechack365/pkg/model"
 )
 
-const TimelineLimit = 10
-
 type IPostRepository interface {
 	Create(userId, content string) (*model.Post, error)
 	FindById(id string) (*model.Post, error)

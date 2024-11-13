@@ -39,6 +39,9 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 	if err := users.Get("/{id}/followers", handler.GetUserFollowers); err != nil {
 		return err
 	}
+	if err := users.Get("/{id}/timeline", handler.GetUserTimeline); err != nil {
+		return err
+	}
 
 	follow := api.Group("/follows")
 	if err := follow.Post("", handler.CreateFollow); err != nil {
@@ -51,6 +54,13 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 
 	post := api.Group("/posts")
 	if err := post.Post("", handler.CreatePost, framework.AuthMiddleware(lg)); err != nil {
+		return err
+	}
+	if err := post.Get("/{id}", handler.GetPost); err != nil {
+		return err
+	}
+
+	if err := api.Get("/timeline", handler.GetTimeline); err != nil {
 		return err
 	}
 
