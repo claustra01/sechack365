@@ -55,7 +55,7 @@ func (r *PostRepository) FindTimeline(createdAt time.Time, limit int) ([]*model.
 	row, err := r.SqlHandler.Query(`
 		SELECT * FROM posts
 		WHERE created_at < $1
-		LIMIT $2
+		ORDER BY created_at ASC LIMIT $2 ;
 	`, createdAt, limit)
 	if err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func (r *PostRepository) FindUserTimeline(userId string, createdAt time.Time, li
 	row, err := r.SqlHandler.Query(`
 		SELECT * FROM posts
 		WHERE user_id = $1 AND created_at < $2
-		LIMIT $3
+		ORDER BY created_at DESC LIMIT $3;
 	`, userId, createdAt, limit)
 	if err != nil {
 		return nil, err
