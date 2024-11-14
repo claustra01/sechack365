@@ -1,27 +1,11 @@
 "use client";
-import { PostCard } from "@/components/PostCard/PostCard";
-import { UserProfile } from "@/components/Profile/UserProfile";
-import { getApiV1PostsId, getApiV1UsersId } from "@/openapi";
-import type { Post, User } from "@/openapi/schemas";
-import React from "react";
+import { GuestTimeline } from "@/components/Timeline/GuestTimeline";
 
 export default function Home() {
-	const [data, setData] = React.useState<User | null>(null);
-
-	React.useEffect(() => {
-		getApiV1UsersId("019324b7-ab40-7c7c-ada1-702fe243847f").then((response) => {
-			setData(response.data as unknown as User);
-		});
-	}, []);
-
-	if (!data) {
-		return <main>Loading...</main>;
-	}
-
 	return (
 		<main>
 			<div>
-				<UserProfile {...data} />
+				<GuestTimeline />
 			</div>
 		</main>
 	);
