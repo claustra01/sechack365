@@ -21,7 +21,7 @@ export const PostUserCard = (props: User) => {
 		<Box style={{ display: "flex", alignItems: "center", gap: "24px" }}>
 			<Avatar src={props.icon} size="lg" />
 			<Box style={{ display: "flex", flexDirection: "column" }}>
-				<Title size="h5" fw={500}>
+				<Title size="h4" fw={500}>
 					{props.display_name}
 				</Title>
 				<Box>
