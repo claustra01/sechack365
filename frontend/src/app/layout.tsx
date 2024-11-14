@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
+import AxiosProvider from "./AxiosProvider";
+import ReactQueryProvider from "./ReactQueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,13 +19,15 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" suppressHydrationWarning>
-			<head>
-				<ColorSchemeScript />
-			</head>
-			<body>
-				<MantineProvider>{children}</MantineProvider>
-			</body>
-		</html>
+		<AxiosProvider>
+			<html lang="en" suppressHydrationWarning>
+				<head>
+					<ColorSchemeScript />
+				</head>
+				<body>
+					<MantineProvider>{children}</MantineProvider>
+				</body>
+			</html>
+		</AxiosProvider>
 	);
 }
