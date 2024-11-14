@@ -4,21 +4,12 @@
  * SecHack365
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type {
-	DefinedInitialDataOptions,
-	DefinedUseQueryResult,
-	MutationFunction,
-	QueryFunction,
-	QueryKey,
-	UndefinedInitialDataOptions,
-	UseMutationOptions,
-	UseMutationResult,
-	UseQueryOptions,
-	UseQueryResult,
-} from "@tanstack/react-query";
 import axios from "axios";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import useSwr from "swr";
+import type { Arguments, Key, SWRConfiguration } from "swr";
+import useSWRMutation from "swr/mutation";
+import type { SWRMutationConfiguration } from "swr/mutation";
 import type {
 	Actor,
 	Auth,
@@ -52,41 +43,19 @@ export const postApiV1AuthLogin = (
 	return axios.post("/api/v1/auth/login", auth, options);
 };
 
-export const getPostApiV1AuthLoginMutationOptions = <
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
-	TContext = unknown,
->(options?: {
-	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof postApiV1AuthLogin>>,
-		TError,
-		{ data: Auth },
-		TContext
-	>;
-	axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-	Awaited<ReturnType<typeof postApiV1AuthLogin>>,
-	TError,
-	{ data: Auth },
-	TContext
-> => {
-	const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
-
-	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof postApiV1AuthLogin>>,
-		{ data: Auth }
-	> = (props) => {
-		const { data } = props ?? {};
-
-		return postApiV1AuthLogin(data, axiosOptions);
+export const getPostApiV1AuthLoginMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (_: Key, { arg }: { arg: Auth }): Promise<AxiosResponse<User>> => {
+		return postApiV1AuthLogin(arg, options);
 	};
-
-	return { mutationFn, ...mutationOptions };
 };
+export const getPostApiV1AuthLoginMutationKey = () =>
+	["/api/v1/auth/login"] as const;
 
 export type PostApiV1AuthLoginMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1AuthLogin>>
 >;
-export type PostApiV1AuthLoginMutationBody = Auth;
 export type PostApiV1AuthLoginMutationError = AxiosError<
 	Error400 | Error401 | Error404 | Error500
 >;
@@ -96,24 +65,27 @@ export type PostApiV1AuthLoginMutationError = AxiosError<
  */
 export const usePostApiV1AuthLogin = <
 	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
-	TContext = unknown,
 >(options?: {
-	mutation?: UseMutationOptions<
+	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1AuthLogin>>,
 		TError,
-		{ data: Auth },
-		TContext
-	>;
+		Key,
+		Auth,
+		Awaited<ReturnType<typeof postApiV1AuthLogin>>
+	> & { swrKey?: string };
 	axios?: AxiosRequestConfig;
-}): UseMutationResult<
-	Awaited<ReturnType<typeof postApiV1AuthLogin>>,
-	TError,
-	{ data: Auth },
-	TContext
-> => {
-	const mutationOptions = getPostApiV1AuthLoginMutationOptions(options);
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	return useMutation(mutationOptions);
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1AuthLoginMutationKey();
+	const swrFn = getPostApiV1AuthLoginMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
 };
 
 /**
@@ -125,39 +97,22 @@ export const postApiV1AuthLogout = (
 	return axios.post("/api/v1/auth/logout", undefined, options);
 };
 
-export const getPostApiV1AuthLogoutMutationOptions = <
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
-	TContext = unknown,
->(options?: {
-	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof postApiV1AuthLogout>>,
-		TError,
-		void,
-		TContext
-	>;
-	axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-	Awaited<ReturnType<typeof postApiV1AuthLogout>>,
-	TError,
-	void,
-	TContext
-> => {
-	const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
-
-	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof postApiV1AuthLogout>>,
-		void
-	> = () => {
-		return postApiV1AuthLogout(axiosOptions);
+export const getPostApiV1AuthLogoutMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		__: { arg: Arguments },
+	): Promise<AxiosResponse<PostApiV1AuthLogout200>> => {
+		return postApiV1AuthLogout(options);
 	};
-
-	return { mutationFn, ...mutationOptions };
 };
+export const getPostApiV1AuthLogoutMutationKey = () =>
+	["/api/v1/auth/logout"] as const;
 
 export type PostApiV1AuthLogoutMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1AuthLogout>>
 >;
-
 export type PostApiV1AuthLogoutMutationError = AxiosError<
 	Error400 | Error401 | Error404 | Error500
 >;
@@ -167,24 +122,27 @@ export type PostApiV1AuthLogoutMutationError = AxiosError<
  */
 export const usePostApiV1AuthLogout = <
 	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
-	TContext = unknown,
 >(options?: {
-	mutation?: UseMutationOptions<
+	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1AuthLogout>>,
 		TError,
-		void,
-		TContext
-	>;
+		Key,
+		Arguments,
+		Awaited<ReturnType<typeof postApiV1AuthLogout>>
+	> & { swrKey?: string };
 	axios?: AxiosRequestConfig;
-}): UseMutationResult<
-	Awaited<ReturnType<typeof postApiV1AuthLogout>>,
-	TError,
-	void,
-	TContext
-> => {
-	const mutationOptions = getPostApiV1AuthLogoutMutationOptions(options);
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	return useMutation(mutationOptions);
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1AuthLogoutMutationKey();
+	const swrFn = getPostApiV1AuthLogoutMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
 };
 
 /**
@@ -196,105 +154,41 @@ export const getApiV1Users = (
 	return axios.get("/api/v1/users", options);
 };
 
-export const getGetApiV1UsersQueryKey = () => {
-	return ["/api/v1/users"] as const;
-};
-
-export const getGetApiV1UsersQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1Users>>,
-	TError = AxiosError<Error500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1Users>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey = queryOptions?.queryKey ?? getGetApiV1UsersQueryKey();
-
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1Users>>> = ({
-		signal,
-	}) => getApiV1Users({ signal, ...axiosOptions });
-
-	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1Users>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1UsersKey = () => ["/api/v1/users"] as const;
 
 export type GetApiV1UsersQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1Users>>
 >;
 export type GetApiV1UsersQueryError = AxiosError<Error500>;
 
-export function useGetApiV1Users<
-	TData = Awaited<ReturnType<typeof getApiV1Users>>,
-	TError = AxiosError<Error500>,
->(options: {
-	query: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1Users>>, TError, TData>
-	> &
-		Pick<
-			DefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1Users>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1Users<
-	TData = Awaited<ReturnType<typeof getApiV1Users>>,
-	TError = AxiosError<Error500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1Users>>, TError, TData>
-	> &
-		Pick<
-			UndefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1Users>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1Users<
-	TData = Awaited<ReturnType<typeof getApiV1Users>>,
-	TError = AxiosError<Error500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1Users>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Get All Users (for debug)
  */
-
-export function useGetApiV1Users<
-	TData = Awaited<ReturnType<typeof getApiV1Users>>,
-	TError = AxiosError<Error500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1Users>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1UsersQueryOptions(options);
-
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+export const useGetApiV1Users = <TError = AxiosError<Error500>>(options?: {
+	swr?: SWRConfiguration<Awaited<ReturnType<typeof getApiV1Users>>, TError> & {
+		swrKey?: Key;
+		enabled?: boolean;
 	};
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	query.queryKey = queryOptions.queryKey;
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ?? (() => (isEnabled ? getGetApiV1UsersKey() : null));
+	const swrFn = () => getApiV1Users(axiosOptions);
 
-	return query;
-}
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
 
 /**
  * @summary Get User by ID
@@ -306,45 +200,8 @@ export const getApiV1UsersId = (
 	return axios.get(`/api/v1/users/${id}`, options);
 };
 
-export const getGetApiV1UsersIdQueryKey = (id: string) => {
-	return [`/api/v1/users/${id}`] as const;
-};
-
-export const getGetApiV1UsersIdQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1UsersId>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersId>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey = queryOptions?.queryKey ?? getGetApiV1UsersIdQueryKey(id);
-
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UsersId>>> = ({
-		signal,
-	}) => getApiV1UsersId(id, { signal, ...axiosOptions });
-
-	return {
-		queryKey,
-		queryFn,
-		enabled: !!id,
-		...queryOptions,
-	} as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1UsersId>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1UsersIdKey = (id: string) =>
+	[`/api/v1/users/${id}`] as const;
 
 export type GetApiV1UsersIdQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersId>>
@@ -353,100 +210,40 @@ export type GetApiV1UsersIdQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-export function useGetApiV1UsersId<
-	TData = Awaited<ReturnType<typeof getApiV1UsersId>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options: {
-		query: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersId>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1UsersId>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1UsersId<
-	TData = Awaited<ReturnType<typeof getApiV1UsersId>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersId>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1UsersId>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1UsersId<
-	TData = Awaited<ReturnType<typeof getApiV1UsersId>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersId>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Get User by ID
  */
-
-export function useGetApiV1UsersId<
-	TData = Awaited<ReturnType<typeof getApiV1UsersId>>,
+export const useGetApiV1UsersId = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
 	id: string,
 	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersId>>,
-				TError,
-				TData
-			>
-		>;
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1UsersId>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
 		axios?: AxiosRequestConfig;
 	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1UsersIdQueryOptions(id, options);
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1UsersIdKey(id) : null));
+	const swrFn = () => getApiV1UsersId(id, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary Get Current User
@@ -457,33 +254,7 @@ export const getApiV1UsersMe = (
 	return axios.get("/api/v1/users/me", options);
 };
 
-export const getGetApiV1UsersMeQueryKey = () => {
-	return ["/api/v1/users/me"] as const;
-};
-
-export const getGetApiV1UsersMeQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1UsersMe>>,
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey = queryOptions?.queryKey ?? getGetApiV1UsersMeQueryKey();
-
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UsersMe>>> = ({
-		signal,
-	}) => getApiV1UsersMe({ signal, ...axiosOptions });
-
-	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1UsersMe>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1UsersMeKey = () => ["/api/v1/users/me"] as const;
 
 export type GetApiV1UsersMeQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersMe>>
@@ -492,72 +263,36 @@ export type GetApiV1UsersMeQueryError = AxiosError<
 	Error400 | Error401 | Error404 | Error500
 >;
 
-export function useGetApiV1UsersMe<
-	TData = Awaited<ReturnType<typeof getApiV1UsersMe>>,
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
->(options: {
-	query: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>
-	> &
-		Pick<
-			DefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1UsersMe>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1UsersMe<
-	TData = Awaited<ReturnType<typeof getApiV1UsersMe>>,
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>
-	> &
-		Pick<
-			UndefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1UsersMe>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1UsersMe<
-	TData = Awaited<ReturnType<typeof getApiV1UsersMe>>,
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Get Current User
  */
-
-export function useGetApiV1UsersMe<
-	TData = Awaited<ReturnType<typeof getApiV1UsersMe>>,
+export const useGetApiV1UsersMe = <
 	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
 >(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>
-	>;
+	swr?: SWRConfiguration<
+		Awaited<ReturnType<typeof getApiV1UsersMe>>,
+		TError
+	> & { swrKey?: Key; enabled?: boolean };
 	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1UsersMeQueryOptions(options);
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ?? (() => (isEnabled ? getGetApiV1UsersMeKey() : null));
+	const swrFn = () => getApiV1UsersMe(axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary Get Follows of User
@@ -569,46 +304,8 @@ export const getApiV1UsersIdFollows = (
 	return axios.get(`/api/v1/users/${id}/follows`, options);
 };
 
-export const getGetApiV1UsersIdFollowsQueryKey = (id: string) => {
-	return [`/api/v1/users/${id}/follows`] as const;
-};
-
-export const getGetApiV1UsersIdFollowsQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey =
-		queryOptions?.queryKey ?? getGetApiV1UsersIdFollowsQueryKey(id);
-
-	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getApiV1UsersIdFollows>>
-	> = ({ signal }) => getApiV1UsersIdFollows(id, { signal, ...axiosOptions });
-
-	return {
-		queryKey,
-		queryFn,
-		enabled: !!id,
-		...queryOptions,
-	} as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1UsersIdFollowsKey = (id: string) =>
+	[`/api/v1/users/${id}/follows`] as const;
 
 export type GetApiV1UsersIdFollowsQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersIdFollows>>
@@ -617,100 +314,40 @@ export type GetApiV1UsersIdFollowsQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-export function useGetApiV1UsersIdFollows<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options: {
-		query: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1UsersIdFollows<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1UsersIdFollows<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Get Follows of User
  */
-
-export function useGetApiV1UsersIdFollows<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
+export const useGetApiV1UsersIdFollows = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
 	id: string,
 	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
-				TError,
-				TData
-			>
-		>;
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1UsersIdFollows>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
 		axios?: AxiosRequestConfig;
 	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1UsersIdFollowsQueryOptions(id, options);
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1UsersIdFollowsKey(id) : null));
+	const swrFn = () => getApiV1UsersIdFollows(id, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary Get Followers of User
@@ -722,46 +359,8 @@ export const getApiV1UsersIdFollowers = (
 	return axios.get(`/api/v1/users/${id}/followers`, options);
 };
 
-export const getGetApiV1UsersIdFollowersQueryKey = (id: string) => {
-	return [`/api/v1/users/${id}/followers`] as const;
-};
-
-export const getGetApiV1UsersIdFollowersQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey =
-		queryOptions?.queryKey ?? getGetApiV1UsersIdFollowersQueryKey(id);
-
-	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>
-	> = ({ signal }) => getApiV1UsersIdFollowers(id, { signal, ...axiosOptions });
-
-	return {
-		queryKey,
-		queryFn,
-		enabled: !!id,
-		...queryOptions,
-	} as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1UsersIdFollowersKey = (id: string) =>
+	[`/api/v1/users/${id}/followers`] as const;
 
 export type GetApiV1UsersIdFollowersQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>
@@ -770,100 +369,40 @@ export type GetApiV1UsersIdFollowersQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-export function useGetApiV1UsersIdFollowers<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options: {
-		query: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1UsersIdFollowers<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1UsersIdFollowers<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Get Followers of User
  */
-
-export function useGetApiV1UsersIdFollowers<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
+export const useGetApiV1UsersIdFollowers = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
 	id: string,
 	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
-				TError,
-				TData
-			>
-		>;
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
 		axios?: AxiosRequestConfig;
 	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1UsersIdFollowersQueryOptions(id, options);
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1UsersIdFollowersKey(id) : null));
+	const swrFn = () => getApiV1UsersIdFollowers(id, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary Get Latest Posts of User
@@ -875,46 +414,8 @@ export const getApiV1UsersIdPosts = (
 	return axios.get(`/api/v1/users/${id}/posts`, options);
 };
 
-export const getGetApiV1UsersIdPostsQueryKey = (id: string) => {
-	return [`/api/v1/users/${id}/posts`] as const;
-};
-
-export const getGetApiV1UsersIdPostsQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey =
-		queryOptions?.queryKey ?? getGetApiV1UsersIdPostsQueryKey(id);
-
-	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getApiV1UsersIdPosts>>
-	> = ({ signal }) => getApiV1UsersIdPosts(id, { signal, ...axiosOptions });
-
-	return {
-		queryKey,
-		queryFn,
-		enabled: !!id,
-		...queryOptions,
-	} as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1UsersIdPostsKey = (id: string) =>
+	[`/api/v1/users/${id}/posts`] as const;
 
 export type GetApiV1UsersIdPostsQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersIdPosts>>
@@ -923,100 +424,40 @@ export type GetApiV1UsersIdPostsQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-export function useGetApiV1UsersIdPosts<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options: {
-		query: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1UsersIdPosts<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1UsersIdPosts<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Get Latest Posts of User
  */
-
-export function useGetApiV1UsersIdPosts<
-	TData = Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
+export const useGetApiV1UsersIdPosts = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
 	id: string,
 	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-				TError,
-				TData
-			>
-		>;
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
 		axios?: AxiosRequestConfig;
 	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1UsersIdPostsQueryOptions(id, options);
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1UsersIdPostsKey(id) : null));
+	const swrFn = () => getApiV1UsersIdPosts(id, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary Lookup (Remote/Local) User
@@ -1028,47 +469,8 @@ export const getApiV1LookupUsername = (
 	return axios.get(`/api/v1/lookup/${username}`, options);
 };
 
-export const getGetApiV1LookupUsernameQueryKey = (username: string) => {
-	return [`/api/v1/lookup/${username}`] as const;
-};
-
-export const getGetApiV1LookupUsernameQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	username: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey =
-		queryOptions?.queryKey ?? getGetApiV1LookupUsernameQueryKey(username);
-
-	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getApiV1LookupUsername>>
-	> = ({ signal }) =>
-		getApiV1LookupUsername(username, { signal, ...axiosOptions });
-
-	return {
-		queryKey,
-		queryFn,
-		enabled: !!username,
-		...queryOptions,
-	} as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1LookupUsernameKey = (username: string) =>
+	[`/api/v1/lookup/${username}`] as const;
 
 export type GetApiV1LookupUsernameQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1LookupUsername>>
@@ -1077,100 +479,40 @@ export type GetApiV1LookupUsernameQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-export function useGetApiV1LookupUsername<
-	TData = Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	username: string,
-	options: {
-		query: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1LookupUsername<
-	TData = Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	username: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1LookupUsername<
-	TData = Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	username: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Lookup (Remote/Local) User
  */
-
-export function useGetApiV1LookupUsername<
-	TData = Awaited<ReturnType<typeof getApiV1LookupUsername>>,
+export const useGetApiV1LookupUsername = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
 	username: string,
 	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1LookupUsername>>,
-				TError,
-				TData
-			>
-		>;
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1LookupUsername>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
 		axios?: AxiosRequestConfig;
 	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1LookupUsernameQueryOptions(username, options);
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false && !!username;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1LookupUsernameKey(username) : null));
+	const swrFn = () => getApiV1LookupUsername(username, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary Create Post
@@ -1182,41 +524,18 @@ export const postApiV1Posts = (
 	return axios.post("/api/v1/posts", newpost, options);
 };
 
-export const getPostApiV1PostsMutationOptions = <
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
-	TContext = unknown,
->(options?: {
-	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof postApiV1Posts>>,
-		TError,
-		{ data: Newpost },
-		TContext
-	>;
-	axios?: AxiosRequestConfig;
-}): UseMutationOptions<
-	Awaited<ReturnType<typeof postApiV1Posts>>,
-	TError,
-	{ data: Newpost },
-	TContext
-> => {
-	const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
-
-	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof postApiV1Posts>>,
-		{ data: Newpost }
-	> = (props) => {
-		const { data } = props ?? {};
-
-		return postApiV1Posts(data, axiosOptions);
+export const getPostApiV1PostsMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (_: Key, { arg }: { arg: Newpost }): Promise<AxiosResponse<Post>> => {
+		return postApiV1Posts(arg, options);
 	};
-
-	return { mutationFn, ...mutationOptions };
 };
+export const getPostApiV1PostsMutationKey = () => ["/api/v1/posts"] as const;
 
 export type PostApiV1PostsMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1Posts>>
 >;
-export type PostApiV1PostsMutationBody = Newpost;
 export type PostApiV1PostsMutationError = AxiosError<
 	Error400 | Error401 | Error404 | Error500
 >;
@@ -1226,24 +545,27 @@ export type PostApiV1PostsMutationError = AxiosError<
  */
 export const usePostApiV1Posts = <
 	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
-	TContext = unknown,
 >(options?: {
-	mutation?: UseMutationOptions<
+	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1Posts>>,
 		TError,
-		{ data: Newpost },
-		TContext
-	>;
+		Key,
+		Newpost,
+		Awaited<ReturnType<typeof postApiV1Posts>>
+	> & { swrKey?: string };
 	axios?: AxiosRequestConfig;
-}): UseMutationResult<
-	Awaited<ReturnType<typeof postApiV1Posts>>,
-	TError,
-	{ data: Newpost },
-	TContext
-> => {
-	const mutationOptions = getPostApiV1PostsMutationOptions(options);
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	return useMutation(mutationOptions);
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1PostsMutationKey();
+	const swrFn = getPostApiV1PostsMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
 };
 
 /**
@@ -1256,45 +578,8 @@ export const getApiV1PostsId = (
 	return axios.get(`/api/v1/posts/${id}`, options);
 };
 
-export const getGetApiV1PostsIdQueryKey = (id: string) => {
-	return [`/api/v1/posts/${id}`] as const;
-};
-
-export const getGetApiV1PostsIdQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1PostsId>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1PostsId>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey = queryOptions?.queryKey ?? getGetApiV1PostsIdQueryKey(id);
-
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1PostsId>>> = ({
-		signal,
-	}) => getApiV1PostsId(id, { signal, ...axiosOptions });
-
-	return {
-		queryKey,
-		queryFn,
-		enabled: !!id,
-		...queryOptions,
-	} as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1PostsId>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1PostsIdKey = (id: string) =>
+	[`/api/v1/posts/${id}`] as const;
 
 export type GetApiV1PostsIdQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1PostsId>>
@@ -1303,100 +588,40 @@ export type GetApiV1PostsIdQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-export function useGetApiV1PostsId<
-	TData = Awaited<ReturnType<typeof getApiV1PostsId>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options: {
-		query: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1PostsId>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1PostsId>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1PostsId<
-	TData = Awaited<ReturnType<typeof getApiV1PostsId>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1PostsId>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getApiV1PostsId>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1PostsId<
-	TData = Awaited<ReturnType<typeof getApiV1PostsId>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1PostsId>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Get Post by ID
  */
-
-export function useGetApiV1PostsId<
-	TData = Awaited<ReturnType<typeof getApiV1PostsId>>,
+export const useGetApiV1PostsId = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
 	id: string,
 	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getApiV1PostsId>>,
-				TError,
-				TData
-			>
-		>;
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1PostsId>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
 		axios?: AxiosRequestConfig;
 	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1PostsIdQueryOptions(id, options);
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1PostsIdKey(id) : null));
+	const swrFn = () => getApiV1PostsId(id, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary Get Timeline
@@ -1407,33 +632,7 @@ export const getApiV1Timeline = (
 	return axios.get("/api/v1/timeline", options);
 };
 
-export const getGetApiV1TimelineQueryKey = () => {
-	return ["/api/v1/timeline"] as const;
-};
-
-export const getGetApiV1TimelineQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1Timeline>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1Timeline>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey = queryOptions?.queryKey ?? getGetApiV1TimelineQueryKey();
-
-	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getApiV1Timeline>>
-	> = ({ signal }) => getApiV1Timeline({ signal, ...axiosOptions });
-
-	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1Timeline>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1TimelineKey = () => ["/api/v1/timeline"] as const;
 
 export type GetApiV1TimelineQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1Timeline>>
@@ -1442,72 +641,36 @@ export type GetApiV1TimelineQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-export function useGetApiV1Timeline<
-	TData = Awaited<ReturnType<typeof getApiV1Timeline>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(options: {
-	query: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1Timeline>>, TError, TData>
-	> &
-		Pick<
-			DefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1Timeline>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1Timeline<
-	TData = Awaited<ReturnType<typeof getApiV1Timeline>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1Timeline>>, TError, TData>
-	> &
-		Pick<
-			UndefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1Timeline>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1Timeline<
-	TData = Awaited<ReturnType<typeof getApiV1Timeline>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1Timeline>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Get Timeline
  */
-
-export function useGetApiV1Timeline<
-	TData = Awaited<ReturnType<typeof getApiV1Timeline>>,
+export const useGetApiV1Timeline = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1Timeline>>, TError, TData>
-	>;
+	swr?: SWRConfiguration<
+		Awaited<ReturnType<typeof getApiV1Timeline>>,
+		TError
+	> & { swrKey?: Key; enabled?: boolean };
 	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1TimelineQueryOptions(options);
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ?? (() => (isEnabled ? getGetApiV1TimelineKey() : null));
+	const swrFn = () => getApiV1Timeline(axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary NodeInfo 2.0
@@ -1518,125 +681,42 @@ export const getApiV1Nodeinfo20 = (
 	return axios.get("/api/v1/nodeinfo/2.0", options);
 };
 
-export const getGetApiV1Nodeinfo20QueryKey = () => {
-	return ["/api/v1/nodeinfo/2.0"] as const;
-};
-
-export const getGetApiV1Nodeinfo20QueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-	TError = AxiosError<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<
-			Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-			TError,
-			TData
-		>
-	>;
-	axios?: AxiosRequestConfig;
-}) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey = queryOptions?.queryKey ?? getGetApiV1Nodeinfo20QueryKey();
-
-	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getApiV1Nodeinfo20>>
-	> = ({ signal }) => getApiV1Nodeinfo20({ signal, ...axiosOptions });
-
-	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1Nodeinfo20Key = () => ["/api/v1/nodeinfo/2.0"] as const;
 
 export type GetApiV1Nodeinfo20QueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1Nodeinfo20>>
 >;
 export type GetApiV1Nodeinfo20QueryError = AxiosError<unknown>;
 
-export function useGetApiV1Nodeinfo20<
-	TData = Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-	TError = AxiosError<unknown>,
->(options: {
-	query: Partial<
-		UseQueryOptions<
-			Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-			TError,
-			TData
-		>
-	> &
-		Pick<
-			DefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1Nodeinfo20<
-	TData = Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-	TError = AxiosError<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<
-			Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-			TError,
-			TData
-		>
-	> &
-		Pick<
-			UndefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1Nodeinfo20<
-	TData = Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-	TError = AxiosError<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<
-			Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-			TError,
-			TData
-		>
-	>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary NodeInfo 2.0
  */
-
-export function useGetApiV1Nodeinfo20<
-	TData = Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-	TError = AxiosError<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<
-			Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
-			TError,
-			TData
-		>
-	>;
+export const useGetApiV1Nodeinfo20 = <TError = AxiosError<unknown>>(options?: {
+	swr?: SWRConfiguration<
+		Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
+		TError
+	> & { swrKey?: Key; enabled?: boolean };
 	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1Nodeinfo20QueryOptions(options);
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1Nodeinfo20Key() : null));
+	const swrFn = () => getApiV1Nodeinfo20(axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary NodeInfo
@@ -1647,125 +727,45 @@ export const getWellKnownNodeinfo = (
 	return axios.get("/.well-known/nodeinfo", options);
 };
 
-export const getGetWellKnownNodeinfoQueryKey = () => {
-	return ["/.well-known/nodeinfo"] as const;
-};
-
-export const getGetWellKnownNodeinfoQueryOptions = <
-	TData = Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-	TError = AxiosError<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<
-			Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-			TError,
-			TData
-		>
-	>;
-	axios?: AxiosRequestConfig;
-}) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey = queryOptions?.queryKey ?? getGetWellKnownNodeinfoQueryKey();
-
-	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getWellKnownNodeinfo>>
-	> = ({ signal }) => getWellKnownNodeinfo({ signal, ...axiosOptions });
-
-	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetWellKnownNodeinfoKey = () =>
+	["/.well-known/nodeinfo"] as const;
 
 export type GetWellKnownNodeinfoQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getWellKnownNodeinfo>>
 >;
 export type GetWellKnownNodeinfoQueryError = AxiosError<unknown>;
 
-export function useGetWellKnownNodeinfo<
-	TData = Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-	TError = AxiosError<unknown>,
->(options: {
-	query: Partial<
-		UseQueryOptions<
-			Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-			TError,
-			TData
-		>
-	> &
-		Pick<
-			DefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetWellKnownNodeinfo<
-	TData = Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-	TError = AxiosError<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<
-			Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-			TError,
-			TData
-		>
-	> &
-		Pick<
-			UndefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetWellKnownNodeinfo<
-	TData = Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-	TError = AxiosError<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<
-			Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-			TError,
-			TData
-		>
-	>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary NodeInfo
  */
-
-export function useGetWellKnownNodeinfo<
-	TData = Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
+export const useGetWellKnownNodeinfo = <
 	TError = AxiosError<unknown>,
 >(options?: {
-	query?: Partial<
-		UseQueryOptions<
-			Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
-			TError,
-			TData
-		>
-	>;
+	swr?: SWRConfiguration<
+		Awaited<ReturnType<typeof getWellKnownNodeinfo>>,
+		TError
+	> & { swrKey?: Key; enabled?: boolean };
 	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetWellKnownNodeinfoQueryOptions(options);
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetWellKnownNodeinfoKey() : null));
+	const swrFn = () => getWellKnownNodeinfo(axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary WebFinger
@@ -1780,44 +780,9 @@ export const getWellKnownWebfinger = (
 	});
 };
 
-export const getGetWellKnownWebfingerQueryKey = (
+export const getGetWellKnownWebfingerKey = (
 	params: GetWellKnownWebfingerParams,
-) => {
-	return ["/.well-known/webfinger", ...(params ? [params] : [])] as const;
-};
-
-export const getGetWellKnownWebfingerQueryOptions = <
-	TData = Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	params: GetWellKnownWebfingerParams,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey =
-		queryOptions?.queryKey ?? getGetWellKnownWebfingerQueryKey(params);
-
-	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getWellKnownWebfinger>>
-	> = ({ signal }) =>
-		getWellKnownWebfinger(params, { signal, ...axiosOptions });
-
-	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+) => ["/.well-known/webfinger", ...(params ? [params] : [])] as const;
 
 export type GetWellKnownWebfingerQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getWellKnownWebfinger>>
@@ -1826,100 +791,40 @@ export type GetWellKnownWebfingerQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-export function useGetWellKnownWebfinger<
-	TData = Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	params: GetWellKnownWebfingerParams,
-	options: {
-		query: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetWellKnownWebfinger<
-	TData = Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	params: GetWellKnownWebfingerParams,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-				TError,
-				TData
-			>
-		> &
-			Pick<
-				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-					TError,
-					TData
-				>,
-				"initialData"
-			>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetWellKnownWebfinger<
-	TData = Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	params: GetWellKnownWebfingerParams,
-	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-				TError,
-				TData
-			>
-		>;
-		axios?: AxiosRequestConfig;
-	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary WebFinger
  */
-
-export function useGetWellKnownWebfinger<
-	TData = Awaited<ReturnType<typeof getWellKnownWebfinger>>,
+export const useGetWellKnownWebfinger = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
 	params: GetWellKnownWebfingerParams,
 	options?: {
-		query?: Partial<
-			UseQueryOptions<
-				Awaited<ReturnType<typeof getWellKnownWebfinger>>,
-				TError,
-				TData
-			>
-		>;
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getWellKnownWebfinger>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
 		axios?: AxiosRequestConfig;
 	},
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetWellKnownWebfingerQueryOptions(params, options);
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetWellKnownWebfingerKey(params) : null));
+	const swrFn = () => getWellKnownWebfinger(params, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary Generate Mock
@@ -1930,33 +835,7 @@ export const getApiV1DevMock = (
 	return axios.get("/api/v1/dev/mock", options);
 };
 
-export const getGetApiV1DevMockQueryKey = () => {
-	return ["/api/v1/dev/mock"] as const;
-};
-
-export const getGetApiV1DevMockQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1DevMock>>,
-	TError = AxiosError<GetApiV1DevMock404 | GetApiV1DevMock500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1DevMock>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey = queryOptions?.queryKey ?? getGetApiV1DevMockQueryKey();
-
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1DevMock>>> = ({
-		signal,
-	}) => getApiV1DevMock({ signal, ...axiosOptions });
-
-	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1DevMock>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1DevMockKey = () => ["/api/v1/dev/mock"] as const;
 
 export type GetApiV1DevMockQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1DevMock>>
@@ -1965,72 +844,36 @@ export type GetApiV1DevMockQueryError = AxiosError<
 	GetApiV1DevMock404 | GetApiV1DevMock500
 >;
 
-export function useGetApiV1DevMock<
-	TData = Awaited<ReturnType<typeof getApiV1DevMock>>,
-	TError = AxiosError<GetApiV1DevMock404 | GetApiV1DevMock500>,
->(options: {
-	query: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1DevMock>>, TError, TData>
-	> &
-		Pick<
-			DefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1DevMock>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1DevMock<
-	TData = Awaited<ReturnType<typeof getApiV1DevMock>>,
-	TError = AxiosError<GetApiV1DevMock404 | GetApiV1DevMock500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1DevMock>>, TError, TData>
-	> &
-		Pick<
-			UndefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1DevMock>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1DevMock<
-	TData = Awaited<ReturnType<typeof getApiV1DevMock>>,
-	TError = AxiosError<GetApiV1DevMock404 | GetApiV1DevMock500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1DevMock>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Generate Mock
  */
-
-export function useGetApiV1DevMock<
-	TData = Awaited<ReturnType<typeof getApiV1DevMock>>,
+export const useGetApiV1DevMock = <
 	TError = AxiosError<GetApiV1DevMock404 | GetApiV1DevMock500>,
 >(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1DevMock>>, TError, TData>
-	>;
+	swr?: SWRConfiguration<
+		Awaited<ReturnType<typeof getApiV1DevMock>>,
+		TError
+	> & { swrKey?: Key; enabled?: boolean };
 	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1DevMockQueryOptions(options);
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ?? (() => (isEnabled ? getGetApiV1DevMockKey() : null));
+	const swrFn = () => getApiV1DevMock(axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
 
 /**
  * @summary Reset Database
@@ -2041,33 +884,7 @@ export const getApiV1DevReset = (
 	return axios.get("/api/v1/dev/reset", options);
 };
 
-export const getGetApiV1DevResetQueryKey = () => {
-	return ["/api/v1/dev/reset"] as const;
-};
-
-export const getGetApiV1DevResetQueryOptions = <
-	TData = Awaited<ReturnType<typeof getApiV1DevReset>>,
-	TError = AxiosError<GetApiV1DevReset404 | GetApiV1DevReset500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1DevReset>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}) => {
-	const { query: queryOptions, axios: axiosOptions } = options ?? {};
-
-	const queryKey = queryOptions?.queryKey ?? getGetApiV1DevResetQueryKey();
-
-	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getApiV1DevReset>>
-	> = ({ signal }) => getApiV1DevReset({ signal, ...axiosOptions });
-
-	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof getApiV1DevReset>>,
-		TError,
-		TData
-	> & { queryKey: QueryKey };
-};
+export const getGetApiV1DevResetKey = () => ["/api/v1/dev/reset"] as const;
 
 export type GetApiV1DevResetQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1DevReset>>
@@ -2076,69 +893,33 @@ export type GetApiV1DevResetQueryError = AxiosError<
 	GetApiV1DevReset404 | GetApiV1DevReset500
 >;
 
-export function useGetApiV1DevReset<
-	TData = Awaited<ReturnType<typeof getApiV1DevReset>>,
-	TError = AxiosError<GetApiV1DevReset404 | GetApiV1DevReset500>,
->(options: {
-	query: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1DevReset>>, TError, TData>
-	> &
-		Pick<
-			DefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1DevReset>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1DevReset<
-	TData = Awaited<ReturnType<typeof getApiV1DevReset>>,
-	TError = AxiosError<GetApiV1DevReset404 | GetApiV1DevReset500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1DevReset>>, TError, TData>
-	> &
-		Pick<
-			UndefinedInitialDataOptions<
-				Awaited<ReturnType<typeof getApiV1DevReset>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetApiV1DevReset<
-	TData = Awaited<ReturnType<typeof getApiV1DevReset>>,
-	TError = AxiosError<GetApiV1DevReset404 | GetApiV1DevReset500>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1DevReset>>, TError, TData>
-	>;
-	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Reset Database
  */
-
-export function useGetApiV1DevReset<
-	TData = Awaited<ReturnType<typeof getApiV1DevReset>>,
+export const useGetApiV1DevReset = <
 	TError = AxiosError<GetApiV1DevReset404 | GetApiV1DevReset500>,
 >(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof getApiV1DevReset>>, TError, TData>
-	>;
+	swr?: SWRConfiguration<
+		Awaited<ReturnType<typeof getApiV1DevReset>>,
+		TError
+	> & { swrKey?: Key; enabled?: boolean };
 	axios?: AxiosRequestConfig;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getGetApiV1DevResetQueryOptions(options);
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
-	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-		queryKey: QueryKey;
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ?? (() => (isEnabled ? getGetApiV1DevResetKey() : null));
+	const swrFn = () => getApiV1DevReset(axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
 	};
-
-	query.queryKey = queryOptions.queryKey;
-
-	return query;
-}
+};
