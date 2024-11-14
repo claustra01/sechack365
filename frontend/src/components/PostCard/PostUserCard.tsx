@@ -19,18 +19,18 @@ const bindUsername = (props: User) => {
 
 export const PostUserCard = (props: User) => {
 	return (
-			<Box style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-		<Link href={`/profile/${bindUsername(props)}`}>
-		<Avatar src={props.icon} size="lg" />
-				</Link>
-				<Box style={{ display: "flex", flexDirection: "column" }}>
-					<Title size="h4" fw={500}>
-						{props.display_name}
-					</Title>
-					<Box>
-						<Text size="sm">{bindUsername(props)}</Text>
-					</Box>
+		<Box style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+			<Link href={`/profile/${bindUsername(props)}`}>
+				<Avatar src={props.icon} size="lg" />
+			</Link>
+			<Box style={{ display: "flex", flexDirection: "column" }}>
+				<Title size="h4" fw={500}>
+					{props.display_name}
+				</Title>
+				<Box>
+					<Text size="sm">{bindUsername(props)}</Text>
 				</Box>
 			</Box>
+		</Box>
 	);
 };

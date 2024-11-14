@@ -1,5 +1,5 @@
 "use client";
-import { PageTemplate } from "@/components/Template/Template";
+import { PageTemplate } from "@/components/Template/PageTemplate";
 import { UserTimeline } from "@/components/Timeline/UserTimeline";
 
 export default function UserProfilePage({

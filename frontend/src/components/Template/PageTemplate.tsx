@@ -24,7 +24,13 @@ export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 					minHeight: "100vh",
 				}}
 			>
-				<Box style={{ display: "flex", gap: "24px" }}>
+				<Box
+					style={{
+						display: "flex",
+						gap: "24px",
+						marginTop: "24px",
+					}}
+				>
 					<Box bg="#FFF" w={720} style={{ minHeight: "100vh" }}>
 						{children}
 					</Box>
