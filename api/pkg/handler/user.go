@@ -74,11 +74,12 @@ func GetUser(c *framework.Context) http.HandlerFunc {
 		case "application/activity+json":
 			actor := c.Controllers.ActivityPub.NewActor(*user, *identifier)
 			jsonCustomContentTypeResponse(w, actor, "application/activity+json")
-		case "application/json":
+		// case "application/json":
+		// 	omittedUser := OmitUser(user)
+		// 	jsonResponse(w, omittedUser)
+		default:
 			omittedUser := OmitUser(user)
 			jsonResponse(w, omittedUser)
-		default:
-			returnBadRequest(w, c.Logger, cerror.ErrInvalidAcceptHeader)
 		}
 	}
 }
