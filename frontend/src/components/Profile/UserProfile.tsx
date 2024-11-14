@@ -2,9 +2,9 @@ import type { User } from "@/openapi/schemas";
 import { ActionIcon, Avatar, Box, Image, Text, Title } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
 import Link from "next/link";
+import { Header } from "../Header/Header";
 import { UserProfileCard } from "./UserProfileCard";
 import { UserProfileCounter } from "./UserProfileCounter";
-import { Header } from "../Header/Header";
 
 export const UserProfile = (props: User) => {
 	return (
