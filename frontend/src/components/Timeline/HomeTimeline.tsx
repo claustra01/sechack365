@@ -5,7 +5,7 @@ import { IconHome } from "@tabler/icons-react";
 import { useState } from "react";
 import { Header } from "../Header/Header";
 import { NewPost } from "../NewPost/NewPost";
-import { PostCard } from "../PostCard/PostCard";
+import { TimelineBase } from "./TimelineBase";
 
 export const HomeTimeline = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
@@ -18,9 +18,7 @@ export const HomeTimeline = () => {
 		<Box w={720}>
 			<Header title={"Home"} icon={<IconHome />} />
 			<NewPost />
-			{posts.map((post) => {
-				return <PostCard key={post.id} {...post} />;
-			})}
+      <TimelineBase posts={posts} />
 		</Box>
 	);
 };

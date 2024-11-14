@@ -4,7 +4,7 @@ import { Box } from "@mantine/core";
 import { IconHome } from "@tabler/icons-react";
 import { useState } from "react";
 import { Header } from "../Header/Header";
-import { PostCard } from "../PostCard/PostCard";
+import { TimelineBase } from "./TimelineBase";
 
 export const GuestTimeline = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
@@ -16,9 +16,7 @@ export const GuestTimeline = () => {
 	return (
 		<Box w={720}>
 			<Header title={"Home"} icon={<IconHome />} />
-			{posts.map((post) => {
-				return <PostCard key={post.id} {...post} />;
-			})}
+      <TimelineBase posts={posts} />
 		</Box>
 	);
 };

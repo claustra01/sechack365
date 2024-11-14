@@ -1,11 +1,9 @@
 import { getApiV1LookupUsername, getApiV1UsersIdPosts } from "@/openapi";
 import type { Post, User } from "@/openapi/schemas";
 import { Box } from "@mantine/core";
-import { IconHome } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { Header } from "../Header/Header";
-import { PostCard } from "../PostCard/PostCard";
 import { UserProfile } from "../Profile/UserProfile";
+import { TimelineBase } from "./TimelineBase";
 
 export type UserTimelineProps = {
 	username: string;
@@ -36,9 +34,7 @@ export const UserTimeline = (props: UserTimelineProps) => {
 	return (
 		<Box w={720}>
 			<UserProfile {...user} />
-			{posts.map((post) => {
-				return <PostCard key={post.id} {...post} />;
-			})}
+      <TimelineBase posts={posts} />
 		</Box>
 	);
 };
