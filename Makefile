@@ -43,8 +43,12 @@ oapi-codegen:
 	fi
 	cd api && $$(go env GOPATH)/bin/oapi-codegen -generate types,spec -package openapi -o ./pkg/openapi/types.gen.go ../openapi/all.gen.yaml
 
+# genera hooks and types from openapi
+orval:
+	cd frontend && pnpm orval && pnpm check:unsafe
+
 # generate all openapi files
-openapi: redocly oapi-codegen
+openapi: redocly oapi-codegen orval
 
 # generate sql from dbdocs
 schema:
