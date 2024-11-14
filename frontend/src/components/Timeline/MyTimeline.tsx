@@ -1,4 +1,7 @@
-import { getApiV1LookupUsername, getApiV1UsersIdPosts, getApiV1UsersMe } from "@/openapi";
+import {
+	getApiV1UsersIdPosts,
+	getApiV1UsersMe,
+} from "@/openapi";
 import type { Post, User } from "@/openapi/schemas";
 import { Box } from "@mantine/core";
 import { useEffect, useState } from "react";
@@ -28,9 +31,9 @@ export const MyTimeline = () => {
 	}
 
 	return (
-		<Box w={720}>
+		<Box>
 			<UserProfile {...user} />
-      <TimelineBase posts={posts} />
+			<TimelineBase posts={posts} />
 		</Box>
 	);
 };

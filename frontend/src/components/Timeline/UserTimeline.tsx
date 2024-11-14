@@ -32,9 +32,9 @@ export const UserTimeline = (props: UserTimelineProps) => {
 	}
 
 	return (
-		<Box w={720}>
+		<Box>
 			<UserProfile {...user} />
-      <TimelineBase posts={posts} />
+			<TimelineBase posts={posts} />
 		</Box>
 	);
 };

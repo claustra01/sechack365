@@ -14,9 +14,9 @@ export const GuestTimeline = () => {
 	});
 
 	return (
-		<Box w={720}>
+		<Box>
 			<Header title={"Home"} icon={<IconHome />} />
-      <TimelineBase posts={posts} />
+			<TimelineBase posts={posts} />
 		</Box>
 	);
 };

@@ -15,10 +15,10 @@ export const HomeTimeline = () => {
 	});
 
 	return (
-		<Box w={720}>
+		<Box>
 			<Header title={"Home"} icon={<IconHome />} />
 			<NewPost />
-      <TimelineBase posts={posts} />
+			<TimelineBase posts={posts} />
 		</Box>
 	);
 };
