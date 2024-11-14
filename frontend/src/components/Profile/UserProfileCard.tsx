@@ -25,7 +25,7 @@ export const UserProfileCard = (props: User) => {
 					{props.display_name}
 				</Title>
 				<Box>
-					<Text>{bindUsername(props)}</Text>
+					<Text size="lg">{bindUsername(props)}</Text>
 				</Box>
 			</Box>
 		</Box>
