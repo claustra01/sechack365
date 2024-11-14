@@ -1,14 +1,13 @@
 "use client";
+import { PageTemplate } from "@/components/Template/Template";
 import { UserTimeline } from "@/components/Timeline/UserTimeline";
 
 export default function UserProfilePage({
 	params,
 }: { params: { id: string } }) {
 	return (
-		<main>
-			<div>
-				<UserTimeline username={params.id} />
-			</div>
-		</main>
+		<PageTemplate>
+			<UserTimeline username={params.id} />
+		</PageTemplate>
 	);
 }
