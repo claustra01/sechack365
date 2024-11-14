@@ -1,12 +1,15 @@
 "use client";
 
-import { UserTimeline } from "@/components/Timeline/UserTimeline";
+import { PageTemplate } from "@/components/Template/Template";
+import { HomeTimeline } from "@/components/Timeline/HomeTimeline";
 
 export default function Home() {
 	return (
 		<main>
 			<div>
-				<UserTimeline username={"mock"} />
+				<PageTemplate>
+					<HomeTimeline />
+				</PageTemplate>
 			</div>
 		</main>
 	);
