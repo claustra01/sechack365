@@ -114,14 +114,14 @@ export type PostApiV1AuthLogoutMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1AuthLogout>>
 >;
 export type PostApiV1AuthLogoutMutationError = AxiosError<
-	Error400 | Error401 | Error404 | Error500
+	Error400 | Error404 | Error500
 >;
 
 /**
  * @summary Logout
  */
 export const usePostApiV1AuthLogout = <
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+	TError = AxiosError<Error400 | Error404 | Error500>,
 >(options?: {
 	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1AuthLogout>>,
