@@ -2,7 +2,7 @@
   "petstore": {
     "input": "../openapi/all.gen.yaml",
     "output": {
-      "client": "react-query",               
+      "client": "swr",               
       "target": "./src/openapi/index.ts", 
       "schemas": "./src/openapi/schemas"
     }

@@ -74,11 +74,12 @@ func GetUser(c *framework.Context) http.HandlerFunc {
 		case "application/activity+json":
 			actor := c.Controllers.ActivityPub.NewActor(*user, *identifier)
 			jsonCustomContentTypeResponse(w, actor, "application/activity+json")
-		case "application/json":
+		// case "application/json":
+		// 	omittedUser := OmitUser(user)
+		// 	jsonResponse(w, omittedUser)
+		default:
 			omittedUser := OmitUser(user)
 			jsonResponse(w, omittedUser)
-		default:
-			returnBadRequest(w, c.Logger, cerror.ErrInvalidAcceptHeader)
 		}
 	}
 }
@@ -129,7 +130,7 @@ func GetUserFollowers(c *framework.Context) http.HandlerFunc {
 	}
 }
 
-func GetUserTimeline(c *framework.Context) http.HandlerFunc {
+func GetUserPosts(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userId := r.PathValue("id")
 		createdAtStr := r.URL.Query().Get("created_at")

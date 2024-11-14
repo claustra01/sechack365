@@ -6,5 +6,5 @@
  */
 
 export interface Newpost {
-	text: string;
+	content: string;
 }

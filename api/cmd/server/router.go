@@ -39,7 +39,7 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 	if err := users.Get("/{id}/followers", handler.GetUserFollowers); err != nil {
 		return err
 	}
-	if err := users.Get("/{id}/timeline", handler.GetUserTimeline); err != nil {
+	if err := users.Get("/{id}/posts", handler.GetUserPosts); err != nil {
 		return err
 	}
 

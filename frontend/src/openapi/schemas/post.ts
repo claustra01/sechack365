@@ -7,9 +7,9 @@
 import type { User } from "./user";
 
 export interface Post {
+	content: string;
 	created_at: string;
 	id: string;
-	text: string;
 	updated_at: string;
 	user: User;
 }
