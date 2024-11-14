@@ -13,7 +13,7 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 	if err := auth.Post("/login", handler.Login); err != nil {
 		return err
 	}
-	if err := auth.Post("/logout", handler.Logout, framework.AuthMiddleware(lg)); err != nil {
+	if err := auth.Post("/logout", handler.Logout); err != nil {
 		return err
 	}
 

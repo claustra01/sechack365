@@ -55,6 +55,7 @@ func Login(c *framework.Context) http.HandlerFunc {
 		http.SetCookie(w, &http.Cookie{
 			Name:     "session",
 			Value:    sessionId,
+			Path:     "/",
 			HttpOnly: true,
 			Secure:   true,
 			Expires:  framework.Sessions[sessionId].ExpiredAt,
@@ -71,6 +72,17 @@ func Logout(c *framework.Context) http.HandlerFunc {
 		cookie, _ := r.Cookie("session")
 		sessionId := cookie.Value
 		delete(framework.Sessions, sessionId)
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session",
+			Value:    "",
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   true,
+			Expires:  time.Unix(0, 0),
+			MaxAge:   -1,
+		})
+
 		jsonResponse(w, nil)
 	}
 }
