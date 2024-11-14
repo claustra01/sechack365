@@ -32,5 +32,5 @@ jobs:
       - name: OpenAPI check
         run: |
           make redocly
-          cd frontend && npm orval && npm check:unsafe
+          cd frontend && npm orval && npm orval:lint
           git diff -- frontend/src/openapi --exit-code

@@ -45,7 +45,7 @@ oapi-codegen:
 
 # genera hooks and types from openapi
 orval:
-	cd frontend && pnpm orval && pnpm check:unsafe
+	cd frontend && pnpm orval && pnpm orval:lint
 
 # generate all openapi files
 openapi: redocly oapi-codegen orval
