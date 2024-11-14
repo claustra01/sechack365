@@ -5,9 +5,9 @@ const bindUsername = (props: User) => {
 	switch (props.protocol) {
 		case "local":
 			// TODO: nostr support
-			return `@${props.username}@${props.host}`;
+			return `${props.username}@${props.host}`;
 		case "activitypub":
-			return `@${props.username}@${props.host}`;
+			return `${props.username}@${props.host}`;
 		case "nostr":
 			// TODO: nostr support
 			return "";
