@@ -28,7 +28,7 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		if postRequsetBody.Text == "" {
+		if postRequsetBody.Content == "" {
 			returnBadRequest(w, c.Logger, nil)
 			return
 		}
@@ -39,7 +39,7 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		post, err := c.Controllers.Post.Create(user.Id, postRequsetBody.Text)
+		post, err := c.Controllers.Post.Create(user.Id, postRequsetBody.Content)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return

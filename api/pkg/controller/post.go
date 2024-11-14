@@ -26,14 +26,14 @@ func (c *PostController) Create(userId, content string) (*model.Post, error) {
 	return c.PostUsecase.Create(userId, content)
 }
 
-func (c *PostController) FindById(id string) (*model.Post, error) {
+func (c *PostController) FindById(id string) (*model.PostWithUser, error) {
 	return c.PostUsecase.FindById(id)
 }
 
-func (c *PostController) FindTimeline(createdAt time.Time, limit int) ([]*model.Post, error) {
+func (c *PostController) FindTimeline(createdAt time.Time, limit int) ([]*model.PostWithUser, error) {
 	return c.PostUsecase.FindTimeline(createdAt, limit)
 }
 
-func (c *PostController) FindUserTimeline(userId string, createdAt time.Time, limit int) ([]*model.Post, error) {
+func (c *PostController) FindUserTimeline(userId string, createdAt time.Time, limit int) ([]*model.PostWithUser, error) {
 	return c.PostUsecase.FindUserTimeline(userId, createdAt, limit)
 }
