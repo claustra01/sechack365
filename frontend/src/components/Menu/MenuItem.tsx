@@ -13,7 +13,7 @@ export const MenuItem = (props: MenuItemProps) => {
       <ActionIcon component={Link} href={props.href} variant="subtle" size="xl" color="blue">
         {props.icon}
       </ActionIcon>
-      <Text size="xl" color="blue">{props.title}</Text>
+      <Text size="xl" fw={500} c="blue">{props.title}</Text>
     </Box>
   )
 }
