@@ -1,11 +1,10 @@
-import { MenuItem } from "@/components/Menu/MenuItem";
-import { IconHeart } from "@tabler/icons-react";
+import { UserMenu } from "@/components/Menu/UserMenu";
 
 export default function Home() {
 	return (
 		<main>
 			<div>
-				<MenuItem icon={<IconHeart />} title="Menu Item" href="/" />
+				<UserMenu />
 			</div>
 		</main>
 	);
