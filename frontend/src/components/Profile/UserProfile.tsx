@@ -4,27 +4,12 @@ import { IconArrowBackUp } from "@tabler/icons-react";
 import Link from "next/link";
 import { UserProfileCard } from "./UserProfileCard";
 import { UserProfileCounter } from "./UserProfileCounter";
+import { Header } from "../Header/Header";
 
 export const UserProfile = (props: User) => {
 	return (
 		<Box>
-			<Box
-				bg="blue"
-				style={{ display: "flex", alignItems: "center", padding: "24px" }}
-			>
-				<ActionIcon
-					component={Link}
-					href="/"
-					variant="subtle"
-					size="xl"
-					c="white"
-				>
-					<IconArrowBackUp />
-				</ActionIcon>
-				<Title size="h3" fw={500} c="white">
-					{props.display_name}
-				</Title>
-			</Box>
+			<Header title={props.display_name} icon={<IconArrowBackUp />} />
 			{/* TODO: implement profile header */}
 			<Image src="https://placehold.jp/540x180.png" />
 			<Box

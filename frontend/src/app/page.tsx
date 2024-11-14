@@ -1,15 +1,16 @@
 "use client";
-import { PostCard } from "@/components/Post/PostCard";
+import { PostCard } from "@/components/PostCard/PostCard";
+import { UserProfile } from "@/components/Profile/UserProfile";
 import { getApiV1PostsId, getApiV1UsersId } from "@/openapi";
 import type { Post, User } from "@/openapi/schemas";
 import React from "react";
 
 export default function Home() {
-	const [data, setData] = React.useState<Post | null>(null);
+	const [data, setData] = React.useState<User | null>(null);
 
 	React.useEffect(() => {
-		getApiV1PostsId("01932b39-e617-7851-bdc0-2b97a972b48c").then((response) => {
-			setData(response.data as unknown as Post);
+		getApiV1UsersId("019324b7-ab40-7c7c-ada1-702fe243847f").then((response) => {
+			setData(response.data as unknown as User);
 		});
 	}, []);
 
@@ -20,7 +21,7 @@ export default function Home() {
 	return (
 		<main>
 			<div>
-				<PostCard {...data} />
+				<UserProfile {...data} />
 			</div>
 		</main>
 	);
