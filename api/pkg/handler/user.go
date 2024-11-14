@@ -130,7 +130,7 @@ func GetUserFollowers(c *framework.Context) http.HandlerFunc {
 	}
 }
 
-func GetUserTimeline(c *framework.Context) http.HandlerFunc {
+func GetUserPosts(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userId := r.PathValue("id")
 		createdAtStr := r.URL.Query().Get("created_at")
