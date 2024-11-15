@@ -1,3 +1,4 @@
+import { colors } from "@/styles/colors";
 import { ActionIcon, Box, Title } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
 import Link from "next/link";
@@ -10,7 +11,7 @@ export type HeaderProps = {
 export const Header = (props: HeaderProps) => {
 	return (
 		<Box
-			bg="blue"
+			bg={colors.secondaryColor}
 			style={{ display: "flex", alignItems: "center", padding: "24px" }}
 		>
 			<ActionIcon
@@ -18,11 +19,11 @@ export const Header = (props: HeaderProps) => {
 				href="/"
 				variant="subtle"
 				size="xl"
-				c="white"
+				c={colors.primaryColor}
 			>
 				{props.icon}
 			</ActionIcon>
-			<Title size="h3" fw={500} c="white">
+			<Title size="h3" fw={500} c={colors.primaryColor}>
 				{props.title}
 			</Title>
 		</Box>

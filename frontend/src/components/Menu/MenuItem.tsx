@@ -1,3 +1,4 @@
+import { colors } from "@/styles/colors";
 import { ActionIcon, Box, Text, Title } from "@mantine/core";
 import Link from "next/link";
 
@@ -15,11 +16,11 @@ export const MenuItem = (props: MenuItemProps) => {
 				href={props.href}
 				variant="subtle"
 				size="xl"
-				color="blue"
+				color={colors.secondaryColor}
 			>
 				{props.icon}
 			</ActionIcon>
-			<Title size="h3" fw={500} c="blue">
+			<Title size="h3" fw={500} c={colors.secondaryColor}>
 				{props.title}
 			</Title>
 		</Box>

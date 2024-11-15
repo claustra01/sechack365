@@ -3,6 +3,7 @@ import { Box } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { GuestMenu } from "../Menu/GuestMenu";
 import { UserMenu } from "../Menu/UserMenu";
+import { colors } from "@/styles/colors";
 
 export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -16,7 +17,7 @@ export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<main>
 			<Box
-				bg="#E7F5FF"
+				bg={colors.primaryColor}
 				style={{
 					display: "flex",
 					flexDirection: "column",
@@ -31,7 +32,7 @@ export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 						marginTop: "24px",
 					}}
 				>
-					<Box bg="#FFF" w={720} style={{ minHeight: "100vh" }}>
+					<Box bg={colors.white} w={720} style={{ minHeight: "100vh" }}>
 						{children}
 					</Box>
 					<Box style={{ marginTop: "92px" }}>

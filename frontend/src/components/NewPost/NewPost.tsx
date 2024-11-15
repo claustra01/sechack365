@@ -1,5 +1,6 @@
 import { postApiV1Posts } from "@/openapi";
 import type { Newpost } from "@/openapi/schemas";
+import { colors } from "@/styles/colors";
 import { Box, Button, Textarea } from "@mantine/core";
 import { useState } from "react";
 
@@ -18,7 +19,7 @@ export const NewPost = () => {
 			content: text,
 		};
 		postApiV1Posts(newPost)
-			.then((response) => {
+			.then(() => {
 				// FIXME: routerを使うようにする
 				window.location.href = "/";
 			})
@@ -42,7 +43,7 @@ export const NewPost = () => {
 				minRows={4}
 				onChange={handleChange}
 			/>
-			<Button style={{ alignSelf: "flex-end" }} onClick={handleSubmit}>
+			<Button color={colors.secondaryColor} style={{ alignSelf: "flex-end" }} onClick={handleSubmit}>
 				New Post
 			</Button>
 		</Box>
