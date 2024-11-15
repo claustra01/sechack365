@@ -1,9 +1,9 @@
 import { getApiV1UsersMe } from "@/openapi";
+import { colors } from "@/styles/colors";
 import { Box } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { GuestMenu } from "../Menu/GuestMenu";
 import { UserMenu } from "../Menu/UserMenu";
-import { colors } from "@/styles/colors";
 
 export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);

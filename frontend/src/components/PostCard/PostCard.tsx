@@ -1,7 +1,7 @@
 import type { Post } from "@/openapi/schemas";
+import { colors } from "@/styles/colors";
 import { Box, Text } from "@mantine/core";
 import { PostUserCard } from "./PostUserCard";
-import { colors } from "@/styles/colors";
 
 export const PostCard = (props: Post) => {
 	console.log(props);

@@ -43,7 +43,11 @@ export const NewPost = () => {
 				minRows={4}
 				onChange={handleChange}
 			/>
-			<Button color={colors.secondaryColor} style={{ alignSelf: "flex-end" }} onClick={handleSubmit}>
+			<Button
+				color={colors.secondaryColor}
+				style={{ alignSelf: "flex-end" }}
+				onClick={handleSubmit}
+			>
 				New Post
 			</Button>
 		</Box>

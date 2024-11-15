@@ -63,7 +63,11 @@ export default function LoginPage() {
 					type="password"
 					onChange={handlePasswordChange}
 				/>
-				<Button color={colors.secondaryColor} style={{ alignSelf: "flex-end" }} onClick={handleSubmit}>
+				<Button
+					color={colors.secondaryColor}
+					style={{ alignSelf: "flex-end" }}
+					onClick={handleSubmit}
+				>
 					Login
 				</Button>
 			</Box>
