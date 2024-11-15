@@ -3,6 +3,7 @@
 import { Header } from "@/components/Header/Header";
 import { PageTemplate } from "@/components/Template/PageTemplate";
 import { postApiV1AuthLogin } from "@/openapi";
+import { colors } from "@/styles/colors";
 import { Box, Button, TextInput } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
 import { useState } from "react";
@@ -62,7 +63,11 @@ export default function LoginPage() {
 					type="password"
 					onChange={handlePasswordChange}
 				/>
-				<Button style={{ alignSelf: "flex-end" }} onClick={handleSubmit}>
+				<Button
+					color={colors.secondaryColor}
+					style={{ alignSelf: "flex-end" }}
+					onClick={handleSubmit}
+				>
 					Login
 				</Button>
 			</Box>
