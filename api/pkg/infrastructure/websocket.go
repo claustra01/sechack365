@@ -9,14 +9,14 @@ type WsHandler struct {
 	Ws []*websocket.Conn
 }
 
-func monitorConnection(ws *[]websocket.Conn) {
-	for _, conn := range *ws {
-		_, err := conn.Write([]byte("PING"))
-		if err != nil {
-			conn.Close()
-		}
-	}
-}
+// func monitorConnection(ws *[]websocket.Conn) {
+// 	for _, conn := range *ws {
+// 		_, err := conn.Write([]byte("PING"))
+// 		if err != nil {
+// 			conn.Close()
+// 		}
+// 	}
+// }
 
 func NewWsHandler(urls []string) (model.IWsHandler, error) {
 	var ws []*websocket.Conn
