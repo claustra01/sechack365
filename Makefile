@@ -7,11 +7,12 @@ down:
 	docker compose -f compose.prod.yaml down
 
 # backend static analysis
-lint-api:
+lint:
 	@if ! command -v $$(go env GOPATH)/bin/golangci-lint > /dev/null 2>&1; then \
 		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
 	fi
 	cd api && $$(go env GOPATH)/bin/golangci-lint run ./...
+	cd frontend && pnpm lint
 
 # db migration
 migrate:
