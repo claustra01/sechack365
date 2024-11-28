@@ -44,7 +44,7 @@ func returnBadRequest(w http.ResponseWriter, logger model.ILogger, errInput erro
 		panic(err)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	http.Error(w, string(body), http.StatusInternalServerError)
+	http.Error(w, string(body), http.StatusBadRequest)
 }
 
 func returnUnauthorized(w http.ResponseWriter, logger model.ILogger, errInput error) {
@@ -59,7 +59,7 @@ func returnUnauthorized(w http.ResponseWriter, logger model.ILogger, errInput er
 		panic(err)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	http.Error(w, string(body), http.StatusInternalServerError)
+	http.Error(w, string(body), http.StatusUnauthorized)
 }
 
 func returnNotFound(w http.ResponseWriter, logger model.ILogger, errInput error) {
@@ -74,7 +74,7 @@ func returnNotFound(w http.ResponseWriter, logger model.ILogger, errInput error)
 		panic(err)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	http.Error(w, string(body), http.StatusInternalServerError)
+	http.Error(w, string(body), http.StatusNotFound)
 }
 
 func returnInternalServerError(w http.ResponseWriter, logger model.ILogger, errInput error) {
