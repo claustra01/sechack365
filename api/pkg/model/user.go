@@ -16,7 +16,7 @@ type User struct {
 type ApUserIdentifier struct {
 	UserId     string `json:"user_id" db:"user_id"`
 	PublicKey  string `json:"public_key" db:"public_key"`
-	PrivateKey string `json:"private_key" db:"private"`
+	PrivateKey string `json:"private_key" db:"private_key"`
 	CreatedAt  string `json:"created_at" db:"created_at"`
 	UpdatedAt  string `json:"updated_at" db:"updated_at"`
 }
