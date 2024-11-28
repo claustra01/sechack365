@@ -11,6 +11,7 @@ type IPostRepository interface {
 	FindById(id string) (*model.PostWithUser, error)
 	FindTimeline(createdAt time.Time, limit int) ([]*model.PostWithUser, error)
 	FindUserTimeline(userId string, createdAt time.Time, limit int) ([]*model.PostWithUser, error)
+	Delete(id string) error
 }
 
 type PostUsecase struct {
@@ -31,4 +32,8 @@ func (u *PostUsecase) FindTimeline(createdAt time.Time, limit int) ([]*model.Pos
 
 func (u *PostUsecase) FindUserTimeline(userId string, createdAt time.Time, limit int) ([]*model.PostWithUser, error) {
 	return u.PostRepository.FindUserTimeline(userId, createdAt, limit)
+}
+
+func (u *PostUsecase) Delete(id string) error {
+	return u.PostRepository.Delete(id)
 }
