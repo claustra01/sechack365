@@ -4,7 +4,7 @@ up:
 
 # stop
 down:
-	docker compose down
+	docker compose -f compose.prod.yaml down
 
 # backend static analysis
 lint-api:
