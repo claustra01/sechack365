@@ -37,3 +37,7 @@ func (c *PostController) FindTimeline(createdAt time.Time, limit int) ([]*model.
 func (c *PostController) FindUserTimeline(userId string, createdAt time.Time, limit int) ([]*model.PostWithUser, error) {
 	return c.PostUsecase.FindUserTimeline(userId, createdAt, limit)
 }
+
+func (c *PostController) Delete(id string) error {
+	return c.PostUsecase.Delete(id)
+}

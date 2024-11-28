@@ -20,14 +20,6 @@ func NewTransactionController(conn model.ISqlHandler) *TransactionController {
 	}
 }
 
-func (c *TransactionController) Begin() error {
+func (c *TransactionController) Begin() (model.Tx, error) {
 	return c.TransactionUsecase.Begin()
-}
-
-func (c *TransactionController) Commit() error {
-	return c.TransactionUsecase.Commit()
-}
-
-func (c *TransactionController) Rollback() error {
-	return c.TransactionUsecase.Rollback()
 }
