@@ -1,23 +1,15 @@
 package usecase
 
+import "github.com/claustra01/sechack365/pkg/model"
+
 type ITransactionRepository interface {
-	Begin() error
-	Commit() error
-	Rollback() error
+	Begin() (model.Tx, error)
 }
 
 type TransactionUsecase struct {
 	TransactionRepository ITransactionRepository
 }
 
-func (u *TransactionUsecase) Begin() error {
+func (u *TransactionUsecase) Begin() (model.Tx, error) {
 	return u.TransactionRepository.Begin()
-}
-
-func (u *TransactionUsecase) Commit() error {
-	return u.TransactionRepository.Commit()
-}
-
-func (u *TransactionUsecase) Rollback() error {
-	return u.TransactionRepository.Rollback()
 }
