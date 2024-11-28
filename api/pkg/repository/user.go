@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"database/sql"
+	"errors"
+
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/util"
 )
@@ -35,58 +38,33 @@ func (r *UserRepository) Create(username, host, protocol, password, displayName,
 }
 
 func (r *UserRepository) FindAll() ([]*model.User, error) {
-	row, err := r.SqlHandler.Query("SELECT * FROM users;")
-	if err != nil {
-		return nil, err
-	}
-	defer row.Close()
 	var users []*model.User
-	for row.Next() {
-		var user = new(model.User)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.Protocol, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
-			return nil, err
-		}
-		users = append(users, user)
+	if err := r.SqlHandler.Select(&users, "SELECT * FROM users;"); err != nil {
+		return nil, err
 	}
 	return users, nil
 }
 
 func (r *UserRepository) FindById(id string) (*model.User, error) {
-	row, err := r.SqlHandler.Query(`
-		SELECT * FROM users
-		WHERE id = $1;
-	`, id)
-	if err != nil {
+	var user = new(model.User)
+	err := r.SqlHandler.Get(user, "SELECT * FROM users WHERE id = $1;", id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
 		return nil, err
 	}
-	defer row.Close()
-	if row.Next() {
-		var user = new(model.User)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.Protocol, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
-			return nil, err
-		}
-		return user, nil
-	}
-	return nil, nil
+	return user, nil
 }
 
 func (r *UserRepository) FindByUsername(username, host string) (*model.User, error) {
-	row, err := r.SqlHandler.Query(`
-		SELECT * FROM users
-		WHERE username = $1 AND host = $2;
-	`, username, host)
-	if err != nil {
+	var user = new(model.User)
+	err := r.SqlHandler.Get(user, "SELECT * FROM users WHERE username = $1 AND host = $2;", username, host)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
 		return nil, err
 	}
-	defer row.Close()
-	if row.Next() {
-		var user = new(model.User)
-		if err = row.Scan(&user.Id, &user.Username, &user.Host, &user.Protocol, &user.HashedPassword, &user.DisplayName, &user.Profile, &user.Icon, &user.CreatedAt, &user.UpdatedAt); err != nil {
-			return nil, err
-		}
-		return user, nil
-	}
-	return nil, nil
+	return user, nil
 }
 
 func (r *UserRepository) DeleteById(id string) error {
@@ -94,10 +72,7 @@ func (r *UserRepository) DeleteById(id string) error {
 		DELETE FROM users
 		WHERE id = $1;
 	`, id)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (r *UserRepository) CreateRemoteUser(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
@@ -170,22 +145,14 @@ func (r *ApUserIdentifierRepository) Create(id string) (*model.ApUserIdentifier,
 }
 
 func (r *ApUserIdentifierRepository) FindById(id string) (*model.ApUserIdentifier, error) {
-	row, err := r.SqlHandler.Query(`
-		SELECT * FROM ap_user_identifiers
-		WHERE user_id = $1;
-	`, id)
-	if err != nil {
+	var apUserIdentifier = new(model.ApUserIdentifier)
+	err := r.SqlHandler.Get(apUserIdentifier, "SELECT * FROM ap_user_identifiers WHERE user_id = $1;", id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
 		return nil, err
 	}
-	defer row.Close()
-	if row.Next() {
-		var apUserIdentifier = new(model.ApUserIdentifier)
-		if err = row.Scan(&apUserIdentifier.UserId, &apUserIdentifier.PublicKey, &apUserIdentifier.PrivateKey, &apUserIdentifier.CreatedAt, &apUserIdentifier.UpdatedAt); err != nil {
-			return nil, err
-		}
-		return apUserIdentifier, nil
-	}
-	return nil, nil
+	return apUserIdentifier, nil
 }
 
 func (r *ApUserIdentifierRepository) DeleteById(id string) error {
