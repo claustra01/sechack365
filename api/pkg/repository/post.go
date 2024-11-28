@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/claustra01/sechack365/pkg/model"
@@ -12,90 +14,91 @@ type PostRepository struct {
 }
 
 func (r *PostRepository) Create(userId, content string) (*model.Post, error) {
+	post := new(model.Post)
 	uuid := util.NewUuid()
-	row, err := r.SqlHandler.Query(`
+	query := `
 		INSERT INTO posts (id, user_id, content)
 		VALUES ($1, $2, $3)
 		RETURNING *;
-	`, uuid, userId, content)
-	if err != nil {
+	`
+	if err := r.SqlHandler.Get(post, query, uuid, userId, content); err != nil {
 		return nil, err
 	}
-	defer row.Close()
-	if row.Next() {
-		var post = new(model.Post)
-		if err := row.Scan(&post.Id, &post.UserId, &post.Content, &post.CreatedAt, &post.UpdatedAt); err != nil {
-			return nil, err
-		}
-		return post, nil
-	}
-	return nil, nil
+	return post, nil
 }
 
 func (r *PostRepository) FindById(id string) (*model.PostWithUser, error) {
-	row, err := r.SqlHandler.Query(`
-		SELECT posts.*, users.username, users.host, users.protocol, users.display_name, users.profile, users.icon FROM posts JOIN users ON posts.user_id = users.id
+	post := new(model.PostWithUser)
+	query := `
+		SELECT posts.*,
+		users.username AS user_username,
+		users.host AS user_host,
+		users.protocol AS user_protocol,
+		users.display_name AS user_display_name,
+		users.profile AS user_profile,
+		users.icon AS user_icon
+		FROM posts JOIN users ON posts.user_id = users.id
 		WHERE posts.id = $1;
-	`, id)
+	`
+	err := r.SqlHandler.Get(post, query, id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer row.Close()
-	if row.Next() {
-		var post = new(model.PostWithUser)
-		if err := row.Scan(&post.Id, &post.UserId, &post.Content, &post.CreatedAt, &post.UpdatedAt, &post.User.Username, &post.User.Host, &post.User.Protocol, &post.User.DisplayName, &post.User.Profile, &post.User.Icon); err != nil {
-			return nil, err
-		}
-		return post, nil
-	}
-	return nil, nil
+	return post, nil
 }
 
 func (r *PostRepository) FindTimeline(createdAt time.Time, limit int) ([]*model.PostWithUser, error) {
-	row, err := r.SqlHandler.Query(`
-		SELECT posts.*, users.username, users.host, users.protocol, users.display_name, users.profile, users.icon FROM posts JOIN users ON posts.user_id = users.id
+	rawPosts := make([]model.PostWithUser, 0)
+	query := `
+		SELECT posts.*,
+		users.username AS "user.username",
+		users.host AS "user.host",
+		users.protocol AS "user.protocol",
+		users.display_name AS "user.display_name",
+		users.profile AS "user.profile",
+		users.icon AS "user.icon"
+		FROM posts JOIN users ON posts.user_id = users.id
 		WHERE posts.created_at < $1
-		ORDER BY posts.created_at DESC LIMIT $2 ;
-	`, createdAt, limit)
-	if err != nil {
+		ORDER BY posts.created_at DESC LIMIT $2;
+	`
+	if err := r.SqlHandler.Select(&rawPosts, query, createdAt, limit); err != nil {
 		return nil, err
 	}
-	defer row.Close()
-	var posts []*model.PostWithUser
-	for row.Next() {
-		var post = new(model.PostWithUser)
-		if err := row.Scan(&post.Id, &post.UserId, &post.Content, &post.CreatedAt, &post.UpdatedAt, &post.User.Username, &post.User.Host, &post.User.Protocol, &post.User.DisplayName, &post.User.Profile, &post.User.Icon); err != nil {
-			return nil, err
-		}
-		posts = append(posts, post)
+	posts := make([]*model.PostWithUser, 0)
+	for _, rawPost := range rawPosts {
+		posts = append(posts, &rawPost)
 	}
 	return posts, nil
 }
 
 func (r *PostRepository) FindUserTimeline(userId string, createdAt time.Time, limit int) ([]*model.PostWithUser, error) {
-	row, err := r.SqlHandler.Query(`
-		SELECT posts.*, users.username, users.host, users.protocol, users.display_name, users.profile, users.icon FROM posts JOIN users ON posts.user_id = users.id
+	rawPosts := make([]model.PostWithUser, 0)
+	query := `
+		SELECT posts.*,
+		users.username AS "user.username",
+		users.host AS "user.host",
+		users.protocol AS "user.protocol",
+		users.display_name AS "user.display_name",
+		users.profile AS "user.profile",
+		users.icon AS "user.icon"
+		FROM posts JOIN users ON posts.user_id = users.id
 		WHERE user_id = $1 AND posts.created_at < $2
 		ORDER BY posts.created_at DESC LIMIT $3;
-	`, userId, createdAt, limit)
-	if err != nil {
+	`
+	if err := r.SqlHandler.Select(&rawPosts, query, userId, createdAt, limit); err != nil {
 		return nil, err
 	}
-	defer row.Close()
-	var posts []*model.PostWithUser
-	for row.Next() {
-		var post = new(model.PostWithUser)
-		if err := row.Scan(&post.Id, &post.UserId, &post.Content, &post.CreatedAt, &post.UpdatedAt, &post.User.Username, &post.User.Host, &post.User.Protocol, &post.User.DisplayName, &post.User.Profile, &post.User.Icon); err != nil {
-			return nil, err
-		}
-		posts = append(posts, post)
+	posts := make([]*model.PostWithUser, 0)
+	for _, rawPost := range rawPosts {
+		posts = append(posts, &rawPost)
 	}
 	return posts, nil
 }
 
 func (r *PostRepository) Delete(id string) error {
-	_, err := r.SqlHandler.Exec(`
-		DELETE FROM posts WHERE id = $1;
-	`, id)
+	_, err := r.SqlHandler.Exec(`DELETE FROM posts WHERE id = $1;`, id)
 	return err
 }
