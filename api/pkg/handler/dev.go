@@ -19,12 +19,13 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 			}
 			return
 		}
-		if err := c.Controllers.Transaction.Begin(); err != nil {
+		tx, err := c.Controllers.Transaction.Begin()
+		if err != nil {
 			panic(err)
 		}
 		defer func() {
 			if r := recover(); r != nil {
-				if err := c.Controllers.Transaction.Rollback(); err != nil {
+				if err := tx.Rollback(); err != nil {
 					panic(err)
 				}
 				panic(err)
@@ -37,7 +38,7 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 		if _, err := c.Controllers.ApUserIdentifier.Create(user.Id); err != nil {
 			panic(err)
 		}
-		if err := c.Controllers.Transaction.Commit(); err != nil {
+		if err := tx.Commit(); err != nil {
 			panic(err)
 		}
 		if _, err := w.Write([]byte("Mock Data Created")); err != nil {
