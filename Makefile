@@ -7,11 +7,16 @@ down:
 	docker compose -f compose.prod.yaml down
 
 # backend static analysis
-lint:
+lint-api:
 	@if ! command -v $$(go env GOPATH)/bin/golangci-lint > /dev/null 2>&1; then \
 		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
 	fi
 	cd api && $$(go env GOPATH)/bin/golangci-lint run ./...
+	cd frontend && pnpm lint
+
+# lint all
+lint:
+	make lint-api
 	cd frontend && pnpm lint
 
 # db migration
@@ -44,7 +49,7 @@ oapi-codegen:
 	fi
 	cd api && $$(go env GOPATH)/bin/oapi-codegen -generate types,spec -package openapi -o ./pkg/openapi/types.gen.go ../openapi/all.gen.yaml
 
-# genera hooks and types from openapi
+# generate hooks and types from openapi
 orval:
 	cd frontend && pnpm orval && pnpm orval:lint
 
