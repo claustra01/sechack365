@@ -17,6 +17,11 @@ BEFORE UPDATE ON ap_user_identifiers
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 
+CREATE TRIGGER set_updated_at_on_nostr_user_identifiers
+BEFORE UPDATE ON nostr_user_identifiers
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
 CREATE TRIGGER set_updated_at_on_follows
 BEFORE UPDATE ON follows
 FOR EACH ROW
