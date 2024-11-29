@@ -16,6 +16,10 @@ type ApUserIdentifierRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
+type NostrUserIdentifierRepository struct {
+	SqlHandler model.ISqlHandler
+}
+
 func (r *UserRepository) Create(username, host, protocol, password, displayName, profile, icon string) (*model.User, error) {
 	user := new(model.User)
 	uuid := util.NewUuid()
@@ -127,5 +131,38 @@ func (r *ApUserIdentifierRepository) FindById(id string) (*model.ApUserIdentifie
 
 func (r *ApUserIdentifierRepository) DeleteById(id string) error {
 	_, err := r.SqlHandler.Exec("DELETE FROM ap_user_identifiers WHERE user_id = $1;", id)
+	return err
+}
+
+func (r *NostrUserIdentifierRepository) Create(id string) (*model.NostrUserIdentifier, error) {
+	nostrUserIdentifier := new(model.NostrUserIdentifier)
+	pubKey, prvKey, err := util.GenerateNostrKeyPair()
+	if err != nil {
+		return nil, err
+	}
+	query := `
+		INSERT INTO nostr_user_identifiers (user_id, public_key, private_key)
+		VALUES ($1, $2, $3)
+		RETURNING *;
+	`
+	if err := r.SqlHandler.Get(nostrUserIdentifier, query, id, pubKey, prvKey); err != nil {
+		return nil, err
+	}
+	return nostrUserIdentifier, nil
+}
+
+func (r *NostrUserIdentifierRepository) FindById(id string) (*model.NostrUserIdentifier, error) {
+	nostrUserIdentifier := new(model.NostrUserIdentifier)
+	err := r.SqlHandler.Get(nostrUserIdentifier, "SELECT * FROM nostr_user_identifiers WHERE user_id = $1;", id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+	return nostrUserIdentifier, nil
+}
+
+func (r *NostrUserIdentifierRepository) DeleteById(id string) error {
+	_, err := r.SqlHandler.Exec("DELETE FROM nostr_user_identifiers WHERE user_id = $1;", id)
 	return err
 }
