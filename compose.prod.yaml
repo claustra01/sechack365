@@ -10,6 +10,7 @@ services:
       - PORT=${API_PORT}
       - LOG_LEVEL=${API_LOG_LEVEL}
       - POSTGRES_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable
+      - TZ=${TIMEZONE}
     depends_on:
       - db
 
@@ -19,6 +20,7 @@ services:
       - "127.0.0.1:${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
       - PORT=${FRONTEND_PORT}
+      - TZ=${TIMEZONE}
     depends_on:
       - api
     
@@ -30,6 +32,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+      - PGTZ=${TIMEZONE}
     volumes:
       - dbdata:/var/lib/postgresql/data
 
@@ -39,6 +42,8 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - "${REVERSE_PROXY_PORT}:443"
+    environment:
+      - TZ=${TIMEZONE}
     depends_on:
       - api
       - frontend
