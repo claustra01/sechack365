@@ -12,7 +12,6 @@ lint-api:
 		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
 	fi
 	cd api && $$(go env GOPATH)/bin/golangci-lint run ./...
-	cd frontend && pnpm lint
 
 # lint all
 lint:
@@ -62,7 +61,7 @@ schema:
 		npm install -g @dbml/cli; \
 	fi
 	dbml2sql dbdocs/schema.dbml --postgres > api/cmd/database/schema.sql
-	sed -i "s/'CURRENT_TIMESTAMP'/CURRENT_TIMESTAMP/g" api/cmd/database/schema.sql
+	sed -i "s/timestamp DEFAULT 'CURRENT_TIMESTAMP'/timestamp with time zone DEFAULT CURRENT_TIMESTAMP/g" api/cmd/database/schema.sql
 
 # generate dbdocs token
 dbdocs-token:
