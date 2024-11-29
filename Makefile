@@ -12,7 +12,6 @@ lint-api:
 		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
 	fi
 	cd api && $$(go env GOPATH)/bin/golangci-lint run ./...
-	cd frontend && pnpm lint
 
 # lint all
 lint:
