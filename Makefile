@@ -62,7 +62,7 @@ schema:
 		npm install -g @dbml/cli; \
 	fi
 	dbml2sql dbdocs/schema.dbml --postgres > api/cmd/database/schema.sql
-	sed -i "s/'CURRENT_TIMESTAMP'/CURRENT_TIMESTAMP/g" api/cmd/database/schema.sql
+	sed -i "s/timestamp DEFAULT 'CURRENT_TIMESTAMP'/timestamp with time zone DEFAULT CURRENT_TIMESTAMP/g" api/cmd/database/schema.sql
 
 # generate dbdocs token
 dbdocs-token:
