@@ -9,7 +9,7 @@ import (
 	"github.com/claustra01/sechack365/pkg/cerror"
 )
 
-func GenerateKeyPair() (string, string, error) {
+func GenerateApKeyPair() (string, string, error) {
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		return "", "", cerror.ErrGenerateRsaKey

@@ -34,6 +34,20 @@ func NewApUserIdentifierController(conn model.ISqlHandler) *ApUserIdentifierCont
 	}
 }
 
+type NostrUserIdentifierController struct {
+	NostrUserIdentifierUsecase usecase.NostrUserIdentifierUsecase
+}
+
+func NewNostrUserIdentifierController(conn model.ISqlHandler) *NostrUserIdentifierController {
+	return &NostrUserIdentifierController{
+		NostrUserIdentifierUsecase: usecase.NostrUserIdentifierUsecase{
+			NostrUserIdentifierRepository: &repository.NostrUserIdentifierRepository{
+				SqlHandler: conn,
+			},
+		},
+	}
+}
+
 func (c *UserController) Create(username, host, protocol, password, displayName, profile, icon string) (*model.User, error) {
 	return c.UserUsecase.Create(username, host, protocol, password, displayName, profile, icon)
 }
@@ -72,4 +86,16 @@ func (c *ApUserIdentifierController) FindById(id string) (*model.ApUserIdentifie
 
 func (c *ApUserIdentifierController) DeleteById(id string) error {
 	return c.ApUserIdentifierUsecase.DeleteById(id)
+}
+
+func (c *NostrUserIdentifierController) Create(id string) (*model.NostrUserIdentifier, error) {
+	return c.NostrUserIdentifierUsecase.Create(id)
+}
+
+func (c *NostrUserIdentifierController) FindById(id string) (*model.NostrUserIdentifier, error) {
+	return c.NostrUserIdentifierUsecase.FindById(id)
+}
+
+func (c *NostrUserIdentifierController) DeleteById(id string) error {
+	return c.NostrUserIdentifierUsecase.DeleteById(id)
 }

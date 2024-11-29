@@ -25,6 +25,14 @@ CREATE TABLE "ap_user_identifiers" (
   "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE "nostr_user_identifiers" (
+  "user_id" varchar(255) PRIMARY KEY,
+  "public_key" text NOT NULL,
+  "private_key" text NOT NULL,
+  "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE "follows" (
   "id" varchar(255) UNIQUE,
   "follower_id" varchar(255),
@@ -44,6 +52,8 @@ CREATE TABLE "posts" (
 );
 
 ALTER TABLE "ap_user_identifiers" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "nostr_user_identifiers" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "follows" ADD FOREIGN KEY ("follower_id") REFERENCES "users" ("id");
 

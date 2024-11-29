@@ -25,6 +25,14 @@ Table ap_user_identifiers {
   updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }
 
+Table nostr_user_identifiers {
+  user_id varchar(255) [pk, ref: - users.id]
+  public_key text [not null]
+  private_key text [not null]
+  created_at timestamp [default: "CURRENT_TIMESTAMP"]
+  updated_at timestamp [default: "CURRENT_TIMESTAMP"]
+}
+
 Table follows {
   id varchar(255) [unique]
   follower_id varchar(255) [pk, ref: > users.id]

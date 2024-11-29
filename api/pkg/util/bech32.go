@@ -51,3 +51,11 @@ func DecodeBech32(bech32Data string) (string, string, error) {
 	}
 	return hrp, compStr, nil
 }
+
+func EncodeNpub(hexStr string) (string, error) {
+	return EncodeBech32("npub", hexStr)
+}
+
+func EncodeNsec(hexStr string) (string, error) {
+	return EncodeBech32("nsec", hexStr)
+}
