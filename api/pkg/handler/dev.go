@@ -39,6 +39,9 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 		if _, err := c.Controllers.ApUserIdentifier.Create(user.Id); err != nil {
 			panic(err)
 		}
+		if _, err := c.Controllers.NostrUserIdentifier.Create(user.Id); err != nil {
+			panic(err)
+		}
 		if err := tx.Commit(); err != nil {
 			panic(err)
 		}
@@ -77,6 +80,9 @@ func ResetMock(c *framework.Context) http.HandlerFunc {
 
 		for _, user := range users {
 			if err := c.Controllers.ApUserIdentifier.DeleteById(user.Id); err != nil {
+				panic(err)
+			}
+			if err := c.Controllers.NostrUserIdentifier.DeleteById(user.Id); err != nil {
 				panic(err)
 			}
 			if err := c.Controllers.User.DeleteById(user.Id); err != nil {
