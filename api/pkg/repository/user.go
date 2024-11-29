@@ -140,12 +140,20 @@ func (r *NostrUserIdentifierRepository) Create(id string) (*model.NostrUserIdent
 	if err != nil {
 		return nil, err
 	}
+	npub, err := util.EncodeNpub(pubKey)
+	if err != nil {
+		return nil, err
+	}
+	nsec, err := util.EncodeNsec(prvKey)
+	if err != nil {
+		return nil, err
+	}
 	query := `
 		INSERT INTO nostr_user_identifiers (user_id, public_key, private_key)
 		VALUES ($1, $2, $3)
 		RETURNING *;
 	`
-	if err := r.SqlHandler.Get(nostrUserIdentifier, query, id, pubKey, prvKey); err != nil {
+	if err := r.SqlHandler.Get(nostrUserIdentifier, query, id, npub, nsec); err != nil {
 		return nil, err
 	}
 	return nostrUserIdentifier, nil
