@@ -26,6 +26,16 @@ type ApUserIdentifierUsecase struct {
 	ApUserIdentifierRepository IApUserIdentifierRepository
 }
 
+type INostrUserIdentifierRepository interface {
+	Create(id string) (*model.NostrUserIdentifier, error)
+	FindById(id string) (*model.NostrUserIdentifier, error)
+	DeleteById(id string) error
+}
+
+type NostrUserIdentifierUsecase struct {
+	NostrUserIdentifierRepository INostrUserIdentifierRepository
+}
+
 func (u *UserUsecase) Create(username, host, protocol, password, displayName, profile, icon string) (*model.User, error) {
 	return u.UserRepository.Create(username, host, protocol, password, displayName, profile, icon)
 }
@@ -64,4 +74,16 @@ func (u *ApUserIdentifierUsecase) FindById(id string) (*model.ApUserIdentifier, 
 
 func (u *ApUserIdentifierUsecase) DeleteById(id string) error {
 	return u.ApUserIdentifierRepository.DeleteById(id)
+}
+
+func (u *NostrUserIdentifierUsecase) Create(id string) (*model.NostrUserIdentifier, error) {
+	return u.NostrUserIdentifierRepository.Create(id)
+}
+
+func (u *NostrUserIdentifierUsecase) FindById(id string) (*model.NostrUserIdentifier, error) {
+	return u.NostrUserIdentifierRepository.FindById(id)
+}
+
+func (u *NostrUserIdentifierUsecase) DeleteById(id string) error {
+	return u.NostrUserIdentifierRepository.DeleteById(id)
 }
