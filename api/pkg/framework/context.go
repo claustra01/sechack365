@@ -18,14 +18,15 @@ type Context struct {
 }
 
 type Controllers struct {
-	Transaction      *controller.TransactionController
-	User             *controller.UserController
-	ApUserIdentifier *controller.ApUserIdentifierController
-	Follow           *controller.FollowController
-	Post             *controller.PostController
-	ActivityPub      *controller.ActivityPubController
-	Nostr            *controller.NostrController
-	Webfinger        *controller.WebfingerController
+	Transaction         *controller.TransactionController
+	User                *controller.UserController
+	ApUserIdentifier    *controller.ApUserIdentifierController
+	NostrUserIdentifier *controller.NostrUserIdentifierController
+	Follow              *controller.FollowController
+	Post                *controller.PostController
+	ActivityPub         *controller.ActivityPubController
+	Nostr               *controller.NostrController
+	Webfinger           *controller.WebfingerController
 }
 
 func NewContext(logger model.ILogger, conn model.ISqlHandler, ws model.IWsHandler) *Context {
@@ -39,14 +40,15 @@ func NewContext(logger model.ILogger, conn model.ISqlHandler, ws model.IWsHandle
 
 func NewControllers(conn model.ISqlHandler, ws model.IWsHandler) *Controllers {
 	return &Controllers{
-		Transaction:      controller.NewTransactionController(conn),
-		User:             controller.NewUserController(conn),
-		ApUserIdentifier: controller.NewApUserIdentifierController(conn),
-		Follow:           controller.NewFollowController(conn),
-		Post:             controller.NewPostController(conn),
-		ActivityPub:      controller.NewActivityPubController(),
-		Nostr:            controller.NewNostrController(ws),
-		Webfinger:        controller.NewWebfingerController(),
+		Transaction:         controller.NewTransactionController(conn),
+		User:                controller.NewUserController(conn),
+		ApUserIdentifier:    controller.NewApUserIdentifierController(conn),
+		NostrUserIdentifier: controller.NewNostrUserIdentifierController(conn),
+		Follow:              controller.NewFollowController(conn),
+		Post:                controller.NewPostController(conn),
+		ActivityPub:         controller.NewActivityPubController(),
+		Nostr:               controller.NewNostrController(ws),
+		Webfinger:           controller.NewWebfingerController(),
 	}
 }
 
