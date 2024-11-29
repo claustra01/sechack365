@@ -193,23 +193,23 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		// check cache
-		cachedUser, err := c.Controllers.User.FindByUsername(username, host)
-		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
-			return
-		}
-		if cachedUser != nil {
-			cacheTime, err := util.StrToTime(cachedUser.UpdatedAt)
-			if err == nil && util.CalcSubTime(time.Now(), cacheTime) < 24*time.Hour {
-				omittedUser := OmitUser(cachedUser)
-				jsonResponse(w, omittedUser)
-				return
-			}
-		}
-
 		// activitypub
 		if host != "" {
+			// check cache
+			cachedUser, err := c.Controllers.User.FindByUsername(username, host)
+			if err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+			if cachedUser != nil {
+				cacheTime, err := util.StrToTime(cachedUser.UpdatedAt)
+				if err == nil && util.CalcSubTime(time.Now(), cacheTime) < 24*time.Hour {
+					omittedUser := OmitUser(cachedUser)
+					jsonResponse(w, omittedUser)
+					return
+				}
+			}
+
 			// fetch from remote
 			link, err := c.Controllers.ActivityPub.ResolveWebfinger(username, host)
 			if err != nil {
@@ -222,15 +222,8 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				return
 			}
 
-			// check db
-			oldUser, err := c.Controllers.User.FindByUsername(username, host)
-			if err != nil {
-				returnInternalServerError(w, c.Logger, err)
-				return
-			}
-
 			// create user
-			if oldUser == nil {
+			if cachedUser == nil {
 				user, err := c.Controllers.User.CreateRemoteUser(username, host, "activitypub", actor.Name, actor.Summary, actor.Icon.Url)
 				if err != nil {
 					returnInternalServerError(w, c.Logger, err)
@@ -254,6 +247,21 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 
 		// nostr
 		if npub != "" {
+			// check cache
+			cachedUser, err := c.Controllers.User.FindByUsername(npub, "")
+			if err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+			if cachedUser != nil {
+				cacheTime, err := util.StrToTime(cachedUser.UpdatedAt)
+				if err == nil && util.CalcSubTime(time.Now(), cacheTime) < 24*time.Hour {
+					omittedUser := OmitUser(cachedUser)
+					jsonResponse(w, omittedUser)
+					return
+				}
+			}
+
 			// decode bech32
 			hrp, hexStr, err := util.DecodeBech32(npub)
 			if err != nil {
@@ -264,7 +272,6 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				returnBadRequest(w, c.Logger, cerror.ErrInvalidNostrKey)
 				return
 			}
-			log.Println(hexStr)
 
 			// fetch from remote
 			profile, err := c.Controllers.Nostr.GetUserProfile(hexStr)
@@ -277,16 +284,9 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				return
 			}
 
-			// chack db
-			oldUser, err := c.Controllers.User.FindByUsername(username, host)
-			if err != nil {
-				returnInternalServerError(w, c.Logger, err)
-				return
-			}
-
 			// create user
-			if oldUser == nil {
-				user, err := c.Controllers.User.CreateRemoteUser(username, host, "nostr", profile.DisplayName, profile.About, profile.Picture)
+			if cachedUser == nil {
+				user, err := c.Controllers.User.CreateRemoteUser(npub, host, "nostr", profile.DisplayName, profile.About, profile.Picture)
 				if err != nil {
 					returnInternalServerError(w, c.Logger, err)
 					return
@@ -297,7 +297,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			}
 
 			// update cache
-			user, err := c.Controllers.User.UpdateRemoteUser(username, host, profile.DisplayName, profile.About, profile.Picture)
+			user, err := c.Controllers.User.UpdateRemoteUser(npub, host, profile.DisplayName, profile.About, profile.Picture)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
