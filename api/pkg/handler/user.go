@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
@@ -159,21 +160,25 @@ func GetUserPosts(c *framework.Context) http.HandlerFunc {
 // FIXME: nostrユーザーの捜索は本来hashではなくnpub...の文字列で行うべき
 func LookupUser(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// parse username
 		usernameWithHost := r.PathValue("username")
-		pattern := regexp.MustCompile(`^([a-zA-Z0-9_]+)@?([a-zA-Z0-9-.]+)?$`)
+		pattern := regexp.MustCompile(`^(@([a-zA-Z0-9_]+)(@[a-zA-Z0-9-.]+)?)|(npub[a-z0-9]+)$`)
 		matches := pattern.FindStringSubmatch(usernameWithHost)
 
-		if len(matches) != 3 {
-			returnBadRequest(w, c.Logger, cerror.Wrap(cerror.ErrInvalidResourseQuery, usernameWithHost))
-			return
+		// local/remote username
+		username := matches[2]
+
+		// remote host
+		host := matches[3]
+		if host != "" {
+			host = strings.TrimLeft(host, "@")
 		}
 
-		username := matches[1]
-		host := matches[2]
+		// nostr public key
+		npub := matches[4]
 
 		// local user
-		if host == "" || host == c.Config.Host {
-			username := matches[1]
+		if (host == "" || host == c.Config.Host) && npub == "" {
 			user, err := c.Controllers.User.FindByUsername(username, c.Config.Host)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
@@ -194,44 +199,17 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-
 		if cachedUser != nil {
-			// return cached user
-			cachedTime, err := util.StrToTime(cachedUser.UpdatedAt)
-			if err == nil && util.CalcSubTime(time.Now(), cachedTime) < 24*time.Hour {
-				jsonResponse(w, cachedUser)
-				return
-			}
-
-			// nostr
-			if host == "nostr" {
-				// fetch from remote
-				profile, err := c.Controllers.Nostr.GetUserProfile(username)
-				if err != nil {
-					returnInternalServerError(w, c.Logger, err)
-					return
-				}
-				if profile == nil {
-					returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
-					return
-				}
-
-				// update cache
-				if _, err := c.Controllers.User.UpdateRemoteUser(username, host, profile.DisplayName, profile.About, profile.Picture); err != nil {
-					returnInternalServerError(w, c.Logger, err)
-					return
-				}
-				user, err := c.Controllers.User.FindByUsername(username, host)
-				if err != nil {
-					returnInternalServerError(w, c.Logger, err)
-					return
-				}
-				omittedUser := OmitUser(user)
+			cacheTime, err := util.StrToTime(cachedUser.UpdatedAt)
+			if err == nil && util.CalcSubTime(time.Now(), cacheTime) < 24*time.Hour {
+				omittedUser := OmitUser(cachedUser)
 				jsonResponse(w, omittedUser)
 				return
 			}
+		}
 
-			// activitypub
+		// activitypub
+		if host != "" {
 			// fetch from remote
 			link, err := c.Controllers.ActivityPub.ResolveWebfinger(username, host)
 			if err != nil {
@@ -244,24 +222,52 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				return
 			}
 
-			// update cache
-			if _, err := c.Controllers.User.UpdateRemoteUser(username, host, actor.Name, actor.Summary, actor.Icon.Url); err != nil {
+			// check db
+			oldUser, err := c.Controllers.User.FindByUsername(username, host)
+			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
-			user, err := c.Controllers.User.FindByUsername(username, host)
+
+			// create user
+			if oldUser == nil {
+				user, err := c.Controllers.User.CreateRemoteUser(username, host, "activitypub", actor.Name, actor.Summary, actor.Icon.Url)
+				if err != nil {
+					returnInternalServerError(w, c.Logger, err)
+					return
+				}
+				omittedUser := OmitUser(user)
+				jsonResponse(w, omittedUser)
+				return
+			}
+
+			// update cache
+			user, err := c.Controllers.User.UpdateRemoteUser(username, host, actor.Name, actor.Summary, actor.Icon.Url)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
 			omittedUser := OmitUser(user)
 			jsonResponse(w, omittedUser)
+			return
 		}
 
 		// nostr
-		if host == "nostr" {
+		if npub != "" {
+			// decode bech32
+			hrp, hexStr, err := util.DecodeBech32(npub)
+			if err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+			if hrp != "npub" {
+				returnBadRequest(w, c.Logger, cerror.ErrInvalidNostrKey)
+				return
+			}
+			log.Println(hexStr)
+
 			// fetch from remote
-			profile, err := c.Controllers.Nostr.GetUserProfile(username)
+			profile, err := c.Controllers.Nostr.GetUserProfile(hexStr)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
@@ -271,8 +277,27 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				return
 			}
 
-			// save cache
-			user, err := c.Controllers.User.CreateRemoteUser(username, host, model.ProtocolNostr, profile.DisplayName, profile.About, profile.Picture)
+			// chack db
+			oldUser, err := c.Controllers.User.FindByUsername(username, host)
+			if err != nil {
+				returnInternalServerError(w, c.Logger, err)
+				return
+			}
+
+			// create user
+			if oldUser == nil {
+				user, err := c.Controllers.User.CreateRemoteUser(username, host, "nostr", profile.DisplayName, profile.About, profile.Picture)
+				if err != nil {
+					returnInternalServerError(w, c.Logger, err)
+					return
+				}
+				omittedUser := OmitUser(user)
+				jsonResponse(w, omittedUser)
+				return
+			}
+
+			// update cache
+			user, err := c.Controllers.User.UpdateRemoteUser(username, host, profile.DisplayName, profile.About, profile.Picture)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
@@ -282,26 +307,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		// activitypub
-		// fetch from remote
-		link, err := c.Controllers.ActivityPub.ResolveWebfinger(username, host)
-		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
-			return
-		}
-		actor, err := c.Controllers.ActivityPub.ResolveRemoteActor(link)
-		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
-			return
-		}
-
-		// save cache
-		user, err := c.Controllers.User.CreateRemoteUser(actor.PreferredUsername, host, model.ProtocolActivityPub, actor.Name, actor.Summary, actor.Icon.Url)
-		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
-			return
-		}
-		omittedUser := OmitUser(user)
-		jsonResponse(w, omittedUser)
+		// return 404
+		returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
 	}
 }
