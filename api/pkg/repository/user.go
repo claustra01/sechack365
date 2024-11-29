@@ -12,6 +12,10 @@ type UserRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
+type ApUserIdentifierRepository struct {
+	SqlHandler model.ISqlHandler
+}
+
 func (r *UserRepository) Create(username, host, protocol, password, displayName, profile, icon string) (*model.User, error) {
 	user := new(model.User)
 	uuid := util.NewUuid()
@@ -93,13 +97,9 @@ func (r *UserRepository) UpdateRemoteUser(username, host, displayName, profile, 
 	return user, nil
 }
 
-type ApUserIdentifierRepository struct {
-	SqlHandler model.ISqlHandler
-}
-
 func (r *ApUserIdentifierRepository) Create(id string) (*model.ApUserIdentifier, error) {
 	apUserIdentifier := new(model.ApUserIdentifier)
-	pubKey, prvKey, err := util.GenerateKeyPair()
+	pubKey, prvKey, err := util.GenerateApKeyPair()
 	if err != nil {
 		return nil, err
 	}
