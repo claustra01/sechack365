@@ -3,9 +3,11 @@ module github.com/claustra01/sechack365
 go 1.22.5
 
 require (
+	github.com/btcsuite/btcutil v1.0.2
 	github.com/deepmap/oapi-codegen v1.16.3
 	github.com/getkin/kin-openapi v0.118.0
 	github.com/google/uuid v1.6.0
+	github.com/jmoiron/sqlx v1.4.0
 	github.com/lib/pq v1.10.9
 	github.com/pkg/errors v0.9.1
 	golang.org/x/crypto v0.27.0
@@ -21,7 +23,6 @@ require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
-	github.com/btcsuite/btcutil v1.0.2 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
@@ -40,7 +41,6 @@ require (
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/invopop/yaml v0.1.0 // indirect
 	github.com/iris-contrib/schema v0.0.6 // indirect
-	github.com/jmoiron/sqlx v1.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kataras/blocks v0.0.7 // indirect
