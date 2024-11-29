@@ -4,4 +4,7 @@ username:
   required: true
   schema:
     type: string
-    example: 'mock@localhost'
+    example:
+      - "@user"
+      - "@user@example.com"
+      - "npub123abc"
