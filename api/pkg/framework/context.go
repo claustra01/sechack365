@@ -55,7 +55,7 @@ func (c *Context) SetNostrRelays(ws model.IWsHandler) {
 	c.Controllers.Nostr = controller.NewNostrController(ws)
 }
 
-func (c *Context) CurrentUser(r *http.Request) (*model.User, error) {
+func (c *Context) CurrentUser(r *http.Request) (*model.UserWithIdentifiers, error) {
 	cookie, err := r.Cookie("session")
 	if err != nil || cookie.Value == "" {
 		return nil, cerror.ErrUserNotFound
