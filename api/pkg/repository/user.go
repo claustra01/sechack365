@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"database/sql"
+	"errors"
+
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/util"
 )
@@ -88,7 +91,7 @@ func (r *UserRepository) CreateRemoteApUser(user *model.User, identifier *model.
 	// create ap_user_identifier record
 	query = `
 		INSERT INTO ap_user_identifiers (user_id, local_username, host)
-		VALUES ($1, $2, $3, $4)
+		VALUES ($1, $2, $3)
 		RETURNING *;
 	`
 	if err := r.SqlHandler.Get(identifier, query, newUser.Id, identifier.LocalUsername, identifier.Host); err != nil {
@@ -229,9 +232,13 @@ func (r *UserRepository) FindByApUsername(username, host string) (*model.UserWit
 			ap_user_identifiers.public_key AS "identifiers.activitypub.public_key"
 		FROM users
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
-		WHERE users.protocol = $1 AND ap_user_identifiers.username = $2 AND ap_user_identifiers.host = $3;
+		WHERE users.protocol = $1 AND ap_user_identifiers.local_username = $2 AND ap_user_identifiers.host = $3;
 	`
-	if err := r.SqlHandler.Get(user, query, model.ProtocolActivityPub, username, host); err != nil {
+	err := r.SqlHandler.Get(user, query, model.ProtocolActivityPub, username, host)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
 		return nil, err
 	}
 	return user, nil
@@ -254,7 +261,11 @@ func (r *UserRepository) FindByNostrPublicKey(publicKey string) (*model.UserWith
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
 		WHERE users.protocol = $1 AND nostr_user_identifiers.public_key = $2;
 	`
-	if err := r.SqlHandler.Get(user, query, model.ProtocolNostr, publicKey); err != nil {
+	err := r.SqlHandler.Get(user, query, model.ProtocolNostr, publicKey)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
 		return nil, err
 	}
 	return user, nil
