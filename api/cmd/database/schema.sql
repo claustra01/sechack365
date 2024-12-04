@@ -51,6 +51,14 @@ CREATE TABLE "posts" (
   "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE "nostr_relays" (
+  "id" varchar(255) PRIMARY KEY,
+  "url" varchar(255) UNIQUE NOT NULL,
+  "is_enable" boolean NOT NULL DEFAULT true,
+  "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+
 ALTER TABLE "ap_user_identifiers" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "nostr_user_identifiers" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
