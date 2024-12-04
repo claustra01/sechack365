@@ -1,4 +1,4 @@
-import { getApiV1UsersIdPosts, getApiV1UsersMe } from "@/openapi";
+import { getApiV1UsersIdPosts, getApiV1UsersMe } from "@/openapi/api";
 import type { Post, User } from "@/openapi/schemas";
 import { Box } from "@mantine/core";
 import { useEffect, useState } from "react";

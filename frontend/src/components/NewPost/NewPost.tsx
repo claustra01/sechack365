@@ -1,4 +1,4 @@
-import { postApiV1Posts } from "@/openapi";
+import { postApiV1Posts } from "@/openapi/api";
 import type { Newpost } from "@/openapi/schemas";
 import { colors } from "@/styles/colors";
 import { Box, Button, Textarea } from "@mantine/core";

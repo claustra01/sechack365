@@ -1,5 +1,5 @@
 import { Box } from "@mantine/core";
-import { IconHome, IconLogin, IconLogout, IconUser } from "@tabler/icons-react";
+import { IconLogin, IconUser } from "@tabler/icons-react";
 import { MenuItem, type MenuItemProps } from "./MenuItem";
 
 export const GuestMenu = () => {

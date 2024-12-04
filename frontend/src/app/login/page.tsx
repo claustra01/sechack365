@@ -2,7 +2,7 @@
 
 import { Header } from "@/components/Header/Header";
 import { PageTemplate } from "@/components/Template/PageTemplate";
-import { postApiV1AuthLogin } from "@/openapi";
+import { postApiV1AuthLogin } from "@/openapi/api";
 import { colors } from "@/styles/colors";
 import { Box, Button, TextInput } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
