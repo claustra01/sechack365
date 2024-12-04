@@ -124,7 +124,7 @@ func (r *UserRepository) CreateRemoteNostrUser(user *model.User, identifier *mod
 		VALUES ($1, $2)
 		RETURNING user_id, public_key;
 	`
-	if err := r.SqlHandler.Get(identifier, query, newUser.Id, identifier.PublicKey, identifier.PrivateKey); err != nil {
+	if err := r.SqlHandler.Get(identifier, query, newUser.Id, identifier.PublicKey); err != nil {
 		return nil, err
 	}
 
