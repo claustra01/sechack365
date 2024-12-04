@@ -1,5 +1,5 @@
 import { colors } from "@/styles/colors";
-import { ActionIcon, Box, Text, Title } from "@mantine/core";
+import { ActionIcon, Box, Title } from "@mantine/core";
 import Link from "next/link";
 
 export type MenuItemProps = {

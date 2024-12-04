@@ -9,7 +9,7 @@ export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
 	useEffect(() => {
-		getApiV1UsersMe().then((response) => {
+		getApiV1UsersMe().then(() => {
 			setIsAuthenticated(true);
 		});
 	}, []);
