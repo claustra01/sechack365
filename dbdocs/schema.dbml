@@ -6,8 +6,7 @@ Enum protocol {
 
 Table users {
   id varchar(255) [pk]
-  username varchar(255) [not null]
-  host varchar(255) [not null]
+  username varchar(255) []
   protocol protocol [not null]
   hashed_password varchar(255) [not null, default: ""]
   display_name varchar(255)

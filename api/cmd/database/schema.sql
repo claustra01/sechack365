@@ -6,8 +6,7 @@ CREATE TYPE "protocol" AS ENUM (
 
 CREATE TABLE "users" (
   "id" varchar(255) PRIMARY KEY,
-  "username" varchar(255) NOT NULL,
-  "host" varchar(255) NOT NULL,
+  "username" varchar(255),
   "protocol" protocol NOT NULL,
   "hashed_password" varchar(255) NOT NULL DEFAULT '',
   "display_name" varchar(255),
