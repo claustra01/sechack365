@@ -18,20 +18,30 @@ func main() {
 		panic(err)
 	}
 
-	// Nostr Relay Connection
-	// TODO: 接続するRelayを自由に設定できるようにする
-	// FIXME: たまにbroken pipeが発生する、この時ユーザーのcacheロジックがぶっ壊れる
-	ws, err := infrastructure.NewWsHandler([]string{"wss://yabu.me"})
+	// Context
+	ctx := framework.NewContext(logger, conn)
+
+	// Websocket Connection
+	nostrRelays, err := ctx.Controllers.NostrRelay.FindAll()
 	if err != nil {
 		panic(err)
 	}
-	defer ws.Close()
+	urls := make([]string, 0, len(nostrRelays))
+	for _, r := range nostrRelays {
+		urls = append(urls, r.Url)
+	}
+	// FIXME: たまにbroken pipeが発生する、この時ユーザーのcacheロジックがぶっ壊れる
+	ws, err := infrastructure.NewWsHandler(urls)
+	if err != nil {
+		panic(err)
+	}
+	ctx.SetNostrRelays(ws)
 
-	ctx := framework.NewContext(logger, conn, ws)
+	// Server
 	server := framework.NewServer(ctx)
 	router := server.Router
 
-	router.Use(framework.LoggingMiddleware(logger), framework.RecoverMiddleware(logger))
+	router.Use(framework.LoggingMiddleware(logger), framework.RecoverMiddleware(logger), framework.CorsMiddleware(ctx.Config.Host))
 	if err := setupRouter(router, logger); err != nil {
 		panic(err)
 	}

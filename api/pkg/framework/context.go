@@ -24,21 +24,22 @@ type Controllers struct {
 	NostrUserIdentifier *controller.NostrUserIdentifierController
 	Follow              *controller.FollowController
 	Post                *controller.PostController
+	NostrRelay          *controller.NostrRelayController
 	ActivityPub         *controller.ActivityPubController
 	Nostr               *controller.NostrController
 	Webfinger           *controller.WebfingerController
 }
 
-func NewContext(logger model.ILogger, conn model.ISqlHandler, ws model.IWsHandler) *Context {
+func NewContext(logger model.ILogger, conn model.ISqlHandler) *Context {
 	return &Context{
 		Ctx:         context.Background(),
 		Logger:      logger,
 		Config:      NewConfig(logger),
-		Controllers: NewControllers(conn, ws),
+		Controllers: NewControllers(conn),
 	}
 }
 
-func NewControllers(conn model.ISqlHandler, ws model.IWsHandler) *Controllers {
+func NewControllers(conn model.ISqlHandler) *Controllers {
 	return &Controllers{
 		Transaction:         controller.NewTransactionController(conn),
 		User:                controller.NewUserController(conn),
@@ -46,10 +47,16 @@ func NewControllers(conn model.ISqlHandler, ws model.IWsHandler) *Controllers {
 		NostrUserIdentifier: controller.NewNostrUserIdentifierController(conn),
 		Follow:              controller.NewFollowController(conn),
 		Post:                controller.NewPostController(conn),
+		NostrRelay:          controller.NewNostrRelayController(conn),
 		ActivityPub:         controller.NewActivityPubController(),
-		Nostr:               controller.NewNostrController(ws),
-		Webfinger:           controller.NewWebfingerController(),
+		// set websocket connection with SetNostrRelays()
+		// Nostr:               controller.NewNostrController(ws),
+		Webfinger: controller.NewWebfingerController(),
 	}
+}
+
+func (c *Context) SetNostrRelays(ws model.IWsHandler) {
+	c.Controllers.Nostr = controller.NewNostrController(ws)
 }
 
 func (c *Context) CurrentUser(r *http.Request) (*model.User, error) {
