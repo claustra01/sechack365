@@ -52,6 +52,26 @@ func RecoverMiddleware(logger model.ILogger) MiddlewareFunc {
 	}
 }
 
+func CorsMiddleware(host string) MiddlewareFunc {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			origin := r.Header.Get("Origin")
+			if origin == host {
+				w.Header().Set("Access-Control-Allow-Origin", host)
+			} else {
+				w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+			}
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Cookie, Authorization")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+			next(w, r)
+		}
+	}
+}
+
 func AuthMiddleware(logger model.ILogger) MiddlewareFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
