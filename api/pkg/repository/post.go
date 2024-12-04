@@ -32,7 +32,6 @@ func (r *PostRepository) FindById(id string) (*model.PostWithUser, error) {
 	query := `
 		SELECT posts.*,
 		users.username AS user_username,
-		users.host AS user_host,
 		users.protocol AS user_protocol,
 		users.display_name AS user_display_name,
 		users.profile AS user_profile,
@@ -55,7 +54,6 @@ func (r *PostRepository) FindTimeline(createdAt time.Time, limit int) ([]*model.
 	query := `
 		SELECT posts.*,
 		users.username AS "user.username",
-		users.host AS "user.host",
 		users.protocol AS "user.protocol",
 		users.display_name AS "user.display_name",
 		users.profile AS "user.profile",
@@ -79,7 +77,6 @@ func (r *PostRepository) FindUserTimeline(userId string, createdAt time.Time, li
 	query := `
 		SELECT posts.*,
 		users.username AS "user.username",
-		users.host AS "user.host",
 		users.protocol AS "user.protocol",
 		users.display_name AS "user.display_name",
 		users.profile AS "user.profile",

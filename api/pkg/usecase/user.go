@@ -3,87 +3,69 @@ package usecase
 import "github.com/claustra01/sechack365/pkg/model"
 
 type IUserRepository interface {
-	Create(username, host, protocol, password, displayName, profile, icon string) (*model.User, error)
-	FindAll() ([]*model.User, error)
-	FindById(id string) (*model.User, error)
-	FindByUsername(username string, host string) (*model.User, error)
+	CreateLocalUser(username, password, displayName, profile, icon, host string) (*model.UserWithIdentifiers, error)
+	CreateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) (*model.UserWithIdentifiers, error)
+	CreateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) (*model.UserWithIdentifiers, error)
+	FindAll() ([]*model.UserWithIdentifiers, error)
+	FindById(id string) (*model.UserWithIdentifiers, error)
+	FindByLocalUsername(username string) (*model.UserWithIdentifiers, error)
+	FindByApUsername(username string, host string) (*model.UserWithIdentifiers, error)
+	FindByNostrPublicKey(publicKey string) (*model.UserWithIdentifiers, error)
+	UpdateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) (*model.UserWithIdentifiers, error)
+	UpdateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) (*model.UserWithIdentifiers, error)
 	DeleteById(id string) error
-	CreateRemoteUser(username, host, protocol, displayName, profile, icon string) (*model.User, error)
-	UpdateRemoteUser(username, host, displayName, profile, icon string) (*model.User, error)
+	// 認証でのみ使用
+	FindWithHashedPassword(username string) (*model.User, error)
 }
 
 type UserUsecase struct {
 	UserRepository IUserRepository
 }
 
-type IApUserIdentifierRepository interface {
-	Create(id string) (*model.ApUserIdentifier, error)
-	FindById(id string) (*model.ApUserIdentifier, error)
-	DeleteById(id string) error
+func (u *UserUsecase) CreateLocalUser(username, password, displayName, profile, icon, host string) (*model.UserWithIdentifiers, error) {
+	return u.UserRepository.CreateLocalUser(username, password, displayName, profile, icon, host)
 }
 
-type ApUserIdentifierUsecase struct {
-	ApUserIdentifierRepository IApUserIdentifierRepository
+func (u *UserUsecase) CreateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) (*model.UserWithIdentifiers, error) {
+	return u.UserRepository.CreateRemoteApUser(user, identifier)
 }
 
-type INostrUserIdentifierRepository interface {
-	Create(id string) (*model.NostrUserIdentifier, error)
-	FindById(id string) (*model.NostrUserIdentifier, error)
-	DeleteById(id string) error
+func (u *UserUsecase) CreateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) (*model.UserWithIdentifiers, error) {
+	return u.UserRepository.CreateRemoteNostrUser(user, identifier)
 }
 
-type NostrUserIdentifierUsecase struct {
-	NostrUserIdentifierRepository INostrUserIdentifierRepository
-}
-
-func (u *UserUsecase) Create(username, host, protocol, password, displayName, profile, icon string) (*model.User, error) {
-	return u.UserRepository.Create(username, host, protocol, password, displayName, profile, icon)
-}
-
-func (u *UserUsecase) FindAll() ([]*model.User, error) {
+func (u *UserUsecase) FindAll() ([]*model.UserWithIdentifiers, error) {
 	return u.UserRepository.FindAll()
 }
 
-func (u *UserUsecase) FindById(id string) (*model.User, error) {
+func (u *UserUsecase) FindById(id string) (*model.UserWithIdentifiers, error) {
 	return u.UserRepository.FindById(id)
 }
 
-func (u *UserUsecase) FindByUsername(username string, host string) (*model.User, error) {
-	return u.UserRepository.FindByUsername(username, host)
+func (u *UserUsecase) FindByLocalUsername(username string) (*model.UserWithIdentifiers, error) {
+	return u.UserRepository.FindByLocalUsername(username)
+}
+
+func (u *UserUsecase) FindByApUsername(username string, host string) (*model.UserWithIdentifiers, error) {
+	return u.UserRepository.FindByApUsername(username, host)
+}
+
+func (u *UserUsecase) FindByNostrPublicKey(publicKey string) (*model.UserWithIdentifiers, error) {
+	return u.UserRepository.FindByNostrPublicKey(publicKey)
+}
+
+func (u *UserUsecase) UpdateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) (*model.UserWithIdentifiers, error) {
+	return u.UserRepository.UpdateRemoteApUser(user, identifier)
+}
+
+func (u *UserUsecase) UpdateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) (*model.UserWithIdentifiers, error) {
+	return u.UserRepository.UpdateRemoteNostrUser(user, identifier)
 }
 
 func (u *UserUsecase) DeleteById(id string) error {
 	return u.UserRepository.DeleteById(id)
 }
 
-func (u *UserUsecase) CreateRemoteUser(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
-	return u.UserRepository.CreateRemoteUser(username, host, protocol, displayName, profile, icon)
-}
-
-func (u *UserUsecase) UpdateRemoteUser(username, host, displayName, profile, icon string) (*model.User, error) {
-	return u.UserRepository.UpdateRemoteUser(username, host, displayName, profile, icon)
-}
-
-func (u *ApUserIdentifierUsecase) Create(id string) (*model.ApUserIdentifier, error) {
-	return u.ApUserIdentifierRepository.Create(id)
-}
-
-func (u *ApUserIdentifierUsecase) FindById(id string) (*model.ApUserIdentifier, error) {
-	return u.ApUserIdentifierRepository.FindById(id)
-}
-
-func (u *ApUserIdentifierUsecase) DeleteById(id string) error {
-	return u.ApUserIdentifierRepository.DeleteById(id)
-}
-
-func (u *NostrUserIdentifierUsecase) Create(id string) (*model.NostrUserIdentifier, error) {
-	return u.NostrUserIdentifierRepository.Create(id)
-}
-
-func (u *NostrUserIdentifierUsecase) FindById(id string) (*model.NostrUserIdentifier, error) {
-	return u.NostrUserIdentifierRepository.FindById(id)
-}
-
-func (u *NostrUserIdentifierUsecase) DeleteById(id string) error {
-	return u.NostrUserIdentifierRepository.DeleteById(id)
+func (u *UserUsecase) FindWithHashedPassword(username string) (*model.User, error) {
+	return u.UserRepository.FindWithHashedPassword(username)
 }

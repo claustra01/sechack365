@@ -24,7 +24,7 @@ func Login(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		user, err := c.Controllers.User.FindByUsername(authRequestBody.Username, c.Config.Host)
+		user, err := c.Controllers.User.FindWithHashedPassword(authRequestBody.Username)
 		if err != nil {
 			returnInternalServerError(w, c.Logger, err)
 			return
@@ -61,8 +61,7 @@ func Login(c *framework.Context) http.HandlerFunc {
 			Expires:  framework.Sessions[sessionId].ExpiredAt,
 		})
 
-		omittedUser := OmitUser(user)
-		jsonResponse(w, omittedUser)
+		jsonResponse(w, user)
 	}
 }
 

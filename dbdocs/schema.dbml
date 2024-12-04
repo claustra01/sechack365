@@ -6,11 +6,10 @@ Enum protocol {
 
 Table users {
   id varchar(255) [pk]
-  username varchar(255) [not null]
-  host varchar(255) [not null]
+  username varchar(255) [not null, default: ""]
   protocol protocol [not null]
   hashed_password varchar(255) [not null, default: ""]
-  display_name varchar(255)
+  display_name varchar(255) [not null, default: ""]
   profile text
   icon varchar(255)
   created_at timestamp [default: "CURRENT_TIMESTAMP"]
@@ -19,8 +18,10 @@ Table users {
 
 Table ap_user_identifiers {
   user_id varchar(255) [pk, ref: - users.id]
-  public_key text [not null]
-  private_key text [not null]
+  local_username varchar(255) [not null]
+  host varchar(255) [not null]
+  public_key text [not null, default: ""]
+  private_key text
   created_at timestamp [default: "CURRENT_TIMESTAMP"]
   updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }
@@ -28,7 +29,7 @@ Table ap_user_identifiers {
 Table nostr_user_identifiers {
   user_id varchar(255) [pk, ref: - users.id]
   public_key text [not null]
-  private_key text [not null]
+  private_key text
   created_at timestamp [default: "CURRENT_TIMESTAMP"]
   updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }

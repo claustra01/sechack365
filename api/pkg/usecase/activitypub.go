@@ -17,9 +17,9 @@ type FollowActivity struct {
 }
 
 type IActivityPubService interface {
-	NewActor(user model.User, identifier model.ApUserIdentifier) *openapi.Actor
+	NewActor(user model.UserWithIdentifiers) *openapi.Actor
 	NewActorUrl(host, id string) string
-	NewKeyIdUrl(host string, name string) string
+	NewKeyIdUrl(host, name string) string
 	NewFollowActivity(id, host, followerId, followeeUrl string) *FollowActivity
 	NewNodeInfo(userUsage int) *openapi.Nodeinfo
 	ResolveWebfinger(username, host string) (string, error)
@@ -31,8 +31,8 @@ type ActivityPubUsecase struct {
 	ActivityPubService IActivityPubService
 }
 
-func (u *ActivityPubUsecase) NewActor(user model.User, identifier model.ApUserIdentifier) *openapi.Actor {
-	return u.ActivityPubService.NewActor(user, identifier)
+func (u *ActivityPubUsecase) NewActor(user model.UserWithIdentifiers) *openapi.Actor {
+	return u.ActivityPubService.NewActor(user)
 }
 
 func (u *ActivityPubUsecase) NewActorUrl(host, id string) string {

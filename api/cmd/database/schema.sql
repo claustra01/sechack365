@@ -6,11 +6,10 @@ CREATE TYPE "protocol" AS ENUM (
 
 CREATE TABLE "users" (
   "id" varchar(255) PRIMARY KEY,
-  "username" varchar(255) NOT NULL,
-  "host" varchar(255) NOT NULL,
+  "username" varchar(255) NOT NULL DEFAULT '',
   "protocol" protocol NOT NULL,
   "hashed_password" varchar(255) NOT NULL DEFAULT '',
-  "display_name" varchar(255),
+  "display_name" varchar(255) NOT NULL DEFAULT '',
   "profile" text,
   "icon" varchar(255),
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
@@ -19,8 +18,10 @@ CREATE TABLE "users" (
 
 CREATE TABLE "ap_user_identifiers" (
   "user_id" varchar(255) PRIMARY KEY,
-  "public_key" text NOT NULL,
-  "private_key" text NOT NULL,
+  "local_username" varchar(255) NOT NULL,
+  "host" varchar(255) NOT NULL,
+  "public_key" text NOT NULL DEFAULT '',
+  "private_key" text,
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );
@@ -28,7 +29,7 @@ CREATE TABLE "ap_user_identifiers" (
 CREATE TABLE "nostr_user_identifiers" (
   "user_id" varchar(255) PRIMARY KEY,
   "public_key" text NOT NULL,
-  "private_key" text NOT NULL,
+  "private_key" text,
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );

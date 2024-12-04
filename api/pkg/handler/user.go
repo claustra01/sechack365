@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 	"regexp"
 	"strings"
@@ -10,31 +9,8 @@ import (
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/model"
-	"github.com/claustra01/sechack365/pkg/openapi"
 	"github.com/claustra01/sechack365/pkg/util"
 )
-
-func OmitUser(user *model.User) *openapi.User {
-	createdAt, err := util.StrToTime(user.CreatedAt)
-	if err != nil {
-		panic(err)
-	}
-	updatedAt, err := util.StrToTime(user.UpdatedAt)
-	if err != nil {
-		panic(err)
-	}
-	return &openapi.User{
-		Id:          user.Id,
-		Username:    user.Username,
-		Host:        user.Host,
-		Protocol:    user.Protocol,
-		DisplayName: user.DisplayName,
-		Profile:     user.Profile,
-		Icon:        user.Icon,
-		CreatedAt:   createdAt,
-		UpdatedAt:   updatedAt,
-	}
-}
 
 func GetAllUsers(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -43,18 +19,14 @@ func GetAllUsers(c *framework.Context) http.HandlerFunc {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		var omittedUsers []*openapi.User
-		for _, user := range users {
-			omittedUsers = append(omittedUsers, OmitUser(user))
-		}
-		jsonResponse(w, omittedUsers)
+		jsonResponse(w, users)
 	}
 }
 
 func GetUser(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
-		header := r.Header.Get("Accept")
+		acceptHeader := r.Header.Get("Accept")
 
 		user, err := c.Controllers.User.FindById(id)
 		if err != nil {
@@ -65,22 +37,12 @@ func GetUser(c *framework.Context) http.HandlerFunc {
 			returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
 			return
 		}
-		identifier, err := c.Controllers.ApUserIdentifier.FindById(user.Id)
-		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
-			return
-		}
-
-		switch header {
+		switch acceptHeader {
 		case "application/activity+json":
-			actor := c.Controllers.ActivityPub.NewActor(*user, *identifier)
+			actor := c.Controllers.ActivityPub.NewActor(*user)
 			jsonCustomContentTypeResponse(w, actor, "application/activity+json")
-		// case "application/json":
-		// 	omittedUser := OmitUser(user)
-		// 	jsonResponse(w, omittedUser)
 		default:
-			omittedUser := OmitUser(user)
-			jsonResponse(w, omittedUser)
+			jsonResponse(w, user)
 		}
 	}
 }
@@ -92,8 +54,7 @@ func GetCurrentUser(c *framework.Context) http.HandlerFunc {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		omittedUser := OmitUser(user)
-		jsonResponse(w, omittedUser)
+		jsonResponse(w, user)
 	}
 }
 
@@ -105,12 +66,7 @@ func GetUserFollows(c *framework.Context) http.HandlerFunc {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		var omittedFollows []*openapi.User
-		for _, user := range follows {
-			omittedFollows = append(omittedFollows, OmitUser(user))
-		}
-		log.Println(omittedFollows)
-		jsonResponse(w, omittedFollows)
+		jsonResponse(w, follows)
 	}
 }
 
@@ -122,12 +78,7 @@ func GetUserFollowers(c *framework.Context) http.HandlerFunc {
 			returnInternalServerError(w, c.Logger, err)
 			return
 		}
-		var omittedFollowers []*openapi.User
-		for _, user := range followers {
-			omittedFollowers = append(omittedFollowers, OmitUser(user))
-		}
-		log.Println(omittedFollowers)
-		jsonResponse(w, omittedFollowers)
+		jsonResponse(w, followers)
 	}
 }
 
@@ -179,7 +130,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 
 		// local user
 		if (host == "" || host == c.Config.Host) && npub == "" {
-			user, err := c.Controllers.User.FindByUsername(username, c.Config.Host)
+			user, err := c.Controllers.User.FindByLocalUsername(username)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
@@ -188,15 +139,14 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
 				return
 			}
-			omittedUser := OmitUser(user)
-			jsonResponse(w, omittedUser)
+			jsonResponse(w, user)
 			return
 		}
 
 		// activitypub
 		if host != "" {
 			// check cache
-			cachedUser, err := c.Controllers.User.FindByUsername(username, host)
+			cachedUser, err := c.Controllers.User.FindByApUsername(username, host)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
@@ -204,8 +154,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			if cachedUser != nil {
 				cacheTime, err := util.StrToTime(cachedUser.UpdatedAt)
 				if err == nil && util.CalcSubTime(time.Now(), cacheTime) < 24*time.Hour {
-					omittedUser := OmitUser(cachedUser)
-					jsonResponse(w, omittedUser)
+					jsonResponse(w, cachedUser)
 					return
 				}
 			}
@@ -222,33 +171,41 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				return
 			}
 
+			u := &model.User{
+				DisplayName: actor.Name,
+				Profile:     actor.Summary,
+				Icon:        actor.Icon.Url,
+			}
+			i := &model.ApUserIdentifier{
+				LocalUsername: username,
+				Host:          host,
+			}
+
 			// create user
 			if cachedUser == nil {
-				user, err := c.Controllers.User.CreateRemoteUser(username, host, "activitypub", actor.Name, actor.Summary, actor.Icon.Url)
+				user, err := c.Controllers.User.CreateRemoteApUser(u, i)
 				if err != nil {
 					returnInternalServerError(w, c.Logger, err)
 					return
 				}
-				omittedUser := OmitUser(user)
-				jsonResponse(w, omittedUser)
+				jsonResponse(w, user)
 				return
 			}
 
 			// update cache
-			user, err := c.Controllers.User.UpdateRemoteUser(username, host, actor.Name, actor.Summary, actor.Icon.Url)
+			user, err := c.Controllers.User.UpdateRemoteApUser(u, i)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
-			omittedUser := OmitUser(user)
-			jsonResponse(w, omittedUser)
+			jsonResponse(w, user)
 			return
 		}
 
 		// nostr
 		if npub != "" {
 			// check cache
-			cachedUser, err := c.Controllers.User.FindByUsername(npub, "")
+			cachedUser, err := c.Controllers.User.FindByNostrPublicKey(npub)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
@@ -256,8 +213,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			if cachedUser != nil {
 				cacheTime, err := util.StrToTime(cachedUser.UpdatedAt)
 				if err == nil && util.CalcSubTime(time.Now(), cacheTime) < 24*time.Hour {
-					omittedUser := OmitUser(cachedUser)
-					jsonResponse(w, omittedUser)
+					jsonResponse(w, cachedUser)
 					return
 				}
 			}
@@ -284,26 +240,33 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				return
 			}
 
+			u := &model.User{
+				DisplayName: profile.DisplayName,
+				Profile:     profile.About,
+				Icon:        profile.Picture,
+			}
+			i := &model.NostrUserIdentifier{
+				PublicKey: npub,
+			}
+
 			// create user
 			if cachedUser == nil {
-				user, err := c.Controllers.User.CreateRemoteUser(npub, host, "nostr", profile.DisplayName, profile.About, profile.Picture)
+				user, err := c.Controllers.User.CreateRemoteNostrUser(u, i)
 				if err != nil {
 					returnInternalServerError(w, c.Logger, err)
 					return
 				}
-				omittedUser := OmitUser(user)
-				jsonResponse(w, omittedUser)
+				jsonResponse(w, user)
 				return
 			}
 
 			// update cache
-			user, err := c.Controllers.User.UpdateRemoteUser(npub, host, profile.DisplayName, profile.About, profile.Picture)
+			user, err := c.Controllers.User.UpdateRemoteNostrUser(u, i)
 			if err != nil {
 				returnInternalServerError(w, c.Logger, err)
 				return
 			}
-			omittedUser := OmitUser(user)
-			jsonResponse(w, omittedUser)
+			jsonResponse(w, user)
 			return
 		}
 

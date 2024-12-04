@@ -20,82 +20,50 @@ func NewUserController(conn model.ISqlHandler) *UserController {
 	}
 }
 
-type ApUserIdentifierController struct {
-	ApUserIdentifierUsecase usecase.ApUserIdentifierUsecase
+func (c *UserController) CreateLocalUser(username, password, displayName, profile, icon, host string) (*model.UserWithIdentifiers, error) {
+	return c.UserUsecase.CreateLocalUser(username, password, displayName, profile, icon, host)
 }
 
-func NewApUserIdentifierController(conn model.ISqlHandler) *ApUserIdentifierController {
-	return &ApUserIdentifierController{
-		ApUserIdentifierUsecase: usecase.ApUserIdentifierUsecase{
-			ApUserIdentifierRepository: &repository.ApUserIdentifierRepository{
-				SqlHandler: conn,
-			},
-		},
-	}
+func (c *UserController) CreateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) (*model.UserWithIdentifiers, error) {
+	return c.UserUsecase.CreateRemoteApUser(user, identifier)
 }
 
-type NostrUserIdentifierController struct {
-	NostrUserIdentifierUsecase usecase.NostrUserIdentifierUsecase
+func (c *UserController) CreateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) (*model.UserWithIdentifiers, error) {
+	return c.UserUsecase.CreateRemoteNostrUser(user, identifier)
 }
 
-func NewNostrUserIdentifierController(conn model.ISqlHandler) *NostrUserIdentifierController {
-	return &NostrUserIdentifierController{
-		NostrUserIdentifierUsecase: usecase.NostrUserIdentifierUsecase{
-			NostrUserIdentifierRepository: &repository.NostrUserIdentifierRepository{
-				SqlHandler: conn,
-			},
-		},
-	}
-}
-
-func (c *UserController) Create(username, host, protocol, password, displayName, profile, icon string) (*model.User, error) {
-	return c.UserUsecase.Create(username, host, protocol, password, displayName, profile, icon)
-}
-
-func (c *UserController) FindAll() ([]*model.User, error) {
+func (c *UserController) FindAll() ([]*model.UserWithIdentifiers, error) {
 	return c.UserUsecase.FindAll()
 }
 
-func (c *UserController) FindById(id string) (*model.User, error) {
+func (c *UserController) FindById(id string) (*model.UserWithIdentifiers, error) {
 	return c.UserUsecase.FindById(id)
 }
 
-func (c *UserController) FindByUsername(username, host string) (*model.User, error) {
-	return c.UserUsecase.FindByUsername(username, host)
+func (c *UserController) FindByLocalUsername(username string) (*model.UserWithIdentifiers, error) {
+	return c.UserUsecase.FindByLocalUsername(username)
+}
+
+func (c *UserController) FindByApUsername(username string, host string) (*model.UserWithIdentifiers, error) {
+	return c.UserUsecase.FindByApUsername(username, host)
+}
+
+func (c *UserController) FindByNostrPublicKey(publicKey string) (*model.UserWithIdentifiers, error) {
+	return c.UserUsecase.FindByNostrPublicKey(publicKey)
+}
+
+func (c *UserController) UpdateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) (*model.UserWithIdentifiers, error) {
+	return c.UserUsecase.UpdateRemoteApUser(user, identifier)
+}
+
+func (c *UserController) UpdateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) (*model.UserWithIdentifiers, error) {
+	return c.UserUsecase.UpdateRemoteNostrUser(user, identifier)
 }
 
 func (c *UserController) DeleteById(id string) error {
 	return c.UserUsecase.DeleteById(id)
 }
 
-func (c *UserController) CreateRemoteUser(username, host, protocol, displayName, profile, icon string) (*model.User, error) {
-	return c.UserUsecase.CreateRemoteUser(username, host, protocol, displayName, profile, icon)
-}
-
-func (c *UserController) UpdateRemoteUser(username, host, displayName, profile, icon string) (*model.User, error) {
-	return c.UserUsecase.UpdateRemoteUser(username, host, displayName, profile, icon)
-}
-
-func (c *ApUserIdentifierController) Create(id string) (*model.ApUserIdentifier, error) {
-	return c.ApUserIdentifierUsecase.Create(id)
-}
-
-func (c *ApUserIdentifierController) FindById(id string) (*model.ApUserIdentifier, error) {
-	return c.ApUserIdentifierUsecase.FindById(id)
-}
-
-func (c *ApUserIdentifierController) DeleteById(id string) error {
-	return c.ApUserIdentifierUsecase.DeleteById(id)
-}
-
-func (c *NostrUserIdentifierController) Create(id string) (*model.NostrUserIdentifier, error) {
-	return c.NostrUserIdentifierUsecase.Create(id)
-}
-
-func (c *NostrUserIdentifierController) FindById(id string) (*model.NostrUserIdentifier, error) {
-	return c.NostrUserIdentifierUsecase.FindById(id)
-}
-
-func (c *NostrUserIdentifierController) DeleteById(id string) error {
-	return c.NostrUserIdentifierUsecase.DeleteById(id)
+func (c *UserController) FindWithHashedPassword(username string) (*model.User, error) {
+	return c.UserUsecase.FindWithHashedPassword(username)
 }
