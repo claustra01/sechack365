@@ -13,37 +13,6 @@ type WsHandler struct {
 	lock sync.Mutex
 }
 
-func (ws *WsHandler) monitorWs(logger model.ILogger) {
-	ticker := time.NewTicker(1 * time.Minute)
-	go func() {
-		for range ticker.C {
-			ws.lock.Lock()
-			for url, conn := range ws.Ws {
-				_, err := conn.Write([]byte("PING"))
-				if err != nil {
-					logger.Error("Connection error: " + err.Error())
-					conn.Close()
-					conn, err = reconnect(url, logger)
-					if err != nil {
-						logger.Error("Reconnection error: " + err.Error())
-					}
-					ws.Ws[url] = conn
-				}
-			}
-			ws.lock.Unlock()
-		}
-	}()
-}
-
-func reconnect(url string, logger model.ILogger) (*websocket.Conn, error) {
-	conn, err := websocket.Dial(url, "", "http://localhost")
-	if err != nil {
-		return nil, err
-	}
-	logger.Info("connected websocket to " + url)
-	return conn, nil
-}
-
 func NewWsHandler(urls []string, logger model.ILogger) (model.IWsHandler, error) {
 	ws := make(map[string]*websocket.Conn)
 	for _, url := range urls {
@@ -58,7 +27,7 @@ func NewWsHandler(urls []string, logger model.ILogger) (model.IWsHandler, error)
 		ws[url] = conn
 	}
 	wsHandler := &WsHandler{Ws: ws}
-	wsHandler.monitorWs(logger)
+	wsHandler.monitor(logger)
 	return wsHandler, nil
 }
 
@@ -93,4 +62,35 @@ func (ws *WsHandler) Close() error {
 		conn.Close()
 	}
 	return nil
+}
+
+func (ws *WsHandler) monitor(logger model.ILogger) {
+	ticker := time.NewTicker(1 * time.Minute)
+	go func() {
+		for range ticker.C {
+			ws.lock.Lock()
+			for url, conn := range ws.Ws {
+				_, err := conn.Write([]byte("PING"))
+				if err != nil {
+					logger.Error("connection broken: " + err.Error())
+					conn.Close()
+					conn, err = reconnect(url, logger)
+					if err != nil {
+						logger.Error("reconnection error: " + err.Error())
+					}
+					ws.Ws[url] = conn
+				}
+			}
+			ws.lock.Unlock()
+		}
+	}()
+}
+
+func reconnect(url string, logger model.ILogger) (*websocket.Conn, error) {
+	conn, err := websocket.Dial(url, "", "http://localhost")
+	if err != nil {
+		return nil, err
+	}
+	logger.Info("reconnected websocket to " + url)
+	return conn, nil
 }
