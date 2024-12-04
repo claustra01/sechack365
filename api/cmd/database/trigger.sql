@@ -31,3 +31,8 @@ CREATE TRIGGER set_updated_at_on_posts
 BEFORE UPDATE ON posts
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER set_updated_at_on_nostr_relays
+BEFORE UPDATE ON nostr_relays
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
