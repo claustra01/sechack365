@@ -5,12 +5,11 @@ const bindUsername = (props: User) => {
 	switch (props.protocol) {
 		case "local":
 			// TODO: nostr support
-			return `${props.username}@${props.host}`;
+			return `@${props.username}@${props.identifiers.activitypub?.host}\n${props.identifiers.nostr?.public_key}`;
 		case "activitypub":
-			return `${props.username}@${props.host}`;
+			return `@${props.identifiers.activitypub?.local_username}@${props.identifiers.activitypub?.host}`;
 		case "nostr":
-			// TODO: nostr support
-			return "";
+			return props.identifiers.nostr?.public_key;
 		default:
 			return "";
 	}
@@ -25,7 +24,7 @@ export const UserProfileCard = (props: User) => {
 					{props.display_name}
 				</Title>
 				<Box>
-					<Text size="lg">{bindUsername(props)}</Text>
+					<Text size="md">{bindUsername(props)}</Text>
 				</Box>
 			</Box>
 		</Box>
