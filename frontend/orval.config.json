@@ -3,7 +3,7 @@
     "input": "../openapi/all.gen.yaml",
     "output": {
       "client": "swr",               
-      "target": "./src/openapi/index.ts", 
+      "target": "./src/openapi/api.ts", 
       "schemas": "./src/openapi/schemas"
     }
   }
