@@ -319,7 +319,7 @@ func (r *UserRepository) DeleteById(id string) error {
 	if _, err := r.SqlHandler.Exec("DELETE FROM nostr_user_identifiers WHERE user_id = $1;", id); err != nil {
 		return err
 	}
-	if _, err := r.SqlHandler.Exec("DELETE FROM users WHERE user_id = $1;", id); err != nil {
+	if _, err := r.SqlHandler.Exec("DELETE FROM users WHERE id = $1;", id); err != nil {
 		return err
 	}
 	return nil
