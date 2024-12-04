@@ -29,3 +29,21 @@ type NostrUserIdentifier struct {
 	CreatedAt  string `json:"created_at" db:"created_at"`
 	UpdatedAt  string `json:"updated_at" db:"updated_at"`
 }
+
+type UserWithIdentifiers struct {
+	Id             string       `json:"id" db:"id"`
+	Username       string       `json:"username" db:"username"`
+	Protocol       string       `json:"protocol" db:"protocol"`
+	HashedPassword string       `json:"hashed_password" db:"hashed_password"`
+	DisplayName    string       `json:"display_name" db:"display_name"`
+	Profile        string       `json:"profile" db:"profile"`
+	Icon           string       `json:"icon" db:"icon"`
+	CreatedAt      string       `json:"created_at" db:"created_at"`
+	UpdatedAt      string       `json:"updated_at" db:"updated_at"`
+	Identifiers    *Identifiers `json:"identifiers" db:"identifiers"`
+}
+
+type Identifiers struct {
+	Activitypub *ApUserIdentifier    `json:"activitypub" db:"activitypub"`
+	Nostr       *NostrUserIdentifier `json:"nostr" db:"nostr"`
+}
