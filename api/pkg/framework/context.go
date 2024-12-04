@@ -30,16 +30,16 @@ type Controllers struct {
 	Webfinger           *controller.WebfingerController
 }
 
-func NewContext(logger model.ILogger, conn model.ISqlHandler, ws model.IWsHandler) *Context {
+func NewContext(logger model.ILogger, conn model.ISqlHandler) *Context {
 	return &Context{
 		Ctx:         context.Background(),
 		Logger:      logger,
 		Config:      NewConfig(logger),
-		Controllers: NewControllers(conn, ws),
+		Controllers: NewControllers(conn),
 	}
 }
 
-func NewControllers(conn model.ISqlHandler, ws model.IWsHandler) *Controllers {
+func NewControllers(conn model.ISqlHandler) *Controllers {
 	return &Controllers{
 		Transaction:         controller.NewTransactionController(conn),
 		User:                controller.NewUserController(conn),
@@ -49,9 +49,14 @@ func NewControllers(conn model.ISqlHandler, ws model.IWsHandler) *Controllers {
 		Post:                controller.NewPostController(conn),
 		NostrRelay:          controller.NewNostrRelayController(conn),
 		ActivityPub:         controller.NewActivityPubController(),
-		Nostr:               controller.NewNostrController(ws),
-		Webfinger:           controller.NewWebfingerController(),
+		// set websocket connection with SetWsConn()
+		// Nostr:               controller.NewNostrController(ws),
+		Webfinger: controller.NewWebfingerController(),
 	}
+}
+
+func (c *Context) SetWsConn(ws model.IWsHandler) {
+	c.Controllers.Nostr = controller.NewNostrController(ws)
 }
 
 func (c *Context) CurrentUser(r *http.Request) (*model.User, error) {
