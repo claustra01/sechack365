@@ -20,7 +20,7 @@ Table ap_user_identifiers {
   user_id varchar(255) [pk, ref: - users.id]
   local_username varchar(255) [not null]
   host varchar(255) [not null]
-  public_key text
+  public_key text [not null, default: ""]
   private_key text
   created_at timestamp [default: "CURRENT_TIMESTAMP"]
   updated_at timestamp [default: "CURRENT_TIMESTAMP"]

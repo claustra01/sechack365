@@ -20,7 +20,7 @@ CREATE TABLE "ap_user_identifiers" (
   "user_id" varchar(255) PRIMARY KEY,
   "local_username" varchar(255) NOT NULL,
   "host" varchar(255) NOT NULL,
-  "public_key" text,
+  "public_key" text NOT NULL DEFAULT '',
   "private_key" text,
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
