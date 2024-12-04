@@ -63,3 +63,7 @@ func (c *UserController) UpdateRemoteNostrUser(user *model.User, identifier *mod
 func (c *UserController) DeleteById(id string) error {
 	return c.UserUsecase.DeleteById(id)
 }
+
+func (c *UserController) FindWithHashedPassword(username string) (*model.User, error) {
+	return c.UserUsecase.FindWithHashedPassword(username)
+}

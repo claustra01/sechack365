@@ -350,3 +350,15 @@ func (r *UserRepository) DeleteById(id string) error {
 	}
 	return nil
 }
+
+func (r *UserRepository) FindWithHashedPassword(username string) (*model.User, error) {
+	user := new(model.User)
+	// NOTE: should be a local user
+	query := `
+		SELECT * FROM users WHERE username = $1 WHERE protocol = $2;
+	`
+	if err := r.SqlHandler.Get(user, query, username, model.ProtocolLocal); err != nil {
+		return nil, err
+	}
+	return user, nil
+}

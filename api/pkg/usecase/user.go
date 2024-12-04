@@ -14,6 +14,8 @@ type IUserRepository interface {
 	UpdateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) (*model.UserWithIdentifiers, error)
 	UpdateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) (*model.UserWithIdentifiers, error)
 	DeleteById(id string) error
+	// 認証でのみ使用
+	FindWithHashedPassword(username string) (*model.User, error)
 }
 
 type UserUsecase struct {
@@ -62,4 +64,8 @@ func (u *UserUsecase) UpdateRemoteNostrUser(user *model.User, identifier *model.
 
 func (u *UserUsecase) DeleteById(id string) error {
 	return u.UserRepository.DeleteById(id)
+}
+
+func (u *UserUsecase) FindWithHashedPassword(username string) (*model.User, error) {
+	return u.UserRepository.FindWithHashedPassword(username)
 }
