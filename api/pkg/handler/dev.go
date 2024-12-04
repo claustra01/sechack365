@@ -20,32 +20,10 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 			}
 			return
 		}
-		tx, err := c.Controllers.Transaction.Begin()
-		if err != nil {
-			panic(err)
-		}
-		defer func() {
-			if r := recover(); r != nil {
-				if err := tx.Rollback(); err != nil {
-					panic(err)
-				}
-				panic(err)
-			}
-		}()
-		user, err := c.Controllers.User.Create("mock", c.Config.Host, "local", "password", "Mock User", "This is mock user", "https://placehold.jp/150x150.png")
-		if err != nil {
-			panic(err)
-		}
-		if _, err := c.Controllers.ApUserIdentifier.Create(user.Id); err != nil {
-			panic(err)
-		}
-		if _, err := c.Controllers.NostrUserIdentifier.Create(user.Id); err != nil {
+		if _, err := c.Controllers.User.CreateLocalUser("mock", "password", "Mock User", "This is mock user", "https://placehold.jp/150x150.png", c.Config.Host); err != nil {
 			panic(err)
 		}
 		if _, err := c.Controllers.NostrRelay.Create("wss://yabu.me"); err != nil {
-			panic(err)
-		}
-		if err := tx.Commit(); err != nil {
 			panic(err)
 		}
 		if _, err := w.Write([]byte("Mock Data Created")); err != nil {
@@ -75,20 +53,13 @@ func ResetMock(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		for _, post := range posts {
-			if err := c.Controllers.Post.Delete(post.Id); err != nil {
+		for _, user := range users {
+			if err := c.Controllers.User.DeleteById(user.Id); err != nil {
 				panic(err)
 			}
 		}
-
-		for _, user := range users {
-			if err := c.Controllers.ApUserIdentifier.DeleteById(user.Id); err != nil {
-				panic(err)
-			}
-			if err := c.Controllers.NostrUserIdentifier.DeleteById(user.Id); err != nil {
-				panic(err)
-			}
-			if err := c.Controllers.User.DeleteById(user.Id); err != nil {
+		for _, post := range posts {
+			if err := c.Controllers.Post.Delete(post.Id); err != nil {
 				panic(err)
 			}
 		}
