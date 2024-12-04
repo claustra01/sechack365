@@ -5,8 +5,6 @@ user:
       type: string
     username:
       type: string
-    host:
-      type: string
     protocol:
       type: string
     display_name:
@@ -21,16 +19,33 @@ user:
     updated_at:
       type: string
       format: date-time
+    identifiers:
+      type: object
+      properties:
+        activitypub:
+          type: object
+          properties:
+            local_username:
+              type: string
+            host:
+              type: string
+            public_key:
+              type: string
+        nostr:
+          type: object
+          properties:
+            public_key:
+              type: string
   required:
     - id
     - username
-    - host
     - protocol
     - display_name
     - profile
     - icon
     - created_at
     - updated_at
+    - identifiers
 
 auth:
   type: object
