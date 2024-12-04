@@ -11,7 +11,7 @@ export const Header = (props: HeaderProps) => {
 	return (
 		<Box
 			bg={colors.secondaryColor}
-			style={{ display: "flex", alignItems: "center", padding: "24px" }}
+			style={{ display: "flex", alignItems: "center", padding: "12px" }}
 		>
 			<ActionIcon
 				component={Link}
