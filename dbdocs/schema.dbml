@@ -6,7 +6,7 @@ Enum protocol {
 
 Table users {
   id varchar(255) [pk]
-  username varchar(255) []
+  username varchar(255)
   protocol protocol [not null]
   hashed_password varchar(255) [not null, default: ""]
   display_name varchar(255)
@@ -18,6 +18,8 @@ Table users {
 
 Table ap_user_identifiers {
   user_id varchar(255) [pk, ref: - users.id]
+  local_username varchar(255) [not null]
+  host varchar(255) [not null]
   public_key text [not null]
   private_key text [not null]
   created_at timestamp [default: "CURRENT_TIMESTAMP"]
