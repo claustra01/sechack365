@@ -49,13 +49,13 @@ func NewControllers(conn model.ISqlHandler) *Controllers {
 		Post:                controller.NewPostController(conn),
 		NostrRelay:          controller.NewNostrRelayController(conn),
 		ActivityPub:         controller.NewActivityPubController(),
-		// set websocket connection with SetWsConn()
+		// set websocket connection with SetNostrRelays()
 		// Nostr:               controller.NewNostrController(ws),
 		Webfinger: controller.NewWebfingerController(),
 	}
 }
 
-func (c *Context) SetWsConn(ws model.IWsHandler) {
+func (c *Context) SetNostrRelays(ws model.IWsHandler) {
 	c.Controllers.Nostr = controller.NewNostrController(ws)
 }
 

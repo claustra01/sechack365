@@ -35,7 +35,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ctx.SetWsConn(ws)
+	ctx.SetNostrRelays(ws)
 
 	// Server
 	server := framework.NewServer(ctx)
