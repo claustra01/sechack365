@@ -77,21 +77,21 @@ func (r *UserRepository) CreateRemoteApUser(user *model.User, identifier *model.
 	// create user record
 	id := util.NewUuid()
 	query := `
-		INSERT INTO users (id, username, protocol, display_name, profile, icon)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO users (id, protocol, display_name, profile, icon)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING *;
 	`
-	if err := r.SqlHandler.Get(newUser, query, id, user.Username, model.ProtocolActivityPub, user.DisplayName, user.Profile, user.Icon); err != nil {
+	if err := r.SqlHandler.Get(newUser, query, id, model.ProtocolActivityPub, user.DisplayName, user.Profile, user.Icon); err != nil {
 		return nil, err
 	}
 
 	// create ap_user_identifier record
 	query = `
-		INSERT INTO ap_user_identifiers (user_id, local_username, host, public_key)
+		INSERT INTO ap_user_identifiers (user_id, local_username, host)
 		VALUES ($1, $2, $3, $4)
 		RETURNING *;
 	`
-	if err := r.SqlHandler.Get(identifier, query, newUser.Id, identifier.LocalUsername, identifier.Host, identifier.PublicKey); err != nil {
+	if err := r.SqlHandler.Get(identifier, query, newUser.Id, identifier.LocalUsername, identifier.Host); err != nil {
 		return nil, err
 	}
 
@@ -107,11 +107,11 @@ func (r *UserRepository) CreateRemoteNostrUser(user *model.User, identifier *mod
 	// create user record
 	id := util.NewUuid()
 	query := `
-		INSERT INTO users (id, username, protocol, display_name, profile, icon)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO users (id, protocol, display_name, profile, icon)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING *;
 	`
-	if err := r.SqlHandler.Get(newUser, query, id, user.Username, model.ProtocolNostr, user.DisplayName, user.Profile, user.Icon); err != nil {
+	if err := r.SqlHandler.Get(newUser, query, id, model.ProtocolNostr, user.DisplayName, user.Profile, user.Icon); err != nil {
 		return nil, err
 	}
 
