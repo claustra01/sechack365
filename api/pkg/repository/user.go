@@ -144,16 +144,10 @@ func (r *UserRepository) FindAll() ([]*model.UserWithIdentifiers, error) {
 			users.icon,
 			users.created_at,
 			users.updated_at,
-			json_build_object(
-				'activitypub', json_build_object(
-					'local_username', ap_user_identifiers.local_username,
-					'host', ap_user_identifiers.host,
-					'public_key', ap_user_identifiers.public_key
-				),
-				'nostr', json_build_object(
-					'public_key', nostr_user_identifiers.public_key
-				)
-			) AS identifiers
+			ap_user_identifiers.local_username AS "identifiers.activitypub.local_username",
+			ap_user_identifiers.host AS "identifiers.activitypub.host",
+			ap_user_identifiers.public_key AS "identifiers.activitypub.public_key",
+			nostr_user_identifiers.public_key AS "identifiers.nostr.public_key"
 		FROM users
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id;
@@ -176,16 +170,10 @@ func (r *UserRepository) FindById(id string) (*model.UserWithIdentifiers, error)
 			users.icon,
 			users.created_at,
 			users.updated_at,
-			json_build_object(
-				'activitypub', json_build_object(
-					'local_username', ap_user_identifiers.local_username,
-					'host', ap_user_identifiers.host,
-					'public_key', ap_user_identifiers.public_key
-				),
-				'nostr', json_build_object(
-					'public_key', nostr_user_identifiers.public_key
-				)
-			) AS identifiers
+			ap_user_identifiers.local_username AS "identifiers.activitypub.local_username",
+			ap_user_identifiers.host AS "identifiers.activitypub.host",
+			ap_user_identifiers.public_key AS "identifiers.activitypub.public_key",
+			nostr_user_identifiers.public_key AS "identifiers.nostr.public_key"
 		FROM users
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
@@ -209,16 +197,10 @@ func (r *UserRepository) FindByLocalUsername(username string) (*model.UserWithId
 			users.icon,
 			users.created_at,
 			users.updated_at,
-			json_build_object(
-				'activitypub', json_build_object(
-					'local_username', ap_user_identifiers.local_username,
-					'host', ap_user_identifiers.host,
-					'public_key', ap_user_identifiers.public_key
-				),
-				'nostr', json_build_object(
-					'public_key', nostr_user_identifiers.public_key
-				)
-			) AS identifiers
+			ap_user_identifiers.local_username AS "identifiers.activitypub.local_username",
+			ap_user_identifiers.host AS "identifiers.activitypub.host",
+			ap_user_identifiers.public_key AS "identifiers.activitypub.public_key",
+			nostr_user_identifiers.public_key AS "identifiers.nostr.public_key"
 		FROM users
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
@@ -242,13 +224,9 @@ func (r *UserRepository) FindByApUsername(username, host string) (*model.UserWit
 			users.icon,
 			users.created_at,
 			users.updated_at,
-			json_build_object(
-				'activitypub', json_build_object(
-					'local_username', ap_user_identifiers.local_username,
-					'host', ap_user_identifiers.host,
-					'public_key', ap_user_identifiers.public_key
-				)
-			) AS identifiers
+			ap_user_identifiers.local_username AS "identifiers.activitypub.local_username",
+			ap_user_identifiers.host AS "identifiers.activitypub.host",
+			ap_user_identifiers.public_key AS "identifiers.activitypub.public_key"
 		FROM users
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		WHERE users.protocol = $1 AND ap_user_identifiers.username = $2 AND ap_user_identifiers.host = $3;
@@ -271,11 +249,7 @@ func (r *UserRepository) FindByNostrPublicKey(publicKey string) (*model.UserWith
 			users.icon,
 			users.created_at,
 			users.updated_at,
-			json_build_object(
-				'nostr', json_build_object(
-					'public_key', nostr_user_identifiers.public_key
-				)
-			) AS identifiers
+			nostr_user_identifiers.public_key AS "identifiers.nostr.public_key"
 		FROM users
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
 		WHERE users.protocol = $1 AND nostr_user_identifiers.public_key = $2;
