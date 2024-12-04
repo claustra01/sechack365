@@ -146,13 +146,11 @@ func (r *UserRepository) FindAll() ([]*model.UserWithIdentifiers, error) {
 			users.updated_at,
 			json_build_object(
 				'activitypub', json_build_object(
-					'user_id', ap_user_identifiers.user_id,
 					'local_username', ap_user_identifiers.local_username,
 					'host', ap_user_identifiers.host,
 					'public_key', ap_user_identifiers.public_key
 				),
 				'nostr', json_build_object(
-					'user_id', nostr_user_identifiers.user_id,
 					'public_key', nostr_user_identifiers.public_key
 				)
 			) AS identifiers
@@ -180,13 +178,11 @@ func (r *UserRepository) FindById(id string) (*model.UserWithIdentifiers, error)
 			users.updated_at,
 			json_build_object(
 				'activitypub', json_build_object(
-					'user_id', ap_user_identifiers.user_id,
 					'local_username', ap_user_identifiers.local_username,
 					'host', ap_user_identifiers.host,
 					'public_key', ap_user_identifiers.public_key
 				),
 				'nostr', json_build_object(
-					'user_id', nostr_user_identifiers.user_id,
 					'public_key', nostr_user_identifiers.public_key
 				)
 			) AS identifiers
@@ -215,13 +211,11 @@ func (r *UserRepository) FindByLocalUsername(username string) (*model.UserWithId
 			users.updated_at,
 			json_build_object(
 				'activitypub', json_build_object(
-					'user_id', ap_user_identifiers.user_id,
 					'local_username', ap_user_identifiers.local_username,
 					'host', ap_user_identifiers.host,
 					'public_key', ap_user_identifiers.public_key
 				),
 				'nostr', json_build_object(
-					'user_id', nostr_user_identifiers.user_id,
 					'public_key', nostr_user_identifiers.public_key
 				)
 			) AS identifiers
@@ -250,7 +244,6 @@ func (r *UserRepository) FindByApUsername(username, host string) (*model.UserWit
 			users.updated_at,
 			json_build_object(
 				'activitypub', json_build_object(
-					'user_id', ap_user_identifiers.user_id,
 					'local_username', ap_user_identifiers.local_username,
 					'host', ap_user_identifiers.host,
 					'public_key', ap_user_identifiers.public_key
@@ -280,7 +273,6 @@ func (r *UserRepository) FindByNostrPublicKey(publicKey string) (*model.UserWith
 			users.updated_at,
 			json_build_object(
 				'nostr', json_build_object(
-					'user_id', nostr_user_identifiers.user_id,
 					'public_key', nostr_user_identifiers.public_key
 				)
 			) AS identifiers
