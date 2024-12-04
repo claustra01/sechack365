@@ -42,6 +42,9 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 		if _, err := c.Controllers.NostrUserIdentifier.Create(user.Id); err != nil {
 			panic(err)
 		}
+		if _, err := c.Controllers.NostrRelay.Create("wss://yabu.me"); err != nil {
+			panic(err)
+		}
 		if err := tx.Commit(); err != nil {
 			panic(err)
 		}
@@ -89,6 +92,17 @@ func ResetMock(c *framework.Context) http.HandlerFunc {
 				panic(err)
 			}
 		}
+
+		nostrRelays, err := c.Controllers.NostrRelay.FindAll()
+		if err != nil {
+			panic(err)
+		}
+		for _, nostrRelay := range nostrRelays {
+			if err := c.Controllers.NostrRelay.Delete(nostrRelay.Id); err != nil {
+				panic(err)
+			}
+		}
+
 		if _, err := w.Write([]byte("Mock Data Deleted")); err != nil {
 			// NOTE: err should be nil
 			panic(err)
