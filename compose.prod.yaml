@@ -19,6 +19,7 @@ services:
     ports:
       - "127.0.0.1:${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
+      - NEXT_PUBLIC_HOST=${HOST}
       - PORT=${FRONTEND_PORT}
       - TZ=${TIMEZONE}
     depends_on:
