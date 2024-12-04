@@ -7,7 +7,6 @@ export default function AxiosProvider({
 }: {
 	children: React.ReactNode;
 }) {
-	axios.defaults.baseURL = "https://localhost";
-
+	axios.defaults.baseURL = process.env.NEXT_PUBLIC_HOST;
 	return children;
 }
