@@ -30,8 +30,7 @@ func main() {
 	for _, r := range nostrRelays {
 		urls = append(urls, r.Url)
 	}
-	// FIXME: たまにbroken pipeが発生する、この時ユーザーのcacheロジックがぶっ壊れる
-	ws, err := infrastructure.NewWsHandler(urls)
+	ws, err := infrastructure.NewWsHandler(urls, logger)
 	if err != nil {
 		panic(err)
 	}

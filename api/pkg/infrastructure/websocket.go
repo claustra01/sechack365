@@ -1,25 +1,51 @@
 package infrastructure
 
 import (
+	"sync"
+	"time"
+
 	"github.com/claustra01/sechack365/pkg/model"
 	"golang.org/x/net/websocket"
 )
 
 type WsHandler struct {
-	Ws []*websocket.Conn
+	Ws   map[string]*websocket.Conn
+	lock sync.Mutex
 }
 
-// func monitorConnection(ws *[]websocket.Conn) {
-// 	for _, conn := range *ws {
-// 		_, err := conn.Write([]byte("PING"))
-// 		if err != nil {
-// 			conn.Close()
-// 		}
-// 	}
-// }
+func (ws *WsHandler) monitorWs(logger model.ILogger) {
+	ticker := time.NewTicker(1 * time.Minute)
+	go func() {
+		for range ticker.C {
+			ws.lock.Lock()
+			for url, conn := range ws.Ws {
+				_, err := conn.Write([]byte("PING"))
+				if err != nil {
+					logger.Error("Connection error: " + err.Error())
+					conn.Close()
+					conn, err = reconnect(url, logger)
+					if err != nil {
+						logger.Error("Reconnection error: " + err.Error())
+					}
+					ws.Ws[url] = conn
+				}
+			}
+			ws.lock.Unlock()
+		}
+	}()
+}
 
-func NewWsHandler(urls []string) (model.IWsHandler, error) {
-	var ws []*websocket.Conn
+func reconnect(url string, logger model.ILogger) (*websocket.Conn, error) {
+	conn, err := websocket.Dial(url, "", "http://localhost")
+	if err != nil {
+		return nil, err
+	}
+	logger.Info("connected websocket to " + url)
+	return conn, nil
+}
+
+func NewWsHandler(urls []string, logger model.ILogger) (model.IWsHandler, error) {
+	ws := make(map[string]*websocket.Conn)
 	for _, url := range urls {
 		conn, err := websocket.Dial(url, "", "http://localhost")
 		if err != nil {
@@ -28,9 +54,12 @@ func NewWsHandler(urls []string) (model.IWsHandler, error) {
 			}
 			return nil, err
 		}
-		ws = append(ws, conn)
+		logger.Info("connected websocket to " + url)
+		ws[url] = conn
 	}
-	return &WsHandler{Ws: ws}, nil
+	wsHandler := &WsHandler{Ws: ws}
+	wsHandler.monitorWs(logger)
+	return wsHandler, nil
 }
 
 func (ws *WsHandler) Send(msg string) error {
@@ -58,6 +87,8 @@ func (ws *WsHandler) Receive() (string, error) {
 }
 
 func (ws *WsHandler) Close() error {
+	ws.lock.Lock()
+	defer ws.lock.Unlock()
 	for _, conn := range ws.Ws {
 		conn.Close()
 	}
