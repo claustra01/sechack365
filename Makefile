@@ -16,7 +16,7 @@ lint-api:
 # lint all
 lint:
 	make lint-api
-	cd frontend && pnpm lint
+	cd frontend && pnpm check
 
 # db migration
 migrate:
