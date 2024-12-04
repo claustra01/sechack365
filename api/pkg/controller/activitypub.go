@@ -21,8 +21,8 @@ func NewActivityPubController() *ActivityPubController {
 	}
 }
 
-func (c *ActivityPubController) NewActor(user model.User, identifier model.ApUserIdentifier) *openapi.Actor {
-	return c.ActivityPubUsecase.NewActor(user, identifier)
+func (c *ActivityPubController) NewActor(user model.UserWithIdentifiers) *openapi.Actor {
+	return c.ActivityPubUsecase.NewActor(user)
 }
 
 func (c *ActivityPubController) NewActorUrl(host, id string) string {

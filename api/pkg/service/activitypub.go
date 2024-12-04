@@ -44,8 +44,8 @@ const NodeInfoVersion = "2.0"
 
 // NOTE: const values: end
 
-func (s *ActivitypubService) NewActor(user model.User, identifier model.ApUserIdentifier) *openapi.Actor {
-	baseUrl := s.NewActorUrl(user.Host, user.Id)
+func (s *ActivitypubService) NewActor(user model.UserWithIdentifiers) *openapi.Actor {
+	baseUrl := s.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id)
 	actor := &openapi.Actor{
 		Context:           ApContext,
 		Type:              "Person",
@@ -61,9 +61,9 @@ func (s *ActivitypubService) NewActor(user model.User, identifier model.ApUserId
 		},
 		PublicKey: openapi.ActorPublicKey{
 			Type:         "Key",
-			Id:           s.NewActorUrl(user.Host, user.Username),
+			Id:           s.NewActorUrl(user.Identifiers.Activitypub.Host, user.Username),
 			Owner:        baseUrl,
-			PublicKeyPem: identifier.PublicKey,
+			PublicKeyPem: user.Identifiers.Activitypub.PublicKey,
 		},
 	}
 	return actor
