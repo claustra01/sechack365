@@ -1,21 +1,7 @@
 import type { User } from "@/openapi/schemas";
 import { Avatar, Box, Text, Title } from "@mantine/core";
 import Link from "next/link";
-
-const bindUsername = (props: User) => {
-	switch (props.protocol) {
-		case "local":
-			// TODO: nostr support
-			return `${props.username}@${props.host}`;
-		case "activitypub":
-			return `${props.username}@${props.host}`;
-		case "nostr":
-			// TODO: nostr support
-			return "";
-		default:
-			return "";
-	}
-};
+import { bindUsername } from "../../../utils/strings";
 
 export const PostUserCard = (props: User) => {
 	return (
