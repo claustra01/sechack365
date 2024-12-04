@@ -92,7 +92,7 @@ func (r *UserRepository) CreateRemoteApUser(user *model.User, identifier *model.
 	query = `
 		INSERT INTO ap_user_identifiers (user_id, local_username, host)
 		VALUES ($1, $2, $3)
-		RETURNING *;
+		RETURNING user_id, local_username, host;
 	`
 	if err := r.SqlHandler.Get(identifier, query, newUser.Id, identifier.LocalUsername, identifier.Host); err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (r *UserRepository) CreateRemoteNostrUser(user *model.User, identifier *mod
 	query = `
 		INSERT INTO nostr_user_identifiers (user_id, public_key)
 		VALUES ($1, $2)
-		RETURNING *;
+		RETURNING user_id, public_key;
 	`
 	if err := r.SqlHandler.Get(identifier, query, newUser.Id, identifier.PublicKey, identifier.PrivateKey); err != nil {
 		return nil, err
@@ -147,10 +147,10 @@ func (r *UserRepository) FindAll() ([]*model.UserWithIdentifiers, error) {
 			users.icon,
 			users.created_at,
 			users.updated_at,
-			ap_user_identifiers.local_username AS "identifiers.activitypub.local_username",
-			ap_user_identifiers.host AS "identifiers.activitypub.host",
-			ap_user_identifiers.public_key AS "identifiers.activitypub.public_key",
-			nostr_user_identifiers.public_key AS "identifiers.nostr.public_key"
+			COALESCE(ap_user_identifiers.local_username, '') AS "identifiers.activitypub.local_username",
+			COALESCE(ap_user_identifiers.host, '') AS "identifiers.activitypub.host",
+			COALESCE(ap_user_identifiers.public_key, '') AS "identifiers.activitypub.public_key",
+			COALESCE(nostr_user_identifiers.public_key, '') AS "identifiers.nostr.public_key"
 		FROM users
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id;
@@ -173,10 +173,10 @@ func (r *UserRepository) FindById(id string) (*model.UserWithIdentifiers, error)
 			users.icon,
 			users.created_at,
 			users.updated_at,
-			ap_user_identifiers.local_username AS "identifiers.activitypub.local_username",
-			ap_user_identifiers.host AS "identifiers.activitypub.host",
-			ap_user_identifiers.public_key AS "identifiers.activitypub.public_key",
-			nostr_user_identifiers.public_key AS "identifiers.nostr.public_key"
+			COALESCE(ap_user_identifiers.local_username, '') AS "identifiers.activitypub.local_username",
+			COALESCE(ap_user_identifiers.host, '') AS "identifiers.activitypub.host",
+			COALESCE(ap_user_identifiers.public_key, '') AS "identifiers.activitypub.public_key",
+			COALESCE(nostr_user_identifiers.public_key, '') AS "identifiers.nostr.public_key"
 		FROM users
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
@@ -200,10 +200,10 @@ func (r *UserRepository) FindByLocalUsername(username string) (*model.UserWithId
 			users.icon,
 			users.created_at,
 			users.updated_at,
-			ap_user_identifiers.local_username AS "identifiers.activitypub.local_username",
-			ap_user_identifiers.host AS "identifiers.activitypub.host",
-			ap_user_identifiers.public_key AS "identifiers.activitypub.public_key",
-			nostr_user_identifiers.public_key AS "identifiers.nostr.public_key"
+			COALESCE(ap_user_identifiers.local_username, '') AS "identifiers.activitypub.local_username",
+			COALESCE(ap_user_identifiers.host, '') AS "identifiers.activitypub.host",
+			COALESCE(ap_user_identifiers.public_key, '') AS "identifiers.activitypub.public_key",
+			COALESCE(nostr_user_identifiers.public_key, '') AS "identifiers.nostr.public_key"
 		FROM users
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
