@@ -24,6 +24,7 @@ type Controllers struct {
 	NostrUserIdentifier *controller.NostrUserIdentifierController
 	Follow              *controller.FollowController
 	Post                *controller.PostController
+	NostrRelay          *controller.NostrRelayController
 	ActivityPub         *controller.ActivityPubController
 	Nostr               *controller.NostrController
 	Webfinger           *controller.WebfingerController
@@ -46,6 +47,7 @@ func NewControllers(conn model.ISqlHandler, ws model.IWsHandler) *Controllers {
 		NostrUserIdentifier: controller.NewNostrUserIdentifierController(conn),
 		Follow:              controller.NewFollowController(conn),
 		Post:                controller.NewPostController(conn),
+		NostrRelay:          controller.NewNostrRelayController(conn),
 		ActivityPub:         controller.NewActivityPubController(),
 		Nostr:               controller.NewNostrController(ws),
 		Webfinger:           controller.NewWebfingerController(),
