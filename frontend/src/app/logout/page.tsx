@@ -1,6 +1,6 @@
 "use client";
 
-import { postApiV1AuthLogout } from "@/openapi";
+import { postApiV1AuthLogout } from "@/openapi/api";
 
 export default function LogoutPage() {
 	postApiV1AuthLogout()

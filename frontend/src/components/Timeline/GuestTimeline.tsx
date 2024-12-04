@@ -1,4 +1,4 @@
-import { getApiV1Timeline } from "@/openapi";
+import { getApiV1Timeline } from "@/openapi/api";
 import type { Post } from "@/openapi/schemas";
 import { Box } from "@mantine/core";
 import { IconHome } from "@tabler/icons-react";

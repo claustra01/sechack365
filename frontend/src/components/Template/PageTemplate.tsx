@@ -1,4 +1,4 @@
-import { getApiV1UsersMe } from "@/openapi";
+import { getApiV1UsersMe } from "@/openapi/api";
 import { colors } from "@/styles/colors";
 import { Box } from "@mantine/core";
 import { useEffect, useState } from "react";

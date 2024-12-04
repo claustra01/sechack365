@@ -1,6 +1,5 @@
 import { colors } from "@/styles/colors";
 import { ActionIcon, Box, Title } from "@mantine/core";
-import { IconArrowBackUp } from "@tabler/icons-react";
 import Link from "next/link";
 
 export type HeaderProps = {
