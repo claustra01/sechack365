@@ -37,17 +37,26 @@ CREATE TABLE "nostr_user_identifiers" (
 CREATE TABLE "follows" (
   "id" varchar(255) UNIQUE,
   "follower_id" varchar(255),
-  "followee_id" varchar(255),
+  "target_id" varchar(255),
   "is_accepted" boolean NOT NULL DEFAULT false,
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY ("follower_id", "followee_id")
+  PRIMARY KEY ("follower_id", "target_id")
 );
 
 CREATE TABLE "posts" (
   "id" varchar(255) PRIMARY KEY,
   "user_id" varchar(255),
   "content" text NOT NULL,
+  "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "reactions" (
+  "id" varchar(255) PRIMARY KEY,
+  "type" varchar(255) NOT NULL,
+  "user_id" varchar(255) NOT NULL,
+  "post_id" varchar(255) NOT NULL,
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );
@@ -66,7 +75,11 @@ ALTER TABLE "nostr_user_identifiers" ADD FOREIGN KEY ("user_id") REFERENCES "use
 
 ALTER TABLE "follows" ADD FOREIGN KEY ("follower_id") REFERENCES "users" ("id");
 
-ALTER TABLE "follows" ADD FOREIGN KEY ("followee_id") REFERENCES "users" ("id");
+ALTER TABLE "follows" ADD FOREIGN KEY ("target_id") REFERENCES "users" ("id");
 
 ALTER TABLE "posts" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "reactions" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "reactions" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("id");
 
