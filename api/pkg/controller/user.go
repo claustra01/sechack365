@@ -20,15 +20,15 @@ func NewUserController(conn model.ISqlHandler) *UserController {
 	}
 }
 
-func (c *UserController) CreateLocalUser(username, password, displayName, profile, icon, host string) (*model.UserWithIdentifiers, error) {
+func (c *UserController) CreateLocalUser(username, password, displayName, profile, icon, host string) error {
 	return c.UserUsecase.CreateLocalUser(username, password, displayName, profile, icon, host)
 }
 
-func (c *UserController) CreateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) (*model.UserWithIdentifiers, error) {
+func (c *UserController) CreateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) error {
 	return c.UserUsecase.CreateRemoteApUser(user, identifier)
 }
 
-func (c *UserController) CreateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) (*model.UserWithIdentifiers, error) {
+func (c *UserController) CreateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) error {
 	return c.UserUsecase.CreateRemoteNostrUser(user, identifier)
 }
 
@@ -52,11 +52,11 @@ func (c *UserController) FindByNostrPublicKey(publicKey string) (*model.UserWith
 	return c.UserUsecase.FindByNostrPublicKey(publicKey)
 }
 
-func (c *UserController) UpdateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) (*model.UserWithIdentifiers, error) {
+func (c *UserController) UpdateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) error {
 	return c.UserUsecase.UpdateRemoteApUser(user, identifier)
 }
 
-func (c *UserController) UpdateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) (*model.UserWithIdentifiers, error) {
+func (c *UserController) UpdateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) error {
 	return c.UserUsecase.UpdateRemoteNostrUser(user, identifier)
 }
 

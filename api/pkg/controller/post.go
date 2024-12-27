@@ -22,7 +22,7 @@ func NewPostController(conn model.ISqlHandler) *PostController {
 	}
 }
 
-func (c *PostController) Create(userId, content string) (*model.Post, error) {
+func (c *PostController) Create(userId, content string) error {
 	return c.PostUsecase.Create(userId, content)
 }
 

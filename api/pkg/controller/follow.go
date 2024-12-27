@@ -20,12 +20,12 @@ func NewFollowController(conn model.ISqlHandler) *FollowController {
 	}
 }
 
-func (c *FollowController) Create(followerId, followeeId string) (*model.Follow, error) {
-	return c.FollowUsecase.Create(followerId, followeeId)
+func (c *FollowController) Create(followerId, targetId string) error {
+	return c.FollowUsecase.Create(followerId, targetId)
 }
 
-func (c *FollowController) UpdateAcceptFollow(followerId, followeeId string) (*model.Follow, error) {
-	return c.FollowUsecase.UpdateAcceptFollow(followerId, followeeId)
+func (c *FollowController) UpdateAcceptFollow(followerId, targetId string) error {
+	return c.FollowUsecase.UpdateAcceptFollow(followerId, targetId)
 }
 
 func (c *FollowController) FindFollowsByUserId(userId string) ([]*model.User, error) {
