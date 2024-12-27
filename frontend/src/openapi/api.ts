@@ -20,6 +20,7 @@ import type {
 	Error400,
 	Error401,
 	Error404,
+	Error409,
 	Error500,
 	GetApiV1DevMock201,
 	GetApiV1DevMock404,
@@ -75,11 +76,11 @@ export type PostApiV1AuthRegisterMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1AuthRegister>>
 >;
 export type PostApiV1AuthRegisterMutationError = AxiosError<
-	Error400 | Error500
+	Error400 | Error409 | Error500
 >;
 
 export const usePostApiV1AuthRegister = <
-	TError = AxiosError<Error400 | Error500>,
+	TError = AxiosError<Error400 | Error409 | Error500>,
 >(options?: {
 	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1AuthRegister>>,
@@ -183,11 +184,9 @@ export const getPostApiV1AuthLogoutMutationKey = () =>
 export type PostApiV1AuthLogoutMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1AuthLogout>>
 >;
-export type PostApiV1AuthLogoutMutationError = AxiosError<Error400 | Error500>;
+export type PostApiV1AuthLogoutMutationError = AxiosError<unknown>;
 
-export const usePostApiV1AuthLogout = <
-	TError = AxiosError<Error400 | Error500>,
->(options?: {
+export const usePostApiV1AuthLogout = <TError = AxiosError<unknown>>(options?: {
 	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1AuthLogout>>,
 		TError,

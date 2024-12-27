@@ -36,6 +36,19 @@ error-404:
   required:
     - status_code
     - message
+  
+error-409:
+  type: object
+  properties:
+    status_code:
+      type: integer
+      example: 409
+    message:
+      type: string
+      example: Conflict
+  required:
+    - status_code
+    - message
 
 error-500:
   type: object
