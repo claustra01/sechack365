@@ -9,31 +9,27 @@ type FollowRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
-func (r *FollowRepository) Create(followerId, followeeId string) (*model.Follow, error) {
-	follow := new(model.Follow)
+func (r *FollowRepository) Create(followerId, targetId string) error {
 	uuid := util.NewUuid()
 	query := `
-		INSERT INTO follows (id, follower_id, followee_id)
-		VALUES ($1, $2, $3)
-		RETURNING *;
+		INSERT INTO follows (id, follower_id, target_id)
+		VALUES ($1, $2, $3);
 	`
-	if err := r.SqlHandler.Get(follow, query, uuid, followerId, followeeId); err != nil {
-		return nil, err
+	if _, err := r.SqlHandler.Exec(query, uuid, followerId, targetId); err != nil {
+		return err
 	}
-	return follow, nil
+	return nil
 }
 
-func (r *FollowRepository) UpdateAcceptFollow(followerId, followeeId string) (*model.Follow, error) {
-	follow := new(model.Follow)
+func (r *FollowRepository) UpdateAcceptFollow(followerId, targetId string) error {
 	query := `
 		UPDATE follows SET is_accepted = true
-		WHERE follower_id = $1 AND followee_id = $2
-		RETURNING *;
+		WHERE follower_id = $1 AND target_id = $2;
 	`
-	if err := r.SqlHandler.Get(follow, query, followerId, followeeId); err != nil {
-		return nil, err
+	if _, err := r.SqlHandler.Exec(query, followerId, targetId); err != nil {
+		return err
 	}
-	return follow, nil
+	return nil
 }
 
 func (r *FollowRepository) FindFollowsByUserId(userId string) ([]*model.User, error) {
