@@ -20,22 +20,13 @@ user:
       type: string
       format: date-time
     identifiers:
-      type: object
-      properties:
-        activitypub:
-          type: object
-          properties:
-            local_username:
-              type: string
-            host:
-              type: string
-            public_key:
-              type: string
-        nostr:
-          type: object
-          properties:
-            public_key:
-              type: string
+      $ref: '#/identifiers'
+    post-count:
+      type: integer
+    follow-count:
+      type: integer
+    follower-count:
+      type: integer
   required:
     - id
     - username
@@ -46,6 +37,28 @@ user:
     - created_at
     - updated_at
     - identifiers
+    - post-count
+    - follow-count
+    - follower-count
+
+identifiers:
+  type: object
+  properties:
+    activitypub:
+      type: object
+      properties:
+        local_username:
+          type: string
+        host:
+          type: string
+        public_key:
+          type: string
+    nostr:
+      type: object
+      properties:
+        public_key:
+          type: string
+  # no required
 
 auth:
   type: object

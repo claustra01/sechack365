@@ -4,7 +4,7 @@ post:
     id:
       type: string
     user:
-      $ref: './user.yaml#/user'
+      $ref: '#/post-user'
     content:
       type: string
     created_at:
@@ -19,6 +19,17 @@ post:
     - content
     - created_at
     - updated_at
+
+post-user:
+  type: object
+  properties:
+    display_name:
+      type: string
+    icon:
+      type: string
+  required:
+    - display_name
+    - icon
 
 newpost:
   type: object
