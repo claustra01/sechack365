@@ -2,6 +2,8 @@ get:
   tags:
     - posts
   description: Get Timeline
+  parameters:
+    - $ref: '../../../../components/params/posts.yaml#/offset'
   responses:
     '200':
       description: Timeline

@@ -59,3 +59,7 @@ export * from "./wellknownNodeinfo";
 export * from "./wellknownNodeinfoLink";
 export * from "./wellknownWebfinger";
 export * from "./wellknownWebfingerLink";
+export * from "./getApiV1TimelineParams";
+export * from "./getApiV1UsersIdPostsParams";
+export * from "./newfollow";
+export * from "./offsetParameter";

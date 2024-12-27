@@ -4,6 +4,7 @@ get:
   description: Get Latest Posts of User
   parameters:
     - $ref: '../../../../components/params/users.yaml#/id'
+    - $ref: '../../../../components/params/posts.yaml#/offset'
   responses:
     '200':
       description: Latest Posts

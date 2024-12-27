@@ -17,12 +17,12 @@ paths:
     $ref: ./paths/api/v1/users/id.yaml
   /api/v1/users/me:
     $ref: ./paths/api/v1/users/me.yaml
+  /api/v1/users/{id}/posts:
+    $ref: ./paths/api/v1/users/posts.yaml
   /api/v1/users/{id}/follows:
     $ref: ./paths/api/v1/users/follows.yaml
   /api/v1/users/{id}/followers:
     $ref: ./paths/api/v1/users/followers.yaml
-  /api/v1/users/{id}/posts:
-    $ref: ./paths/api/v1/users/posts.yaml
 
   /api/v1/lookup/{username}:
     $ref: ./paths/api/v1/lookup/{username}.yaml

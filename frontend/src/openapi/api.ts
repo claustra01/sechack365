@@ -20,14 +20,16 @@ import type {
 	Error401,
 	Error404,
 	Error500,
-	Follow,
 	GetApiV1DevMock201,
 	GetApiV1DevMock404,
 	GetApiV1DevMock500,
 	GetApiV1DevReset204,
 	GetApiV1DevReset404,
 	GetApiV1DevReset500,
+	GetApiV1TimelineParams,
+	GetApiV1UsersIdPostsParams,
 	GetWellKnownWebfingerParams,
+	Newfollow,
 	Newlike,
 	Newpost,
 	Nodeinfo,
@@ -452,13 +454,19 @@ export const useGetApiV1UsersIdFollowers = <
  */
 export const getApiV1UsersIdPosts = (
 	id: string,
+	params?: GetApiV1UsersIdPostsParams,
 	options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<Post[]>> => {
-	return axios.get(`/api/v1/users/${id}/posts`, options);
+	return axios.get(`/api/v1/users/${id}/posts`, {
+		...options,
+		params: { ...params, ...options?.params },
+	});
 };
 
-export const getGetApiV1UsersIdPostsKey = (id: string) =>
-	[`/api/v1/users/${id}/posts`] as const;
+export const getGetApiV1UsersIdPostsKey = (
+	id: string,
+	params?: GetApiV1UsersIdPostsParams,
+) => [`/api/v1/users/${id}/posts`, ...(params ? [params] : [])] as const;
 
 export type GetApiV1UsersIdPostsQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersIdPosts>>
@@ -471,6 +479,7 @@ export const useGetApiV1UsersIdPosts = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
 	id: string,
+	params?: GetApiV1UsersIdPostsParams,
 	options?: {
 		swr?: SWRConfiguration<
 			Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
@@ -484,8 +493,8 @@ export const useGetApiV1UsersIdPosts = <
 	const isEnabled = swrOptions?.enabled !== false && !!id;
 	const swrKey =
 		swrOptions?.swrKey ??
-		(() => (isEnabled ? getGetApiV1UsersIdPostsKey(id) : null));
-	const swrFn = () => getApiV1UsersIdPosts(id, axiosOptions);
+		(() => (isEnabled ? getGetApiV1UsersIdPostsKey(id, params) : null));
+	const swrFn = () => getApiV1UsersIdPosts(id, params, axiosOptions);
 
 	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
 		swrKey,
@@ -555,10 +564,10 @@ export const useGetApiV1LookupUsername = <
  * Follow
  */
 export const postApiV1FollowsFollow = (
-	follow: Follow,
+	newfollow: Newfollow,
 	options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<PostApiV1FollowsFollow201>> => {
-	return axios.post("/api/v1/follows/follow", follow, options);
+	return axios.post("/api/v1/follows/follow", newfollow, options);
 };
 
 export const getPostApiV1FollowsFollowMutationFetcher = (
@@ -566,7 +575,7 @@ export const getPostApiV1FollowsFollowMutationFetcher = (
 ) => {
 	return (
 		_: Key,
-		{ arg }: { arg: Follow },
+		{ arg }: { arg: Newfollow },
 	): Promise<AxiosResponse<PostApiV1FollowsFollow201>> => {
 		return postApiV1FollowsFollow(arg, options);
 	};
@@ -588,7 +597,7 @@ export const usePostApiV1FollowsFollow = <
 		Awaited<ReturnType<typeof postApiV1FollowsFollow>>,
 		TError,
 		Key,
-		Follow,
+		Newfollow,
 		Awaited<ReturnType<typeof postApiV1FollowsFollow>>
 	> & { swrKey?: string };
 	axios?: AxiosRequestConfig;
@@ -829,31 +838,40 @@ export const useDeleteApiV1PostsId = <
  * Get Timeline
  */
 export const getApiV1Timeline = (
+	params?: GetApiV1TimelineParams,
 	options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<Post[]>> => {
-	return axios.get("/api/v1/timeline", options);
+	return axios.get("/api/v1/timeline", {
+		...options,
+		params: { ...params, ...options?.params },
+	});
 };
 
-export const getGetApiV1TimelineKey = () => ["/api/v1/timeline"] as const;
+export const getGetApiV1TimelineKey = (params?: GetApiV1TimelineParams) =>
+	["/api/v1/timeline", ...(params ? [params] : [])] as const;
 
 export type GetApiV1TimelineQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1Timeline>>
 >;
 export type GetApiV1TimelineQueryError = AxiosError<Error500>;
 
-export const useGetApiV1Timeline = <TError = AxiosError<Error500>>(options?: {
-	swr?: SWRConfiguration<
-		Awaited<ReturnType<typeof getApiV1Timeline>>,
-		TError
-	> & { swrKey?: Key; enabled?: boolean };
-	axios?: AxiosRequestConfig;
-}) => {
+export const useGetApiV1Timeline = <TError = AxiosError<Error500>>(
+	params?: GetApiV1TimelineParams,
+	options?: {
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1Timeline>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
+		axios?: AxiosRequestConfig;
+	},
+) => {
 	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
 	const isEnabled = swrOptions?.enabled !== false;
 	const swrKey =
-		swrOptions?.swrKey ?? (() => (isEnabled ? getGetApiV1TimelineKey() : null));
-	const swrFn = () => getApiV1Timeline(axiosOptions);
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1TimelineKey(params) : null));
+	const swrFn = () => getApiV1Timeline(params, axiosOptions);
 
 	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
 		swrKey,
