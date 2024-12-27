@@ -346,6 +346,65 @@ export const useGetApiV1UsersMe = <
 };
 
 /**
+ * Get Latest Posts of User
+ */
+export const getApiV1UsersIdPosts = (
+	id: string,
+	params?: GetApiV1UsersIdPostsParams,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<Post[]>> => {
+	return axios.get(`/api/v1/users/${id}/posts`, {
+		...options,
+		params: { ...params, ...options?.params },
+	});
+};
+
+export const getGetApiV1UsersIdPostsKey = (
+	id: string,
+	params?: GetApiV1UsersIdPostsParams,
+) => [`/api/v1/users/${id}/posts`, ...(params ? [params] : [])] as const;
+
+export type GetApiV1UsersIdPostsQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getApiV1UsersIdPosts>>
+>;
+export type GetApiV1UsersIdPostsQueryError = AxiosError<
+	Error400 | Error404 | Error500
+>;
+
+export const useGetApiV1UsersIdPosts = <
+	TError = AxiosError<Error400 | Error404 | Error500>,
+>(
+	id: string,
+	params?: GetApiV1UsersIdPostsParams,
+	options?: {
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
+		axios?: AxiosRequestConfig;
+	},
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1UsersIdPostsKey(id, params) : null));
+	const swrFn = () => getApiV1UsersIdPosts(id, params, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
  * Get Follows of User
  */
 export const getApiV1UsersIdFollows = (
@@ -436,65 +495,6 @@ export const useGetApiV1UsersIdFollowers = <
 		swrOptions?.swrKey ??
 		(() => (isEnabled ? getGetApiV1UsersIdFollowersKey(id) : null));
 	const swrFn = () => getApiV1UsersIdFollowers(id, axiosOptions);
-
-	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-		swrKey,
-		swrFn,
-		swrOptions,
-	);
-
-	return {
-		swrKey,
-		...query,
-	};
-};
-
-/**
- * Get Latest Posts of User
- */
-export const getApiV1UsersIdPosts = (
-	id: string,
-	params?: GetApiV1UsersIdPostsParams,
-	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Post[]>> => {
-	return axios.get(`/api/v1/users/${id}/posts`, {
-		...options,
-		params: { ...params, ...options?.params },
-	});
-};
-
-export const getGetApiV1UsersIdPostsKey = (
-	id: string,
-	params?: GetApiV1UsersIdPostsParams,
-) => [`/api/v1/users/${id}/posts`, ...(params ? [params] : [])] as const;
-
-export type GetApiV1UsersIdPostsQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getApiV1UsersIdPosts>>
->;
-export type GetApiV1UsersIdPostsQueryError = AxiosError<
-	Error400 | Error404 | Error500
->;
-
-export const useGetApiV1UsersIdPosts = <
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	params?: GetApiV1UsersIdPostsParams,
-	options?: {
-		swr?: SWRConfiguration<
-			Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-			TError
-		> & { swrKey?: Key; enabled?: boolean };
-		axios?: AxiosRequestConfig;
-	},
-) => {
-	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
-
-	const isEnabled = swrOptions?.enabled !== false && !!id;
-	const swrKey =
-		swrOptions?.swrKey ??
-		(() => (isEnabled ? getGetApiV1UsersIdPostsKey(id, params) : null));
-	const swrFn = () => getApiV1UsersIdPosts(id, params, axiosOptions);
 
 	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
 		swrKey,
@@ -1008,9 +1008,9 @@ export const getGetApiV1Nodeinfo20Key = () => ["/api/v1/nodeinfo/2.0"] as const;
 export type GetApiV1Nodeinfo20QueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1Nodeinfo20>>
 >;
-export type GetApiV1Nodeinfo20QueryError = AxiosError<unknown>;
+export type GetApiV1Nodeinfo20QueryError = AxiosError<Error500>;
 
-export const useGetApiV1Nodeinfo20 = <TError = AxiosError<unknown>>(options?: {
+export const useGetApiV1Nodeinfo20 = <TError = AxiosError<Error500>>(options?: {
 	swr?: SWRConfiguration<
 		Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
 		TError
