@@ -52,3 +52,6 @@ export * from "./wellknownNodeinfo";
 export * from "./wellknownNodeinfoLink";
 export * from "./wellknownWebfinger";
 export * from "./wellknownWebfingerLink";
+export * from "./deleteApiV1ReactionsLike204";
+export * from "./newlike";
+export * from "./postApiV1ReactionsLike201";

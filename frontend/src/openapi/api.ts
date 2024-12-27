@@ -15,6 +15,7 @@ import type {
 	Auth,
 	DeleteApiV1FollowsFollow204,
 	DeleteApiV1PostsId204,
+	DeleteApiV1ReactionsLike204,
 	Error400,
 	Error401,
 	Error404,
@@ -27,6 +28,7 @@ import type {
 	GetApiV1DevReset404,
 	GetApiV1DevReset500,
 	GetWellKnownWebfingerParams,
+	Newlike,
 	Newpost,
 	Nodeinfo,
 	Post,
@@ -35,6 +37,7 @@ import type {
 	PostApiV1AuthRegister201,
 	PostApiV1FollowsFollow201,
 	PostApiV1Posts201,
+	PostApiV1ReactionsLike201,
 	User,
 	WellknownNodeinfo,
 	WellknownWebfinger,
@@ -857,6 +860,115 @@ export const useGetApiV1Timeline = <TError = AxiosError<Error500>>(options?: {
 		swrFn,
 		swrOptions,
 	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Like a Post
+ */
+export const postApiV1ReactionsLike = (
+	newlike: Newlike,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PostApiV1ReactionsLike201>> => {
+	return axios.post("/api/v1/reactions/like", newlike, options);
+};
+
+export const getPostApiV1ReactionsLikeMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		{ arg }: { arg: Newlike },
+	): Promise<AxiosResponse<PostApiV1ReactionsLike201>> => {
+		return postApiV1ReactionsLike(arg, options);
+	};
+};
+export const getPostApiV1ReactionsLikeMutationKey = () =>
+	["/api/v1/reactions/like"] as const;
+
+export type PostApiV1ReactionsLikeMutationResult = NonNullable<
+	Awaited<ReturnType<typeof postApiV1ReactionsLike>>
+>;
+export type PostApiV1ReactionsLikeMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const usePostApiV1ReactionsLike = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof postApiV1ReactionsLike>>,
+		TError,
+		Key,
+		Newlike,
+		Awaited<ReturnType<typeof postApiV1ReactionsLike>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1ReactionsLikeMutationKey();
+	const swrFn = getPostApiV1ReactionsLikeMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Unlike a Post
+ */
+export const deleteApiV1ReactionsLike = (
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<DeleteApiV1ReactionsLike204>> => {
+	return axios.delete("/api/v1/reactions/like", options);
+};
+
+export const getDeleteApiV1ReactionsLikeMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		__: { arg: Arguments },
+	): Promise<AxiosResponse<DeleteApiV1ReactionsLike204>> => {
+		return deleteApiV1ReactionsLike(options);
+	};
+};
+export const getDeleteApiV1ReactionsLikeMutationKey = () =>
+	["/api/v1/reactions/like"] as const;
+
+export type DeleteApiV1ReactionsLikeMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteApiV1ReactionsLike>>
+>;
+export type DeleteApiV1ReactionsLikeMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const useDeleteApiV1ReactionsLike = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof deleteApiV1ReactionsLike>>,
+		TError,
+		Key,
+		Arguments,
+		Awaited<ReturnType<typeof deleteApiV1ReactionsLike>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getDeleteApiV1ReactionsLikeMutationKey();
+	const swrFn = getDeleteApiV1ReactionsLikeMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
 
 	return {
 		swrKey,

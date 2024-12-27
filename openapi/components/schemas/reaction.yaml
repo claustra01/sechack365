@@ -1,0 +1,28 @@
+reaction:
+  type: object
+  properties:
+    id:
+      type: string
+    reaction:
+      type: string
+    user_id:
+      type: string
+    post_id:
+      type: string
+  required:
+    - id
+    - reaction
+    - user_id
+    - post_id
+
+newlike:
+  type: object
+  properties:
+    reaction:
+      type: string
+      example: "Like"
+    post_id:
+      type: string
+  required:
+    - reaction
+    - post_id
