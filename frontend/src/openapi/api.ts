@@ -30,11 +30,70 @@ import type {
 	Nodeinfo,
 	Post,
 	PostApiV1AuthLogout200,
+	PostApiV1AuthRegister201,
 	PostApiV1FollowsFollow204,
 	User,
 	WellknownNodeinfo,
 	WellknownWebfinger,
 } from "./schemas";
+
+/**
+ * @summary Create User
+ */
+export const postApiV1AuthRegister = (
+	auth: Auth,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PostApiV1AuthRegister201>> => {
+	return axios.post("/api/v1/auth/register", auth, options);
+};
+
+export const getPostApiV1AuthRegisterMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		{ arg }: { arg: Auth },
+	): Promise<AxiosResponse<PostApiV1AuthRegister201>> => {
+		return postApiV1AuthRegister(arg, options);
+	};
+};
+export const getPostApiV1AuthRegisterMutationKey = () =>
+	["/api/v1/auth/register"] as const;
+
+export type PostApiV1AuthRegisterMutationResult = NonNullable<
+	Awaited<ReturnType<typeof postApiV1AuthRegister>>
+>;
+export type PostApiV1AuthRegisterMutationError = AxiosError<
+	Error400 | Error500
+>;
+
+/**
+ * @summary Create User
+ */
+export const usePostApiV1AuthRegister = <
+	TError = AxiosError<Error400 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof postApiV1AuthRegister>>,
+		TError,
+		Key,
+		Auth,
+		Awaited<ReturnType<typeof postApiV1AuthRegister>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1AuthRegisterMutationKey();
+	const swrFn = getPostApiV1AuthRegisterMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
 
 /**
  * @summary Login

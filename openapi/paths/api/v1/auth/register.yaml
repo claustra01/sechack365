@@ -1,0 +1,26 @@
+post:
+  tags:
+    - auth
+  summary: Create User
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../../components/schemas/user.yaml#/auth'
+  responses:
+    '201':
+      content:
+        application/json:
+          schema:
+            type: object
+    '400':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-400'
+    '500':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-500'
