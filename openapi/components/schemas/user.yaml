@@ -21,11 +21,11 @@ user:
       format: date-time
     identifiers:
       $ref: '#/identifiers'
-    post-count:
+    post_count:
       type: integer
-    follow-count:
+    follow_count:
       type: integer
-    follower-count:
+    follower_count:
       type: integer
   required:
     - id
@@ -37,9 +37,9 @@ user:
     - created_at
     - updated_at
     - identifiers
-    - post-count
-    - follow-count
-    - follower-count
+    - post_count
+    - follow_count
+    - follower_count
 
 identifiers:
   type: object

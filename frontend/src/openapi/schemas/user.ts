@@ -9,12 +9,12 @@ import type { Identifiers } from "./identifiers";
 export interface User {
 	created_at: string;
 	display_name: string;
-	"follow-count": number;
-	"follower-count": number;
+	follow_count: number;
+	follower_count: number;
 	icon: string;
 	id: string;
 	identifiers: Identifiers;
-	"post-count": number;
+	post_count: number;
 	profile: string;
 	protocol: string;
 	updated_at: string;
