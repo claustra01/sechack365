@@ -6,9 +6,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-var ErrUserNotFound = fmt.Errorf("user not found")
-var ErrInvalidPassword = fmt.Errorf("invalid password")
+// auth handler
+var ErrInvalidPassword = fmt.Errorf("invalid username or password")
+var ErrUserAlreadyExists = fmt.Errorf("user already exists")
+var ErrInvalidUsername = fmt.Errorf("invalid username")
 
+var ErrUserNotFound = fmt.Errorf("user not found")
 var ErrInvalidResourseQuery = fmt.Errorf("invalid resource query")
 var ErrResolveWebfinger = fmt.Errorf("failed to resolve webfinger")
 var ErrResolveRemoteActor = fmt.Errorf("failed to resolve remote actor")
