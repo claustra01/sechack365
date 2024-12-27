@@ -7,5 +7,5 @@
 
 export interface Newlike {
 	post_id: string;
-	reaction: string;
+	type: string;
 }

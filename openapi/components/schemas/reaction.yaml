@@ -3,26 +3,34 @@ reaction:
   properties:
     id:
       type: string
-    reaction:
+    type:
       type: string
     user_id:
       type: string
     post_id:
       type: string
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
   required:
     - id
-    - reaction
+    - type
     - user_id
     - post_id
+    - created_at
+    - updated_at
 
 newlike:
   type: object
   properties:
-    reaction:
+    type:
       type: string
       example: "Like"
     post_id:
       type: string
   required:
-    - reaction
+    - type
     - post_id
