@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"time"
 
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/util"
@@ -54,7 +53,7 @@ func (r *PostRepository) FindById(id string) (*model.PostWithUser, error) {
 	return post, nil
 }
 
-func (r *PostRepository) FindTimeline(createdAt time.Time, limit int) ([]*model.PostWithUser, error) {
+func (r *PostRepository) FindTimeline(offset int, limit int) ([]*model.PostWithUser, error) {
 	rawPosts := make([]model.PostWithUser, 0)
 	query := `
 		SELECT posts.*,
@@ -70,10 +69,9 @@ func (r *PostRepository) FindTimeline(createdAt time.Time, limit int) ([]*model.
 		JOIN users ON posts.user_id = users.id
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
-		WHERE posts.created_at < $1
-		ORDER BY posts.created_at DESC LIMIT $2;
+		ORDER BY posts.created_at DESC LIMIT $1 OFFSET $2;
 	`
-	if err := r.SqlHandler.Select(&rawPosts, query, createdAt, limit); err != nil {
+	if err := r.SqlHandler.Select(&rawPosts, query, limit, offset); err != nil {
 		return nil, err
 	}
 	posts := make([]*model.PostWithUser, 0)
@@ -83,7 +81,7 @@ func (r *PostRepository) FindTimeline(createdAt time.Time, limit int) ([]*model.
 	return posts, nil
 }
 
-func (r *PostRepository) FindUserTimeline(userId string, createdAt time.Time, limit int) ([]*model.PostWithUser, error) {
+func (r *PostRepository) FindUserTimeline(userId string, offset int, limit int) ([]*model.PostWithUser, error) {
 	rawPosts := make([]model.PostWithUser, 0)
 	query := `
 		SELECT posts.*,
@@ -99,10 +97,10 @@ func (r *PostRepository) FindUserTimeline(userId string, createdAt time.Time, li
 		JOIN users ON posts.user_id = users.id
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
-		WHERE user_id = $1 AND posts.created_at < $2
-		ORDER BY posts.created_at DESC LIMIT $3;
+		WHERE user_id = $1
+		ORDER BY posts.created_at DESC LIMIT $2 OFFSET $3;
 	`
-	if err := r.SqlHandler.Select(&rawPosts, query, userId, createdAt, limit); err != nil {
+	if err := r.SqlHandler.Select(&rawPosts, query, userId, limit, offset); err != nil {
 		return nil, err
 	}
 	posts := make([]*model.PostWithUser, 0)
