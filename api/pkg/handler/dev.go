@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/claustra01/sechack365/pkg/framework"
 )
@@ -20,10 +19,10 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 			}
 			return
 		}
-		if _, err := c.Controllers.User.CreateLocalUser("mock", "password", "Mock User", "This is mock user", "https://placehold.jp/150x150.png", c.Config.Host); err != nil {
+		if err := c.Controllers.User.CreateLocalUser("mock", "password", "Mock User", "This is mock user", "https://placehold.jp/150x150.png", c.Config.Host); err != nil {
 			panic(err)
 		}
-		if _, err := c.Controllers.NostrRelay.Create("wss://yabu.me"); err != nil {
+		if err := c.Controllers.NostrRelay.Create("wss://yabu.me"); err != nil {
 			panic(err)
 		}
 		if _, err := w.Write([]byte("Mock Data Created")); err != nil {
@@ -40,7 +39,7 @@ func ResetMock(c *framework.Context) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
-		posts, err := c.Controllers.Post.FindTimeline(time.Now(), 10000)
+		posts, err := c.Controllers.Post.FindTimeline(0, 10000)
 		if err != nil {
 			panic(err)
 		}
