@@ -13,10 +13,12 @@ import type { SWRMutationConfiguration } from "swr/mutation";
 import type {
 	Actor,
 	Auth,
+	DeleteApiV1FollowsFollow204,
 	Error400,
 	Error401,
 	Error404,
 	Error500,
+	Follow,
 	GetApiV1DevMock200,
 	GetApiV1DevMock404,
 	GetApiV1DevMock500,
@@ -28,6 +30,7 @@ import type {
 	Nodeinfo,
 	Post,
 	PostApiV1AuthLogout200,
+	PostApiV1FollowsFollow204,
 	User,
 	WellknownNodeinfo,
 	WellknownWebfinger,
@@ -507,6 +510,121 @@ export const useGetApiV1LookupUsername = <
 		swrFn,
 		swrOptions,
 	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * @summary Follow
+ */
+export const postApiV1FollowsFollow = (
+	follow: Follow,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PostApiV1FollowsFollow204>> => {
+	return axios.post("/api/v1/follows/follow", follow, options);
+};
+
+export const getPostApiV1FollowsFollowMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		{ arg }: { arg: Follow },
+	): Promise<AxiosResponse<PostApiV1FollowsFollow204>> => {
+		return postApiV1FollowsFollow(arg, options);
+	};
+};
+export const getPostApiV1FollowsFollowMutationKey = () =>
+	["/api/v1/follows/follow"] as const;
+
+export type PostApiV1FollowsFollowMutationResult = NonNullable<
+	Awaited<ReturnType<typeof postApiV1FollowsFollow>>
+>;
+export type PostApiV1FollowsFollowMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+/**
+ * @summary Follow
+ */
+export const usePostApiV1FollowsFollow = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof postApiV1FollowsFollow>>,
+		TError,
+		Key,
+		Follow,
+		Awaited<ReturnType<typeof postApiV1FollowsFollow>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1FollowsFollowMutationKey();
+	const swrFn = getPostApiV1FollowsFollowMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * @summary Unfollow
+ */
+export const deleteApiV1FollowsFollow = (
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<DeleteApiV1FollowsFollow204>> => {
+	return axios.delete("/api/v1/follows/follow", options);
+};
+
+export const getDeleteApiV1FollowsFollowMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		__: { arg: Arguments },
+	): Promise<AxiosResponse<DeleteApiV1FollowsFollow204>> => {
+		return deleteApiV1FollowsFollow(options);
+	};
+};
+export const getDeleteApiV1FollowsFollowMutationKey = () =>
+	["/api/v1/follows/follow"] as const;
+
+export type DeleteApiV1FollowsFollowMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteApiV1FollowsFollow>>
+>;
+export type DeleteApiV1FollowsFollowMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+/**
+ * @summary Unfollow
+ */
+export const useDeleteApiV1FollowsFollow = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof deleteApiV1FollowsFollow>>,
+		TError,
+		Key,
+		Arguments,
+		Awaited<ReturnType<typeof deleteApiV1FollowsFollow>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getDeleteApiV1FollowsFollowMutationKey();
+	const swrFn = getDeleteApiV1FollowsFollowMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
 
 	return {
 		swrKey,

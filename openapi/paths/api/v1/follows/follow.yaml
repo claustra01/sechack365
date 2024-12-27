@@ -1,0 +1,67 @@
+post:
+  tags:
+    - follows
+  summary: Follow
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../../components/schemas/follow.yaml#/follow'
+  responses:
+    '204':
+      content:
+        application/json:
+          schema:
+            type: object
+    '400':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-400'
+    '401':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-401'
+    '404':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-404'
+    '500':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-500'
+
+delete:
+  tags:
+    - follows
+  summary: Unfollow
+  responses:
+    '204':
+      content:
+        application/json:
+          schema:
+            type: object
+    '400':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-400'
+    '401':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-401'
+    '404':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-404'
+    '500':
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-500'
