@@ -1,19 +1,22 @@
 get:
   tags:
     - dev (localhost only)
-  summary: Reset Database
+  description: Reset Database
   responses:
-    '200':
+    '204':
+      description: Reset Successful
       content:
         application/json:
           schema:
             type: object
     '404':
+      description: Access Denied
       content:
         application/json:
           schema:
             type: object
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

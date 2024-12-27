@@ -14,31 +14,34 @@ import type {
 	Actor,
 	Auth,
 	DeleteApiV1FollowsFollow204,
+	DeleteApiV1PostsId204,
 	Error400,
 	Error401,
 	Error404,
 	Error500,
 	Follow,
-	GetApiV1DevMock200,
+	GetApiV1DevMock201,
 	GetApiV1DevMock404,
 	GetApiV1DevMock500,
-	GetApiV1DevReset200,
+	GetApiV1DevReset204,
 	GetApiV1DevReset404,
 	GetApiV1DevReset500,
 	GetWellKnownWebfingerParams,
 	Newpost,
 	Nodeinfo,
 	Post,
-	PostApiV1AuthLogout200,
+	PostApiV1AuthLogin204,
+	PostApiV1AuthLogout204,
 	PostApiV1AuthRegister201,
-	PostApiV1FollowsFollow204,
+	PostApiV1FollowsFollow201,
+	PostApiV1Posts201,
 	User,
 	WellknownNodeinfo,
 	WellknownWebfinger,
 } from "./schemas";
 
 /**
- * @summary Create User
+ * Create User
  */
 export const postApiV1AuthRegister = (
 	auth: Auth,
@@ -67,9 +70,6 @@ export type PostApiV1AuthRegisterMutationError = AxiosError<
 	Error400 | Error500
 >;
 
-/**
- * @summary Create User
- */
 export const usePostApiV1AuthRegister = <
 	TError = AxiosError<Error400 | Error500>,
 >(options?: {
@@ -96,19 +96,22 @@ export const usePostApiV1AuthRegister = <
 };
 
 /**
- * @summary Login
+ * Login
  */
 export const postApiV1AuthLogin = (
 	auth: Auth,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<User>> => {
+): Promise<AxiosResponse<PostApiV1AuthLogin204>> => {
 	return axios.post("/api/v1/auth/login", auth, options);
 };
 
 export const getPostApiV1AuthLoginMutationFetcher = (
 	options?: AxiosRequestConfig,
 ) => {
-	return (_: Key, { arg }: { arg: Auth }): Promise<AxiosResponse<User>> => {
+	return (
+		_: Key,
+		{ arg }: { arg: Auth },
+	): Promise<AxiosResponse<PostApiV1AuthLogin204>> => {
 		return postApiV1AuthLogin(arg, options);
 	};
 };
@@ -119,14 +122,11 @@ export type PostApiV1AuthLoginMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1AuthLogin>>
 >;
 export type PostApiV1AuthLoginMutationError = AxiosError<
-	Error400 | Error401 | Error404 | Error500
+	Error400 | Error401 | Error500
 >;
 
-/**
- * @summary Login
- */
 export const usePostApiV1AuthLogin = <
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+	TError = AxiosError<Error400 | Error401 | Error500>,
 >(options?: {
 	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1AuthLogin>>,
@@ -151,11 +151,11 @@ export const usePostApiV1AuthLogin = <
 };
 
 /**
- * @summary Logout
+ * Logout
  */
 export const postApiV1AuthLogout = (
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PostApiV1AuthLogout200>> => {
+): Promise<AxiosResponse<PostApiV1AuthLogout204>> => {
 	return axios.post("/api/v1/auth/logout", undefined, options);
 };
 
@@ -165,7 +165,7 @@ export const getPostApiV1AuthLogoutMutationFetcher = (
 	return (
 		_: Key,
 		__: { arg: Arguments },
-	): Promise<AxiosResponse<PostApiV1AuthLogout200>> => {
+	): Promise<AxiosResponse<PostApiV1AuthLogout204>> => {
 		return postApiV1AuthLogout(options);
 	};
 };
@@ -175,15 +175,10 @@ export const getPostApiV1AuthLogoutMutationKey = () =>
 export type PostApiV1AuthLogoutMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1AuthLogout>>
 >;
-export type PostApiV1AuthLogoutMutationError = AxiosError<
-	Error400 | Error404 | Error500
->;
+export type PostApiV1AuthLogoutMutationError = AxiosError<Error400 | Error500>;
 
-/**
- * @summary Logout
- */
 export const usePostApiV1AuthLogout = <
-	TError = AxiosError<Error400 | Error404 | Error500>,
+	TError = AxiosError<Error400 | Error500>,
 >(options?: {
 	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1AuthLogout>>,
@@ -208,7 +203,7 @@ export const usePostApiV1AuthLogout = <
 };
 
 /**
- * @summary Get All Users (for debug)
+ * Get All Users (for debug)
  */
 export const getApiV1Users = (
 	options?: AxiosRequestConfig,
@@ -223,9 +218,6 @@ export type GetApiV1UsersQueryResult = NonNullable<
 >;
 export type GetApiV1UsersQueryError = AxiosError<Error500>;
 
-/**
- * @summary Get All Users (for debug)
- */
 export const useGetApiV1Users = <TError = AxiosError<Error500>>(options?: {
 	swr?: SWRConfiguration<Awaited<ReturnType<typeof getApiV1Users>>, TError> & {
 		swrKey?: Key;
@@ -253,7 +245,7 @@ export const useGetApiV1Users = <TError = AxiosError<Error500>>(options?: {
 };
 
 /**
- * @summary Get User by ID
+ * Get User by ID
  */
 export const getApiV1UsersId = (
 	id: string,
@@ -272,9 +264,6 @@ export type GetApiV1UsersIdQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary Get User by ID
- */
 export const useGetApiV1UsersId = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -308,7 +297,7 @@ export const useGetApiV1UsersId = <
 };
 
 /**
- * @summary Get Current User
+ * Get Current User
  */
 export const getApiV1UsersMe = (
 	options?: AxiosRequestConfig,
@@ -321,15 +310,10 @@ export const getGetApiV1UsersMeKey = () => ["/api/v1/users/me"] as const;
 export type GetApiV1UsersMeQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersMe>>
 >;
-export type GetApiV1UsersMeQueryError = AxiosError<
-	Error400 | Error401 | Error404 | Error500
->;
+export type GetApiV1UsersMeQueryError = AxiosError<Error401 | Error500>;
 
-/**
- * @summary Get Current User
- */
 export const useGetApiV1UsersMe = <
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+	TError = AxiosError<Error401 | Error500>,
 >(options?: {
 	swr?: SWRConfiguration<
 		Awaited<ReturnType<typeof getApiV1UsersMe>>,
@@ -357,7 +341,7 @@ export const useGetApiV1UsersMe = <
 };
 
 /**
- * @summary Get Follows of User
+ * Get Follows of User
  */
 export const getApiV1UsersIdFollows = (
 	id: string,
@@ -376,9 +360,6 @@ export type GetApiV1UsersIdFollowsQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary Get Follows of User
- */
 export const useGetApiV1UsersIdFollows = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -412,7 +393,7 @@ export const useGetApiV1UsersIdFollows = <
 };
 
 /**
- * @summary Get Followers of User
+ * Get Followers of User
  */
 export const getApiV1UsersIdFollowers = (
 	id: string,
@@ -431,9 +412,6 @@ export type GetApiV1UsersIdFollowersQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary Get Followers of User
- */
 export const useGetApiV1UsersIdFollowers = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -467,7 +445,7 @@ export const useGetApiV1UsersIdFollowers = <
 };
 
 /**
- * @summary Get Latest Posts of User
+ * Get Latest Posts of User
  */
 export const getApiV1UsersIdPosts = (
 	id: string,
@@ -486,9 +464,6 @@ export type GetApiV1UsersIdPostsQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary Get Latest Posts of User
- */
 export const useGetApiV1UsersIdPosts = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -522,7 +497,7 @@ export const useGetApiV1UsersIdPosts = <
 };
 
 /**
- * @summary Lookup (Remote/Local) User
+ * Lookup (Remote/Local) User
  */
 export const getApiV1LookupUsername = (
 	username: string,
@@ -541,9 +516,6 @@ export type GetApiV1LookupUsernameQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary Lookup (Remote/Local) User
- */
 export const useGetApiV1LookupUsername = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -577,12 +549,12 @@ export const useGetApiV1LookupUsername = <
 };
 
 /**
- * @summary Follow
+ * Follow
  */
 export const postApiV1FollowsFollow = (
 	follow: Follow,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PostApiV1FollowsFollow204>> => {
+): Promise<AxiosResponse<PostApiV1FollowsFollow201>> => {
 	return axios.post("/api/v1/follows/follow", follow, options);
 };
 
@@ -592,7 +564,7 @@ export const getPostApiV1FollowsFollowMutationFetcher = (
 	return (
 		_: Key,
 		{ arg }: { arg: Follow },
-	): Promise<AxiosResponse<PostApiV1FollowsFollow204>> => {
+	): Promise<AxiosResponse<PostApiV1FollowsFollow201>> => {
 		return postApiV1FollowsFollow(arg, options);
 	};
 };
@@ -606,9 +578,6 @@ export type PostApiV1FollowsFollowMutationError = AxiosError<
 	Error400 | Error401 | Error404 | Error500
 >;
 
-/**
- * @summary Follow
- */
 export const usePostApiV1FollowsFollow = <
 	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
 >(options?: {
@@ -635,7 +604,7 @@ export const usePostApiV1FollowsFollow = <
 };
 
 /**
- * @summary Unfollow
+ * Unfollow
  */
 export const deleteApiV1FollowsFollow = (
 	options?: AxiosRequestConfig,
@@ -663,9 +632,6 @@ export type DeleteApiV1FollowsFollowMutationError = AxiosError<
 	Error400 | Error401 | Error404 | Error500
 >;
 
-/**
- * @summary Unfollow
- */
 export const useDeleteApiV1FollowsFollow = <
 	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
 >(options?: {
@@ -692,19 +658,22 @@ export const useDeleteApiV1FollowsFollow = <
 };
 
 /**
- * @summary Create Post
+ * Create Post
  */
 export const postApiV1Posts = (
 	newpost: Newpost,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Post>> => {
+): Promise<AxiosResponse<PostApiV1Posts201>> => {
 	return axios.post("/api/v1/posts", newpost, options);
 };
 
 export const getPostApiV1PostsMutationFetcher = (
 	options?: AxiosRequestConfig,
 ) => {
-	return (_: Key, { arg }: { arg: Newpost }): Promise<AxiosResponse<Post>> => {
+	return (
+		_: Key,
+		{ arg }: { arg: Newpost },
+	): Promise<AxiosResponse<PostApiV1Posts201>> => {
 		return postApiV1Posts(arg, options);
 	};
 };
@@ -714,14 +683,11 @@ export type PostApiV1PostsMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1Posts>>
 >;
 export type PostApiV1PostsMutationError = AxiosError<
-	Error400 | Error401 | Error404 | Error500
+	Error400 | Error401 | Error500
 >;
 
-/**
- * @summary Create Post
- */
 export const usePostApiV1Posts = <
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+	TError = AxiosError<Error400 | Error401 | Error500>,
 >(options?: {
 	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1Posts>>,
@@ -746,7 +712,7 @@ export const usePostApiV1Posts = <
 };
 
 /**
- * @summary Get Post by ID
+ * Get Post by ID
  */
 export const getApiV1PostsId = (
 	id: string,
@@ -765,9 +731,6 @@ export type GetApiV1PostsIdQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary Get Post by ID
- */
 export const useGetApiV1PostsId = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -801,7 +764,66 @@ export const useGetApiV1PostsId = <
 };
 
 /**
- * @summary Get Timeline
+ * Delete Post by ID
+ */
+export const deleteApiV1PostsId = (
+	id: string,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<DeleteApiV1PostsId204>> => {
+	return axios.delete(`/api/v1/posts/${id}`, options);
+};
+
+export const getDeleteApiV1PostsIdMutationFetcher = (
+	id: string,
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		__: { arg: Arguments },
+	): Promise<AxiosResponse<DeleteApiV1PostsId204>> => {
+		return deleteApiV1PostsId(id, options);
+	};
+};
+export const getDeleteApiV1PostsIdMutationKey = (id: string) =>
+	[`/api/v1/posts/${id}`] as const;
+
+export type DeleteApiV1PostsIdMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteApiV1PostsId>>
+>;
+export type DeleteApiV1PostsIdMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const useDeleteApiV1PostsId = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(
+	id: string,
+	options?: {
+		swr?: SWRMutationConfiguration<
+			Awaited<ReturnType<typeof deleteApiV1PostsId>>,
+			TError,
+			Key,
+			Arguments,
+			Awaited<ReturnType<typeof deleteApiV1PostsId>>
+		> & { swrKey?: string };
+		axios?: AxiosRequestConfig;
+	},
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getDeleteApiV1PostsIdMutationKey(id);
+	const swrFn = getDeleteApiV1PostsIdMutationFetcher(id, axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Get Timeline
  */
 export const getApiV1Timeline = (
 	options?: AxiosRequestConfig,
@@ -814,16 +836,9 @@ export const getGetApiV1TimelineKey = () => ["/api/v1/timeline"] as const;
 export type GetApiV1TimelineQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1Timeline>>
 >;
-export type GetApiV1TimelineQueryError = AxiosError<
-	Error400 | Error404 | Error500
->;
+export type GetApiV1TimelineQueryError = AxiosError<Error500>;
 
-/**
- * @summary Get Timeline
- */
-export const useGetApiV1Timeline = <
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(options?: {
+export const useGetApiV1Timeline = <TError = AxiosError<Error500>>(options?: {
 	swr?: SWRConfiguration<
 		Awaited<ReturnType<typeof getApiV1Timeline>>,
 		TError
@@ -850,7 +865,7 @@ export const useGetApiV1Timeline = <
 };
 
 /**
- * @summary NodeInfo 2.0
+ * NodeInfo 2.0
  */
 export const getApiV1Nodeinfo20 = (
 	options?: AxiosRequestConfig,
@@ -865,9 +880,6 @@ export type GetApiV1Nodeinfo20QueryResult = NonNullable<
 >;
 export type GetApiV1Nodeinfo20QueryError = AxiosError<unknown>;
 
-/**
- * @summary NodeInfo 2.0
- */
 export const useGetApiV1Nodeinfo20 = <TError = AxiosError<unknown>>(options?: {
 	swr?: SWRConfiguration<
 		Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
@@ -896,7 +908,7 @@ export const useGetApiV1Nodeinfo20 = <TError = AxiosError<unknown>>(options?: {
 };
 
 /**
- * @summary NodeInfo
+ * NodeInfo
  */
 export const getWellKnownNodeinfo = (
 	options?: AxiosRequestConfig,
@@ -912,9 +924,6 @@ export type GetWellKnownNodeinfoQueryResult = NonNullable<
 >;
 export type GetWellKnownNodeinfoQueryError = AxiosError<unknown>;
 
-/**
- * @summary NodeInfo
- */
 export const useGetWellKnownNodeinfo = <
 	TError = AxiosError<unknown>,
 >(options?: {
@@ -945,7 +954,7 @@ export const useGetWellKnownNodeinfo = <
 };
 
 /**
- * @summary WebFinger
+ * WebFinger
  */
 export const getWellKnownWebfinger = (
 	params: GetWellKnownWebfingerParams,
@@ -968,9 +977,6 @@ export type GetWellKnownWebfingerQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary WebFinger
- */
 export const useGetWellKnownWebfinger = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -1004,11 +1010,11 @@ export const useGetWellKnownWebfinger = <
 };
 
 /**
- * @summary Generate Mock
+ * Generate Mock
  */
 export const getApiV1DevMock = (
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<GetApiV1DevMock200>> => {
+): Promise<AxiosResponse<GetApiV1DevMock201>> => {
 	return axios.get("/api/v1/dev/mock", options);
 };
 
@@ -1021,9 +1027,6 @@ export type GetApiV1DevMockQueryError = AxiosError<
 	GetApiV1DevMock404 | GetApiV1DevMock500
 >;
 
-/**
- * @summary Generate Mock
- */
 export const useGetApiV1DevMock = <
 	TError = AxiosError<GetApiV1DevMock404 | GetApiV1DevMock500>,
 >(options?: {
@@ -1053,11 +1056,11 @@ export const useGetApiV1DevMock = <
 };
 
 /**
- * @summary Reset Database
+ * Reset Database
  */
 export const getApiV1DevReset = (
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<GetApiV1DevReset200>> => {
+): Promise<AxiosResponse<GetApiV1DevReset204>> => {
 	return axios.get("/api/v1/dev/reset", options);
 };
 
@@ -1070,9 +1073,6 @@ export type GetApiV1DevResetQueryError = AxiosError<
 	GetApiV1DevReset404 | GetApiV1DevReset500
 >;
 
-/**
- * @summary Reset Database
- */
 export const useGetApiV1DevReset = <
 	TError = AxiosError<GetApiV1DevReset404 | GetApiV1DevReset500>,
 >(options?: {

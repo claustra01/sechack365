@@ -1,11 +1,12 @@
 get:
   tags:
     - users
-  summary: Get User by ID
+  description: Get User by ID
   parameters:
     - $ref: '../../../../components/params/users.yaml#/id'
   responses:
     '200':
+      description: User Found
       content:
         application/json:
           schema:
@@ -14,16 +15,19 @@ get:
           schema:
             $ref: '../../../../components/schemas/actor.yaml#/actor'
     '400':
+      description: Invalid Query Parameters
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-400'
     '404':
+      description: User Not Found
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-404'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

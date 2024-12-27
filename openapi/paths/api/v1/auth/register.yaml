@@ -1,7 +1,7 @@
 post:
   tags:
     - auth
-  summary: Create User
+  description: Create User
   requestBody:
     required: true
     content:
@@ -10,16 +10,19 @@ post:
           $ref: '../../../../components/schemas/user.yaml#/auth'
   responses:
     '201':
+      description: User Created
       content:
         application/json:
           schema:
             type: object
     '400':
+      description: Invalid Request Body
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-400'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

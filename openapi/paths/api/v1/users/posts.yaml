@@ -1,11 +1,12 @@
 get:
   tags:
     - users
-  summary: Get Latest Posts of User
+  description: Get Latest Posts of User
   parameters:
     - $ref: '../../../../components/params/users.yaml#/id'
   responses:
     '200':
+      description: Latest Posts
       content:
         application/json:
           schema:
@@ -13,16 +14,19 @@ get:
             items:
               $ref: '../../../../components/schemas/post.yaml#/post'
     '400':
+      description: Invalid Query Parameters
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-400'
     '404':
+      description: User Not Found
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-404'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

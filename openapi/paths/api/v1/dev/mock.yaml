@@ -1,19 +1,22 @@
 get:
   tags:
     - dev (localhost only)
-  summary: Generate Mock
+  description: Generate Mock
   responses:
-    '200':
+    '201':
+      description: Mockdata Generated
       content:
         application/json:
           schema:
             type: object
     '404':
+      description: Access Denied
       content:
         application/json:
           schema:
             type: object
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

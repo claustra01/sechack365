@@ -1,7 +1,7 @@
 post:
   tags:
     - follows
-  summary: Follow
+  description: Follow
   requestBody:
     required: true
     content:
@@ -9,27 +9,32 @@ post:
         schema:
           $ref: '../../../../components/schemas/follow.yaml#/follow'
   responses:
-    '204':
+    '201':
+      description: Follow Successful
       content:
         application/json:
           schema:
             type: object
     '400':
+      description: Invalid Request Body
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-400'
     '401':
+      description: Unauthorized
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-401'
     '404':
+      description: User Not Found
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-404'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:
@@ -38,29 +43,34 @@ post:
 delete:
   tags:
     - follows
-  summary: Unfollow
+  description: Unfollow
   responses:
     '204':
+      description: Unfollow Successful
       content:
         application/json:
           schema:
             type: object
     '400':
+      description: Invalid Request Body
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-400'
-    '401':
+    '401':  
+      description: Unauthorized
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-401'
     '404':
+      description: User/Follow Not Found
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-404'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

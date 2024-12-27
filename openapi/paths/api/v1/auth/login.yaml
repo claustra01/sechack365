@@ -1,7 +1,7 @@
 post:
   tags:
     - auth
-  summary: Login
+  description: Login
   requestBody:
     required: true
     content:
@@ -9,27 +9,26 @@ post:
         schema:
           $ref: '../../../../components/schemas/user.yaml#/auth'
   responses:
-    '200':
+    '204':
+      description: Login Successful
       content:
         application/json:
           schema:
-            $ref: '../../../../components/schemas/user.yaml#/user'
+            type: object
     '400':
+      description: Invalid Request Body
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-400'
     '401':
+      description: Invalid Username or Password
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-401'
-    '404':
-      content:
-        application/json:
-          schema:
-            $ref: '../../../../components/schemas/errors.yaml#/error-404'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:
