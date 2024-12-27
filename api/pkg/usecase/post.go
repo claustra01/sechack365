@@ -7,7 +7,7 @@ import (
 )
 
 type IPostRepository interface {
-	Create(userId, content string) (*model.Post, error)
+	Create(userId, content string) error
 	FindById(id string) (*model.PostWithUser, error)
 	FindTimeline(createdAt time.Time, limit int) ([]*model.PostWithUser, error)
 	FindUserTimeline(userId string, createdAt time.Time, limit int) ([]*model.PostWithUser, error)
@@ -18,7 +18,7 @@ type PostUsecase struct {
 	PostRepository IPostRepository
 }
 
-func (u *PostUsecase) Create(userId, content string) (*model.Post, error) {
+func (u *PostUsecase) Create(userId, content string) error {
 	return u.PostRepository.Create(userId, content)
 }
 

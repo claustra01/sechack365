@@ -4,7 +4,7 @@ import "github.com/claustra01/sechack365/pkg/model"
 
 type INostrRelayHandler interface {
 	FindAll() ([]*model.NostrRelay, error)
-	Create(url string) (*model.NostrRelay, error)
+	Create(url string) error
 	Delete(id string) error
 }
 
@@ -16,7 +16,7 @@ func (u *NostrRelayUsecase) FindAll() ([]*model.NostrRelay, error) {
 	return u.NostrRelayHandler.FindAll()
 }
 
-func (u *NostrRelayUsecase) Create(url string) (*model.NostrRelay, error) {
+func (u *NostrRelayUsecase) Create(url string) error {
 	return u.NostrRelayHandler.Create(url)
 }
 
