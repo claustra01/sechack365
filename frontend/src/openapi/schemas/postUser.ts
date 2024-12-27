@@ -8,5 +8,6 @@
 export interface PostUser {
 	display_name: string;
 	icon: string;
+	protocol: string;
 	username: string;
 }

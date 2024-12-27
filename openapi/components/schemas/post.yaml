@@ -28,12 +28,15 @@ post-user:
   properties:
     username:
       type: string
+    protocol:
+      type: string
     display_name:
       type: string
     icon:
       type: string
   required:
     - username
+    - protocol
     - display_name
     - icon
 
