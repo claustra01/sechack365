@@ -7,7 +7,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: '../../../../components/schemas/follow.yaml#/follow'
+          $ref: '../../../../components/schemas/follow.yaml#/newfollow'
   responses:
     '201':
       description: Follow Successful
