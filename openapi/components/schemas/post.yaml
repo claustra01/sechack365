@@ -26,11 +26,14 @@ post:
 post-user:
   type: object
   properties:
+    username:
+      type: string
     display_name:
       type: string
     icon:
       type: string
   required:
+    - username
     - display_name
     - icon
 
