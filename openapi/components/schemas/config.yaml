@@ -1,0 +1,29 @@
+nostr-relay:
+  type: object
+  properties:
+    id:
+      type: string
+    url:
+      type: string
+    is_enable:
+      type: boolean
+    created_at:
+      type: string
+      format: date-time
+    updated_at: 
+      type: string
+      format: date-time
+  required:
+    - id
+    - url
+    - is_enable
+    - created_at
+    - updated_at
+
+new-relay:
+  type: object
+  properties:
+    url:
+      type: string
+  required:
+    - url

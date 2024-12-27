@@ -39,6 +39,9 @@ paths:
 
   /api/v1/reactions/like:
     $ref: ./paths/api/v1/reactions/like.yaml
+  
+  /api/v1/configs/nostr-relay:
+    $ref: ./paths/api/v1/configs/nostr-relay.yaml
 
   /api/v1/nodeinfo/2.0:
     $ref: ./paths/api/v1/nodeinfo/2.0.yaml

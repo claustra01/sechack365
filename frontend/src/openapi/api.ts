@@ -13,6 +13,7 @@ import type { SWRMutationConfiguration } from "swr/mutation";
 import type {
 	Actor,
 	Auth,
+	DeleteApiV1ConfigsNostrRelay204,
 	DeleteApiV1FollowsFollow204,
 	DeleteApiV1PostsId204,
 	DeleteApiV1ReactionsLike204,
@@ -33,10 +34,12 @@ import type {
 	Newlike,
 	Newpost,
 	Nodeinfo,
+	NostrRelay,
 	Post,
 	PostApiV1AuthLogin204,
 	PostApiV1AuthLogout204,
 	PostApiV1AuthRegister201,
+	PostApiV1ConfigsNostrRelay201,
 	PostApiV1FollowsFollow201,
 	PostApiV1Posts201,
 	PostApiV1ReactionsLike201,
@@ -985,6 +988,165 @@ export const useDeleteApiV1ReactionsLike = <
 
 	const swrKey = swrOptions?.swrKey ?? getDeleteApiV1ReactionsLikeMutationKey();
 	const swrFn = getDeleteApiV1ReactionsLikeMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Register a New Nostr Relay
+ */
+export const postApiV1ConfigsNostrRelay = (
+	nostrRelay: NostrRelay,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PostApiV1ConfigsNostrRelay201>> => {
+	return axios.post("/api/v1/configs/nostr-relay", nostrRelay, options);
+};
+
+export const getPostApiV1ConfigsNostrRelayMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		{ arg }: { arg: NostrRelay },
+	): Promise<AxiosResponse<PostApiV1ConfigsNostrRelay201>> => {
+		return postApiV1ConfigsNostrRelay(arg, options);
+	};
+};
+export const getPostApiV1ConfigsNostrRelayMutationKey = () =>
+	["/api/v1/configs/nostr-relay"] as const;
+
+export type PostApiV1ConfigsNostrRelayMutationResult = NonNullable<
+	Awaited<ReturnType<typeof postApiV1ConfigsNostrRelay>>
+>;
+export type PostApiV1ConfigsNostrRelayMutationError = AxiosError<
+	Error400 | Error401 | Error500
+>;
+
+export const usePostApiV1ConfigsNostrRelay = <
+	TError = AxiosError<Error400 | Error401 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof postApiV1ConfigsNostrRelay>>,
+		TError,
+		Key,
+		NostrRelay,
+		Awaited<ReturnType<typeof postApiV1ConfigsNostrRelay>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey =
+		swrOptions?.swrKey ?? getPostApiV1ConfigsNostrRelayMutationKey();
+	const swrFn = getPostApiV1ConfigsNostrRelayMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Get Nostr Relays List
+ */
+export const getApiV1ConfigsNostrRelay = (
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<NostrRelay[]>> => {
+	return axios.get("/api/v1/configs/nostr-relay", options);
+};
+
+export const getGetApiV1ConfigsNostrRelayKey = () =>
+	["/api/v1/configs/nostr-relay"] as const;
+
+export type GetApiV1ConfigsNostrRelayQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getApiV1ConfigsNostrRelay>>
+>;
+export type GetApiV1ConfigsNostrRelayQueryError = AxiosError<
+	Error401 | Error500
+>;
+
+export const useGetApiV1ConfigsNostrRelay = <
+	TError = AxiosError<Error401 | Error500>,
+>(options?: {
+	swr?: SWRConfiguration<
+		Awaited<ReturnType<typeof getApiV1ConfigsNostrRelay>>,
+		TError
+	> & { swrKey?: Key; enabled?: boolean };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1ConfigsNostrRelayKey() : null));
+	const swrFn = () => getApiV1ConfigsNostrRelay(axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Delete a Nostr Relay
+ */
+export const deleteApiV1ConfigsNostrRelay = (
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<DeleteApiV1ConfigsNostrRelay204>> => {
+	return axios.delete("/api/v1/configs/nostr-relay", options);
+};
+
+export const getDeleteApiV1ConfigsNostrRelayMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		__: { arg: Arguments },
+	): Promise<AxiosResponse<DeleteApiV1ConfigsNostrRelay204>> => {
+		return deleteApiV1ConfigsNostrRelay(options);
+	};
+};
+export const getDeleteApiV1ConfigsNostrRelayMutationKey = () =>
+	["/api/v1/configs/nostr-relay"] as const;
+
+export type DeleteApiV1ConfigsNostrRelayMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteApiV1ConfigsNostrRelay>>
+>;
+export type DeleteApiV1ConfigsNostrRelayMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const useDeleteApiV1ConfigsNostrRelay = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof deleteApiV1ConfigsNostrRelay>>,
+		TError,
+		Key,
+		Arguments,
+		Awaited<ReturnType<typeof deleteApiV1ConfigsNostrRelay>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey =
+		swrOptions?.swrKey ?? getDeleteApiV1ConfigsNostrRelayMutationKey();
+	const swrFn = getDeleteApiV1ConfigsNostrRelayMutationFetcher(axiosOptions);
 
 	const query = useSWRMutation(swrKey, swrFn, swrOptions);
 

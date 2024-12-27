@@ -63,3 +63,6 @@ export * from "./wellknownNodeinfo";
 export * from "./wellknownNodeinfoLink";
 export * from "./wellknownWebfinger";
 export * from "./wellknownWebfingerLink";
+export * from "./deleteApiV1ConfigsNostrRelay204";
+export * from "./nostrRelay";
+export * from "./postApiV1ConfigsNostrRelay201";
