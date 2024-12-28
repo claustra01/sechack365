@@ -9,8 +9,6 @@ export const UserProfile = (props: User) => {
 	return (
 		<Box>
 			<Header title={props.display_name} icon={<IconArrowBackUp />} />
-			{/* TODO: implement profile header */}
-			<Image src="https://placehold.jp/540x180.png" />
 			<Box
 				style={{
 					display: "flex",
