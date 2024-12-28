@@ -65,8 +65,8 @@ func GetAllUsers(c *framework.Context) http.HandlerFunc {
 		}
 
 		var usersResponse []openapi.User
-		for i := range users {
-			usersResponse = append(usersResponse, bindUser(users[i]))
+		for _, u := range users {
+			usersResponse = append(usersResponse, bindUser(u))
 		}
 		returnResponse(w, http.StatusOK, ContentTypeJson, usersResponse)
 	}
@@ -136,8 +136,8 @@ func GetUserFollows(c *framework.Context) http.HandlerFunc {
 			return
 		}
 		var followsResponse []openapi.SimpleUser
-		for i := range follows {
-			followsResponse = append(followsResponse, bindSimpleUser(follows[i]))
+		for _, f := range follows {
+			followsResponse = append(followsResponse, bindSimpleUser(f))
 		}
 		returnResponse(w, http.StatusOK, ContentTypeJson, followsResponse)
 	}
@@ -158,8 +158,8 @@ func GetUserFollowers(c *framework.Context) http.HandlerFunc {
 			return
 		}
 		var followersResponse []openapi.SimpleUser
-		for i := range followers {
-			followersResponse = append(followersResponse, bindSimpleUser(followers[i]))
+		for _, f := range followers {
+			followersResponse = append(followersResponse, bindSimpleUser(f))
 		}
 		returnResponse(w, http.StatusOK, ContentTypeJson, followersResponse)
 	}
@@ -188,8 +188,8 @@ func GetUserPosts(c *framework.Context) http.HandlerFunc {
 		}
 
 		var postsResponse []openapi.Post
-		for i := range posts {
-			postsResponse = append(postsResponse, bindPost(posts[i]))
+		for _, p := range posts {
+			postsResponse = append(postsResponse, bindPost(p))
 		}
 		returnResponse(w, http.StatusOK, ContentTypeJson, postsResponse)
 	}
