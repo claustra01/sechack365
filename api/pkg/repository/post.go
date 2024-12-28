@@ -33,10 +33,10 @@ func (r *PostRepository) FindById(id string) (*model.PostWithUser, error) {
 			WHEN users.protocol = 'local' THEN '@' || users.username
 			WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
 			WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
-		END AS user_username,
-		users.protocol AS user_protocol,
-		users.display_name AS user_display_name,
-		users.icon AS user_icon
+		END AS "user.username",
+		users.protocol AS "user.protocol",
+		users.display_name AS "user.display_name",
+		users.icon AS "user.icon"
 		FROM posts
 		JOIN users ON posts.user_id = users.id
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
@@ -54,45 +54,41 @@ func (r *PostRepository) FindById(id string) (*model.PostWithUser, error) {
 }
 
 func (r *PostRepository) FindTimeline(offset int, limit int) ([]*model.PostWithUser, error) {
-	rawPosts := make([]model.PostWithUser, 0)
+	var posts []*model.PostWithUser
 	query := `
 		SELECT posts.*,
 		CASE
 			WHEN users.protocol = 'local' THEN '@' || users.username
 			WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
 			WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
-		END AS user_username,
-		users.protocol AS user_protocol,
-		users.display_name AS user_display_name,
-		users.icon AS user_icon
+		END AS "user.username",
+		users.protocol AS "user.protocol",
+		users.display_name AS "user.display_name",
+		users.icon AS "user.icon"
 		FROM posts
 		JOIN users ON posts.user_id = users.id
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
 		ORDER BY posts.created_at DESC LIMIT $1 OFFSET $2;
 	`
-	if err := r.SqlHandler.Select(&rawPosts, query, limit, offset); err != nil {
+	if err := r.SqlHandler.Select(&posts, query, limit, offset); err != nil {
 		return nil, err
-	}
-	posts := make([]*model.PostWithUser, 0)
-	for _, rawPost := range rawPosts {
-		posts = append(posts, &rawPost)
 	}
 	return posts, nil
 }
 
 func (r *PostRepository) FindUserTimeline(userId string, offset int, limit int) ([]*model.PostWithUser, error) {
-	rawPosts := make([]model.PostWithUser, 0)
+	var posts []*model.PostWithUser
 	query := `
 		SELECT posts.*,
 		CASE
 			WHEN users.protocol = 'local' THEN '@' || users.username
 			WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
 			WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
-		END AS user_username,
-		users.protocol AS user_protocol,
-		users.display_name AS user_display_name,
-		users.icon AS user_icon
+		END AS "user.username",
+		users.protocol AS "user.protocol",
+		users.display_name AS "user.display_name",
+		users.icon AS "user.icon"
 		FROM posts
 		JOIN users ON posts.user_id = users.id
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
@@ -100,12 +96,8 @@ func (r *PostRepository) FindUserTimeline(userId string, offset int, limit int) 
 		WHERE user_id = $1
 		ORDER BY posts.created_at DESC LIMIT $2 OFFSET $3;
 	`
-	if err := r.SqlHandler.Select(&rawPosts, query, userId, limit, offset); err != nil {
+	if err := r.SqlHandler.Select(&posts, query, userId, limit, offset); err != nil {
 		return nil, err
-	}
-	posts := make([]*model.PostWithUser, 0)
-	for _, rawPost := range rawPosts {
-		posts = append(posts, &rawPost)
 	}
 	return posts, nil
 }
