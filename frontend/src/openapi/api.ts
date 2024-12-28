@@ -44,6 +44,7 @@ import type {
 	PostApiV1FollowsFollow201,
 	PostApiV1Posts201,
 	PostApiV1ReactionsLike201,
+	SimpleUser,
 	User,
 	WellknownNodeinfo,
 	WellknownWebfinger,
@@ -317,10 +318,10 @@ export const getGetApiV1UsersMeKey = () => ["/api/v1/users/me"] as const;
 export type GetApiV1UsersMeQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersMe>>
 >;
-export type GetApiV1UsersMeQueryError = AxiosError<Error401 | Error500>;
+export type GetApiV1UsersMeQueryError = AxiosError<Error404 | Error500>;
 
 export const useGetApiV1UsersMe = <
-	TError = AxiosError<Error401 | Error500>,
+	TError = AxiosError<Error404 | Error500>,
 >(options?: {
 	swr?: SWRConfiguration<
 		Awaited<ReturnType<typeof getApiV1UsersMe>>,
@@ -412,7 +413,7 @@ export const useGetApiV1UsersIdPosts = <
 export const getApiV1UsersIdFollows = (
 	id: string,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<User[]>> => {
+): Promise<AxiosResponse<SimpleUser[]>> => {
 	return axios.get(`/api/v1/users/${id}/follows`, options);
 };
 
@@ -422,12 +423,10 @@ export const getGetApiV1UsersIdFollowsKey = (id: string) =>
 export type GetApiV1UsersIdFollowsQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersIdFollows>>
 >;
-export type GetApiV1UsersIdFollowsQueryError = AxiosError<
-	Error400 | Error404 | Error500
->;
+export type GetApiV1UsersIdFollowsQueryError = AxiosError<Error400 | Error500>;
 
 export const useGetApiV1UsersIdFollows = <
-	TError = AxiosError<Error400 | Error404 | Error500>,
+	TError = AxiosError<Error400 | Error500>,
 >(
 	id: string,
 	options?: {
@@ -464,7 +463,7 @@ export const useGetApiV1UsersIdFollows = <
 export const getApiV1UsersIdFollowers = (
 	id: string,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<User[]>> => {
+): Promise<AxiosResponse<SimpleUser[]>> => {
 	return axios.get(`/api/v1/users/${id}/followers`, options);
 };
 
@@ -475,11 +474,11 @@ export type GetApiV1UsersIdFollowersQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>
 >;
 export type GetApiV1UsersIdFollowersQueryError = AxiosError<
-	Error400 | Error404 | Error500
+	Error400 | Error500
 >;
 
 export const useGetApiV1UsersIdFollowers = <
-	TError = AxiosError<Error400 | Error404 | Error500>,
+	TError = AxiosError<Error400 | Error500>,
 >(
 	id: string,
 	options?: {

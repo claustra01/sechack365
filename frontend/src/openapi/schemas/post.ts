@@ -4,7 +4,7 @@
  * SecHack365
  * OpenAPI spec version: 0.1.0
  */
-import type { PostUser } from "./postUser";
+import type { SimpleUser } from "./simpleUser";
 
 export interface Post {
 	content: string;
@@ -12,5 +12,5 @@ export interface Post {
 	id: string;
 	like_count?: number;
 	updated_at: string;
-	user: PostUser;
+	user: SimpleUser;
 }

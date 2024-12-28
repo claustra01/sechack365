@@ -15,7 +15,7 @@ get:
             items:
               $ref: '../../../../components/schemas/post.yaml#/post'
     '400':
-      description: Invalid Query Parameters
+      description: Invalid Path/Query Parameters
       content:
         application/json:
           schema:

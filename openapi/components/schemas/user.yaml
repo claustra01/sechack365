@@ -45,20 +45,50 @@ identifiers:
   type: object
   properties:
     activitypub:
-      type: object
-      properties:
-        local_username:
-          type: string
-        host:
-          type: string
-        public_key:
-          type: string
+      $ref: '#/ap-identifier'
     nostr:
-      type: object
-      properties:
-        public_key:
-          type: string
+      $ref: '#/nostr-identifier'
   # no required
+
+ap-identifier:
+  type: object
+  properties:
+    local_username:
+      type: string
+    host:
+      type: string
+    public_key:
+      type: string
+  required:
+    - local_username
+    - host
+    - public_key
+
+nostr-identifier:
+  type: object
+  properties:
+    public_key:
+      type: string
+  required:
+    - public_key
+
+
+simple-user:
+  type: object
+  properties:
+    username:
+      type: string
+    protocol:
+      type: string
+    display_name:
+      type: string
+    icon:
+      type: string
+  required:
+    - username
+    - protocol
+    - display_name
+    - icon
 
 auth:
   type: object

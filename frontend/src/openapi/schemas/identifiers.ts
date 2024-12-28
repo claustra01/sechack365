@@ -4,10 +4,10 @@
  * SecHack365
  * OpenAPI spec version: 0.1.0
  */
-import type { IdentifiersActivitypub } from "./identifiersActivitypub";
-import type { IdentifiersNostr } from "./identifiersNostr";
+import type { ApIdentifier } from "./apIdentifier";
+import type { NostrIdentifier } from "./nostrIdentifier";
 
 export interface Identifiers {
-	activitypub?: IdentifiersActivitypub;
-	nostr?: IdentifiersNostr;
+	activitypub?: ApIdentifier;
+	nostr?: NostrIdentifier;
 }

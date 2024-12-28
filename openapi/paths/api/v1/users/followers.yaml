@@ -12,19 +12,13 @@ get:
           schema:
             type: array
             items:
-              $ref: '../../../../components/schemas/user.yaml#/user'
+              $ref: '../../../../components/schemas/user.yaml#/simple-user'
     '400':
-      description: Invalid Query Parameters
+      description: Invalid Path Parameters
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-400'
-    '404':
-      description: User Not Found
-      content:
-        application/json:
-          schema:
-            $ref: '../../../../components/schemas/errors.yaml#/error-404'
     '500':
       description: Internal Server Error
       content:

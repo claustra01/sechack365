@@ -4,7 +4,7 @@ post:
     id:
       type: string
     user:
-      $ref: '#/post-user'
+      $ref: './user.yaml#/simple-user'
     content:
       type: string
     like_count:
@@ -22,23 +22,6 @@ post:
     - like-count
     - created_at
     - updated_at
-
-post-user:
-  type: object
-  properties:
-    username:
-      type: string
-    protocol:
-      type: string
-    display_name:
-      type: string
-    icon:
-      type: string
-  required:
-    - username
-    - protocol
-    - display_name
-    - icon
 
 newpost:
   type: object
