@@ -93,7 +93,7 @@ func (r *PostRepository) FindUserTimeline(userId string, offset int, limit int) 
 		JOIN users ON posts.user_id = users.id
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
-		WHERE user_id = $1
+		WHERE posts.user_id = $1
 		ORDER BY posts.created_at DESC LIMIT $2 OFFSET $3;
 	`
 	if err := r.SqlHandler.Select(&posts, query, userId, limit, offset); err != nil {

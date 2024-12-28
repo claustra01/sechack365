@@ -1,12 +1,11 @@
-import type { User } from "@/openapi/schemas";
+import type { SimpleUser } from "@/openapi/schemas";
 import { Avatar, Box, Text, Title } from "@mantine/core";
 import Link from "next/link";
-import { bindUsername } from "../../../utils/strings";
 
-export const PostUserCard = (props: User) => {
+export const PostUserCard = (props: SimpleUser) => {
 	return (
 		<Box style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-			<Link href={`/profile/${bindUsername(props)}`}>
+			<Link href={`/profile/${props.username}`}>
 				<Avatar src={props.icon} size="lg" />
 			</Link>
 			<Box style={{ display: "flex", flexDirection: "column" }}>
@@ -14,7 +13,7 @@ export const PostUserCard = (props: User) => {
 					{props.display_name}
 				</Title>
 				<Box>
-					<Text size="sm">{bindUsername(props)}</Text>
+					<Text size="sm">{props.username}</Text>
 				</Box>
 			</Box>
 		</Box>
