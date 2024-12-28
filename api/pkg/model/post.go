@@ -15,7 +15,6 @@ type PostWithUser struct {
 	UserId    string     `db:"user_id"`
 	Content   string     `db:"content"`
 	User      SimpleUser `db:"user"`
-	LikeCount int        `db:"like_count"`
 	CreatedAt time.Time  `db:"created_at"`
 	UpdatedAt time.Time  `db:"updated_at"`
 }

@@ -26,7 +26,6 @@ func bindPost(p *model.PostWithUser) openapi.Post {
 			DisplayName: p.User.DisplayName,
 			Icon:        p.User.Icon,
 		},
-		LikeCount: p.LikeCount,
 		CreatedAt: p.CreatedAt,
 		UpdatedAt: p.UpdatedAt,
 	}

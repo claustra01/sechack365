@@ -7,8 +7,6 @@ post:
       $ref: './user.yaml#/simple-user'
     content:
       type: string
-    like_count:
-      type: integer
     created_at:
       type: string
       format: date-time
@@ -19,7 +17,6 @@ post:
     - id
     - user
     - content
-    - like_count
     - created_at
     - updated_at
 
