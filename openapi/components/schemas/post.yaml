@@ -19,7 +19,7 @@ post:
     - id
     - user
     - content
-    - like-count
+    - like_count
     - created_at
     - updated_at
 

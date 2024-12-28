@@ -17,18 +17,15 @@ import (
 const TimelineLimit = 10
 
 func bindPost(p *model.PostWithUser) openapi.Post {
-	var user openapi.SimpleUser
-	if p.User != nil {
-		user = openapi.SimpleUser{
-			Username: p.User.Username,
-			Protocol: p.User.Protocol,
-			DisplayName: p.User.DisplayName,
-			Icon: p.User.Icon,
-		}
 	post := openapi.Post{
-		Id:        p.Id,
-		Content:   p.Content,
-		User: 	   user,
+		Id:      p.Id,
+		Content: p.Content,
+		User: openapi.SimpleUser{
+			Username:    p.User.Username,
+			Protocol:    p.User.Protocol,
+			DisplayName: p.User.DisplayName,
+			Icon:        p.User.Icon,
+		},
 		LikeCount: p.LikeCount,
 		CreatedAt: p.CreatedAt,
 		UpdatedAt: p.UpdatedAt,
