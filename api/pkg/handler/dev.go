@@ -52,13 +52,13 @@ func ResetMock(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		for _, user := range users {
-			if err := c.Controllers.User.DeleteById(user.Id); err != nil {
+		for _, post := range posts {
+			if err := c.Controllers.Post.Delete(post.Id); err != nil {
 				panic(err)
 			}
 		}
-		for _, post := range posts {
-			if err := c.Controllers.Post.Delete(post.Id); err != nil {
+		for _, user := range users {
+			if err := c.Controllers.User.DeleteById(user.Id); err != nil {
 				panic(err)
 			}
 		}
