@@ -1,9 +1,10 @@
 import { getApiV1UsersMe } from "@/openapi/api";
 import { colors } from "@/styles/colors";
-import { Box } from "@mantine/core";
+import { DesktopOnly, MobileOnly } from "@/styles/devices";
+import { Box, Flex } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { GuestMenu } from "../Menu/GuestMenu";
-import { UserMenu } from "../Menu/UserMenu";
+import { DesktopMenu } from "../Menu/DesktopMenu";
+import { MobileMenu } from "../Menu/MobileMenu";
 
 export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -16,30 +17,25 @@ export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 
 	return (
 		<main>
-			<Box
-				bg={colors.primaryColor}
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					minHeight: "100vh",
-				}}
-			>
-				<Box
-					style={{
-						display: "flex",
-						gap: "24px",
-						marginTop: "24px",
-					}}
+			<DesktopOnly>
+				<Flex
+					bg={colors.primaryColor}
+					direction={{ base: "row" }}
+					gap={{ base: "24px" }}
+					justify={{ base: "center" }}
 				>
 					<Box bg={colors.white} w={720} style={{ minHeight: "100vh" }}>
 						{children}
 					</Box>
-					<Box style={{ marginTop: "92px" }}>
-						{isAuthenticated ? <UserMenu /> : <GuestMenu />}
-					</Box>
+					<DesktopMenu isAuthenticated={isAuthenticated} />
+				</Flex>
+			</DesktopOnly>
+			<MobileOnly>
+				<Box bg={colors.white} w={"100%"} style={{ minHeight: "100vh" }}>
+					{children}
 				</Box>
-			</Box>
+				<MobileMenu isAuthenticated={isAuthenticated} />
+			</MobileOnly>
 		</main>
 	);
 };
