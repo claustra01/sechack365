@@ -37,8 +37,8 @@ paths:
   /api/v1/timeline:
     $ref: ./paths/api/v1/posts/timeline.yaml
 
-  /api/v1/reactions/like:
-    $ref: ./paths/api/v1/reactions/like.yaml
+  /api/v1/reactions:
+    $ref: ./paths/api/v1/reactions/new.yaml
   
   /api/v1/configs/nostr-relay:
     $ref: ./paths/api/v1/configs/nostr-relay.yaml

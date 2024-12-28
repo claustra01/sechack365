@@ -1,16 +1,16 @@
 post:
   tags: 
     - reactions
-  description: Like a Post
+  description: Add Reaction to Post
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: '../../../../components/schemas/reaction.yaml#/newlike'
+          $ref: '../../../../components/schemas/reaction.yaml#/new-reaction'
   responses:
     '201':
-      description: Like Successful
+      description: Reaction Successful
       content:
         application/json:
           schema:
@@ -43,10 +43,10 @@ post:
 delete:
   tags:
     - reactions
-  description: Unlike a Post
+  description: Remove Reaction to Post
   responses:
     '204':
-      description: Unlike Successful
+      description: Reaction Removed
       content:
         application/json:
           schema:

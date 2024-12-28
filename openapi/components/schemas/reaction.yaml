@@ -23,12 +23,11 @@ reaction:
     - created_at
     - updated_at
 
-newlike:
+new-reaction:
   type: object
   properties:
     type:
       type: string
-      example: "Like"
     post_id:
       type: string
   required:
