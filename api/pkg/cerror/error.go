@@ -14,6 +14,7 @@ var ErrInvalidPassword = fmt.Errorf("invalid username or password")
 var ErrUserAlreadyExists = fmt.Errorf("user already exists")
 var ErrInvalidUsername = fmt.Errorf("invalid username")
 
+// user handler
 var ErrUserNotFound = fmt.Errorf("user not found")
 var ErrResolveWebfinger = fmt.Errorf("failed to resolve webfinger")
 var ErrResolveRemoteActor = fmt.Errorf("failed to resolve remote actor")
@@ -23,6 +24,11 @@ var ErrInvalidNostrKey = fmt.Errorf("invalid nostr key")
 var ErrInvalidFollowRequest = fmt.Errorf("invalid follow request")
 var ErrPushActivity = fmt.Errorf("failed to push activity")
 
+// post handler
+var ErrEmptyContent = fmt.Errorf("empty content")
+var ErrPostNotFound = fmt.Errorf("post not found")
+
+// utils
 var ErrGeneratePasswordHash = fmt.Errorf("failed to generate password hash")
 var ErrGenerateRsaKey = fmt.Errorf("failed to generate RSA key pair")
 var ErrEncodePublicKey = fmt.Errorf("failed to encode public key")

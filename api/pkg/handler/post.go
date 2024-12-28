@@ -2,15 +2,13 @@ package handler
 
 import (
 	"encoding/json"
-	"log"
+	"errors"
 	"net/http"
-	"time"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
-	"github.com/claustra01/sechack365/pkg/util"
 )
 
 // NOTE: timeline limit per request
@@ -48,63 +46,72 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 		}
 
 		if postRequsetBody.Content == "" {
-			returnBadRequest(w, c.Logger, nil)
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrEmptyContent, "failed to create post"))
+			returnError(w, http.StatusBadRequest)
 			return
 		}
 
 		user, err := c.CurrentUser(r)
-		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
+		if errors.Is(err, cerror.ErrUserNotFound) {
+			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusUnauthorized)
+			return
+		} else if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
 			return
 		}
 
-		post, err := c.Controllers.Post.Create(user.Id, postRequsetBody.Content)
-		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
+		if err := c.Controllers.Post.Create(user.Id, postRequsetBody.Content); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
 			return
 		}
 
-		jsonResponse(w, post)
+		returnResponse(w, http.StatusCreated, ContentTypeJson, nil)
 	}
 }
 
 func GetPost(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
-
-		post, err := c.Controllers.Post.FindById(id)
-		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
+		if id == "" {
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidPathParam, "failed to get post"))
+			returnError(w, http.StatusBadRequest)
 			return
 		}
-
-		jsonResponse(w, post)
+		post, err := c.Controllers.Post.FindById(id)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to get post"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		if post == nil {
+			c.Logger.Warn("Not Found", "Error", cerror.Wrap(cerror.ErrPostNotFound, "failed to get post"))
+			returnError(w, http.StatusNotFound)
+			return
+		}
+		returnResponse(w, http.StatusOK, ContentTypeJson, bindPost(post))
 	}
 }
 
 func GetTimeline(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		createdAtStr := r.URL.Query().Get("created_at")
-		var createdAt time.Time
-		if createdAtStr != "" {
-			var err error
-			createdAt, err = util.StrToTime(createdAtStr)
-			if err != nil {
-				returnBadRequest(w, c.Logger, err)
-				return
-			}
-		} else {
-			createdAt = time.Now()
+		offsetStr := r.URL.Query().Get("offset")
+		offset := 0
+		if offsetStr != "" {
+			offset = int(offset)
 		}
-
-		log.Println(createdAt)
-
-		posts, err := c.Controllers.Post.FindTimeline(createdAt, TimelineLimit)
+		posts, err := c.Controllers.Post.FindTimeline(offset, TimelineLimit)
 		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to get timeline"))
+			returnError(w, http.StatusInternalServerError)
 			return
 		}
-
-		jsonResponse(w, posts)
+		var timeline []openapi.Post
+		for _, p := range posts {
+			timeline = append(timeline, bindPost(p))
+		}
+		returnResponse(w, http.StatusOK, ContentTypeJson, timeline)
 	}
 }
