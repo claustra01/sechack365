@@ -1,4 +1,4 @@
-import { Box, Text } from "@mantine/core";
+import { Flex, Text } from "@mantine/core";
 
 export type UserProfileCounterProps = {
 	value: number;
@@ -7,11 +7,11 @@ export type UserProfileCounterProps = {
 
 export const UserProfileCounter = (props: UserProfileCounterProps) => {
 	return (
-		<Box style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+		<Flex direction="row" align="center" gap={4}>
 			<Text size="lg" fw={500}>
 				{props.value}
 			</Text>
 			<Text size="lg">{props.label}</Text>
-		</Box>
+		</Flex>
 	);
 };
