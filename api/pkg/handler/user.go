@@ -45,7 +45,7 @@ func bindUser(u *model.UserWithIdentifiers) openapi.User {
 	return user
 }
 
-func bindSimpleUser(u *model.User) openapi.SimpleUser {
+func bindSimpleUser(u *model.SimpleUser) openapi.SimpleUser {
 	user := openapi.SimpleUser{
 		Username:    u.Username,
 		Protocol:    u.Protocol,
