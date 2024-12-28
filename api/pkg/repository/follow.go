@@ -9,44 +9,72 @@ type FollowRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
-func (r *FollowRepository) Create(followerId, followeeId string) (*model.Follow, error) {
-	follow := new(model.Follow)
+func (r *FollowRepository) Create(followerId, targetId string) error {
 	uuid := util.NewUuid()
 	query := `
-		INSERT INTO follows (id, follower_id, followee_id)
-		VALUES ($1, $2, $3)
-		RETURNING *;
+		INSERT INTO follows (id, follower_id, target_id)
+		VALUES ($1, $2, $3);
 	`
-	if err := r.SqlHandler.Get(follow, query, uuid, followerId, followeeId); err != nil {
-		return nil, err
+	if _, err := r.SqlHandler.Exec(query, uuid, followerId, targetId); err != nil {
+		return err
 	}
-	return follow, nil
+	return nil
 }
 
-func (r *FollowRepository) UpdateAcceptFollow(followerId, followeeId string) (*model.Follow, error) {
-	follow := new(model.Follow)
+func (r *FollowRepository) UpdateAcceptFollow(followerId, targetId string) error {
 	query := `
 		UPDATE follows SET is_accepted = true
-		WHERE follower_id = $1 AND followee_id = $2
-		RETURNING *;
+		WHERE follower_id = $1 AND target_id = $2;
 	`
-	if err := r.SqlHandler.Get(follow, query, followerId, followeeId); err != nil {
-		return nil, err
+	if _, err := r.SqlHandler.Exec(query, followerId, targetId); err != nil {
+		return err
 	}
-	return follow, nil
+	return nil
 }
 
-func (r *FollowRepository) FindFollowsByUserId(userId string) ([]*model.User, error) {
-	var users []*model.User
-	if err := r.SqlHandler.Select(&users, `SELECT users.* FROM users JOIN follows ON users.id = follows.followee_id WHERE follows.follower_id = $1;`, userId); err != nil {
+func (r *FollowRepository) FindFollowsByUserId(userId string) ([]*model.SimpleUser, error) {
+	var users []*model.SimpleUser
+	query := `
+		SELECT
+			CASE
+				WHEN users.protocol = 'local' THEN '@' || users.username
+				WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
+				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
+			END AS username,
+			users.protocol,
+			users.display_name,
+			users.icon
+		FROM users
+		JOIN follows ON users.id = follows.target_id
+		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
+		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
+		WHERE follows.follower_id = $1;
+	`
+	if err := r.SqlHandler.Select(&users, query, userId); err != nil {
 		return nil, err
 	}
 	return users, nil
 }
 
-func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.User, error) {
-	var users []*model.User
-	if err := r.SqlHandler.Select(&users, `SELECT users.* FROM users JOIN follows ON users.id = follows.follower_id WHERE follows.followee_id = $1;`, userId); err != nil {
+func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.SimpleUser, error) {
+	var users []*model.SimpleUser
+	query := `
+		SELECT
+			CASE
+				WHEN users.protocol = 'local' THEN '@' || users.username
+				WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
+				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
+			END AS username,
+			users.protocol,
+			users.display_name,
+			users.icon
+		FROM users
+		JOIN follows ON users.id = follows.target_id
+		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
+		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
+		WHERE follows.target_id = $1;
+	`
+	if err := r.SqlHandler.Select(&users, query, userId); err != nil {
 		return nil, err
 	}
 	return users, nil

@@ -57,6 +57,13 @@ type ActorPublicKey struct {
 	Type         string `json:"type"`
 }
 
+// ApIdentifier defines model for ap-identifier.
+type ApIdentifier struct {
+	Host          string `json:"host"`
+	LocalUsername string `json:"local_username"`
+	PublicKey     string `json:"public_key"`
+}
+
 // Auth defines model for auth.
 type Auth struct {
 	Password string `json:"password"`
@@ -81,10 +88,33 @@ type Error404 struct {
 	StatusCode int    `json:"status_code"`
 }
 
+// Error409 defines model for error-409.
+type Error409 struct {
+	Message    string `json:"message"`
+	StatusCode int    `json:"status_code"`
+}
+
 // Error500 defines model for error-500.
 type Error500 struct {
 	Message    string `json:"message"`
 	StatusCode int    `json:"status_code"`
+}
+
+// Identifiers defines model for identifiers.
+type Identifiers struct {
+	Activitypub *ApIdentifier    `json:"activitypub,omitempty"`
+	Nostr       *NostrIdentifier `json:"nostr,omitempty"`
+}
+
+// Newfollow defines model for newfollow.
+type Newfollow struct {
+	TargetId string `json:"target_id"`
+}
+
+// Newlike defines model for newlike.
+type Newlike struct {
+	PostId string `json:"post_id"`
+	Type   string `json:"type"`
 }
 
 // Newpost defines model for newpost.
@@ -128,35 +158,51 @@ type NodeinfoUsageUsers struct {
 	Total int `json:"total"`
 }
 
-// Post defines model for post.
-type Post struct {
-	Content   string    `json:"content"`
+// NostrIdentifier defines model for nostr-identifier.
+type NostrIdentifier struct {
+	PublicKey string `json:"public_key"`
+}
+
+// NostrRelay defines model for nostr-relay.
+type NostrRelay struct {
 	CreatedAt time.Time `json:"created_at"`
 	Id        string    `json:"id"`
+	IsEnable  bool      `json:"is_enable"`
 	UpdatedAt time.Time `json:"updated_at"`
-	User      User      `json:"user"`
+	Url       string    `json:"url"`
+}
+
+// Post defines model for post.
+type Post struct {
+	Content   string     `json:"content"`
+	CreatedAt time.Time  `json:"created_at"`
+	Id        string     `json:"id"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	User      SimpleUser `json:"user"`
+}
+
+// SimpleUser defines model for simple-user.
+type SimpleUser struct {
+	DisplayName string `json:"display_name"`
+	Icon        string `json:"icon"`
+	Protocol    string `json:"protocol"`
+	Username    string `json:"username"`
 }
 
 // User defines model for user.
 type User struct {
-	CreatedAt   time.Time `json:"created_at"`
-	DisplayName string    `json:"display_name"`
-	Icon        string    `json:"icon"`
-	Id          string    `json:"id"`
-	Identifiers struct {
-		Activitypub *struct {
-			Host          *string `json:"host,omitempty"`
-			LocalUsername *string `json:"local_username,omitempty"`
-			PublicKey     *string `json:"public_key,omitempty"`
-		} `json:"activitypub,omitempty"`
-		Nostr *struct {
-			PublicKey *string `json:"public_key,omitempty"`
-		} `json:"nostr,omitempty"`
-	} `json:"identifiers"`
-	Profile   string    `json:"profile"`
-	Protocol  string    `json:"protocol"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Username  string    `json:"username"`
+	CreatedAt     time.Time   `json:"created_at"`
+	DisplayName   string      `json:"display_name"`
+	FollowCount   int         `json:"follow_count"`
+	FollowerCount int         `json:"follower_count"`
+	Icon          string      `json:"icon"`
+	Id            string      `json:"id"`
+	Identifiers   Identifiers `json:"identifiers"`
+	PostCount     int         `json:"post_count"`
+	Profile       string      `json:"profile"`
+	Protocol      string      `json:"protocol"`
+	UpdatedAt     time.Time   `json:"updated_at"`
+	Username      string      `json:"username"`
 }
 
 // WellknownNodeinfo defines model for wellknown-nodeinfo.
@@ -186,6 +232,9 @@ type WellknownWebfingerLink struct {
 // Id defines model for id.
 type Id = string
 
+// Offset defines model for offset.
+type Offset = int
+
 // Username defines model for username.
 type Username = string
 
@@ -197,11 +246,33 @@ type GetWellKnownWebfingerParams struct {
 	Resource Webfinger `form:"resource" json:"resource"`
 }
 
+// GetApiV1TimelineParams defines parameters for GetApiV1Timeline.
+type GetApiV1TimelineParams struct {
+	Offset *Offset `form:"offset,omitempty" json:"offset,omitempty"`
+}
+
+// GetApiV1UsersIdPostsParams defines parameters for GetApiV1UsersIdPosts.
+type GetApiV1UsersIdPostsParams struct {
+	Offset *Offset `form:"offset,omitempty" json:"offset,omitempty"`
+}
+
 // PostApiV1AuthLoginJSONRequestBody defines body for PostApiV1AuthLogin for application/json ContentType.
 type PostApiV1AuthLoginJSONRequestBody = Auth
 
+// PostApiV1AuthRegisterJSONRequestBody defines body for PostApiV1AuthRegister for application/json ContentType.
+type PostApiV1AuthRegisterJSONRequestBody = Auth
+
+// PostApiV1ConfigsNostrRelayJSONRequestBody defines body for PostApiV1ConfigsNostrRelay for application/json ContentType.
+type PostApiV1ConfigsNostrRelayJSONRequestBody = NostrRelay
+
+// PostApiV1FollowsFollowJSONRequestBody defines body for PostApiV1FollowsFollow for application/json ContentType.
+type PostApiV1FollowsFollowJSONRequestBody = Newfollow
+
 // PostApiV1PostsJSONRequestBody defines body for PostApiV1Posts for application/json ContentType.
 type PostApiV1PostsJSONRequestBody = Newpost
+
+// PostApiV1ReactionsLikeJSONRequestBody defines body for PostApiV1ReactionsLike for application/json ContentType.
+type PostApiV1ReactionsLikeJSONRequestBody = Newlike
 
 // AsActorContext0 returns the union data inside the Actor_Context as a ActorContext0
 func (t Actor_Context) AsActorContext0() (ActorContext0, error) {
@@ -268,37 +339,50 @@ func (t *Actor_Context) UnmarshalJSON(b []byte) error {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"OscShLm+rqXRYvFPAAAA//8KY83aljUAAA==",
+	"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",
+	"AP//0Bxu2xZZAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

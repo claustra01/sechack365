@@ -4,4 +4,4 @@ webfinger:
   required: true
   schema:
     type: string
-    example: 'acct:mock@localhost'
+    example: 'acct:user@example.com'

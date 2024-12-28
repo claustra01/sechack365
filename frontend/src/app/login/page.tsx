@@ -30,7 +30,7 @@ export default function LoginPage() {
 		};
 		postApiV1AuthLogin(reqBody)
 			.then((response) => {
-				if (response.status === 200) {
+				if (response.status === 204) {
 					// FIXME: routerを使うようにする
 					window.location.href = "/";
 				}

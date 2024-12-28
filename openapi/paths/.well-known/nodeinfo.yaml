@@ -1,9 +1,10 @@
 get:
   tags:
     - .well-known
-  summary: NodeInfo
+  description: NodeInfo
   responses:
     '200':
+      description: NodeInfo URL
       content:
         application/json:
           schema:

@@ -4,14 +4,17 @@
  * SecHack365
  * OpenAPI spec version: 0.1.0
  */
-import type { UserIdentifiers } from "./userIdentifiers";
+import type { Identifiers } from "./identifiers";
 
 export interface User {
 	created_at: string;
 	display_name: string;
+	follow_count: number;
+	follower_count: number;
 	icon: string;
 	id: string;
-	identifiers: UserIdentifiers;
+	identifiers: Identifiers;
+	post_count: number;
 	profile: string;
 	protocol: string;
 	updated_at: string;

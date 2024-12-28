@@ -24,7 +24,7 @@ func (c *NostrRelayController) FindAll() ([]*model.NostrRelay, error) {
 	return c.NostrRelayUsecase.FindAll()
 }
 
-func (c *NostrRelayController) Create(url string) (*model.NostrRelay, error) {
+func (c *NostrRelayController) Create(url string) error {
 	return c.NostrRelayUsecase.Create(url)
 }
 

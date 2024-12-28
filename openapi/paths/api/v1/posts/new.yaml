@@ -1,7 +1,7 @@
 post:
   tags:
     - posts
-  summary: Create Post
+  description: Create Post
   requestBody:
     required: true
     content:
@@ -10,26 +10,25 @@ post:
           $ref: '../../../../components/schemas/post.yaml#/newpost'
   responses:
     '201':
+      description: Post Created
       content:
         application/json:
           schema:
-            $ref: '../../../../components/schemas/post.yaml#/post'
+            type: object
     '400':
+      description: Invalid Request Body
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-400'
     '401':
+      description: No User Logged In
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-401'
-    '404':
-      content:
-        application/json:
-          schema:
-            $ref: '../../../../components/schemas/errors.yaml#/error-404'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

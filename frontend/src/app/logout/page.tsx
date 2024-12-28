@@ -5,7 +5,7 @@ import { postApiV1AuthLogout } from "@/openapi/api";
 export default function LogoutPage() {
 	postApiV1AuthLogout()
 		.then((response) => {
-			if (response.status === 200) {
+			if (response.status === 204) {
 				// FIXME: routerを使うようにする
 				window.location.href = "/";
 			}

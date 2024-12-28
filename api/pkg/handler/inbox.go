@@ -16,7 +16,7 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 		signature := headers.Get("Signature")
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
+			returnError(w, http.StatusInternalServerError)
 			return
 		}
 		// FIXME: remove debug log
@@ -24,6 +24,6 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 		log.Println(digest)
 		log.Println(signature)
 		log.Println(string(body))
-		returnInternalServerError(w, c.Logger, nil)
+		returnError(w, http.StatusInternalServerError)
 	}
 }

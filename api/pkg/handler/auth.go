@@ -3,12 +3,59 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"regexp"
 	"time"
 
+	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/openapi"
 	"github.com/claustra01/sechack365/pkg/util"
 )
+
+func Register(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var authRequestBody openapi.Auth
+		body := make([]byte, r.ContentLength)
+		if _, err := r.Body.Read(body); err != nil && err.Error() != "EOF" {
+			// NOTE: err should be nil
+			panic(err)
+		}
+		err := json.Unmarshal(body, &authRequestBody)
+		if err != nil {
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(err, "failed to register user"))
+			returnError(w, http.StatusBadRequest)
+			return
+		}
+
+		pattern := regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
+		if !pattern.MatchString(authRequestBody.Username) {
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidUsername, "failed to register user"))
+			returnError(w, http.StatusBadRequest)
+			return
+		}
+
+		user, err := c.Controllers.User.FindByLocalUsername(authRequestBody.Username)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		if user != nil {
+			c.Logger.Warn("Conflict", "Error", cerror.Wrap(cerror.ErrUserAlreadyExists, "failed to register user"))
+			returnError(w, http.StatusConflict)
+			return
+		}
+
+		// TODO: set default icon url
+		if err := c.Controllers.User.CreateLocalUser(authRequestBody.Username, authRequestBody.Password, authRequestBody.Username, "", "", c.Config.Host); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+
+		returnResponse(w, http.StatusCreated, ContentTypeJson, nil)
+	}
+}
 
 func Login(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -20,21 +67,25 @@ func Login(c *framework.Context) http.HandlerFunc {
 		}
 		err := json.Unmarshal(body, &authRequestBody)
 		if err != nil {
-			returnBadRequest(w, c.Logger, err)
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(err, "failed to login"))
+			returnError(w, http.StatusBadRequest)
 			return
 		}
 
 		user, err := c.Controllers.User.FindWithHashedPassword(authRequestBody.Username)
 		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to login"))
+			returnError(w, http.StatusInternalServerError)
 			return
 		}
 		if user == nil {
-			returnUnauthorized(w, c.Logger, nil)
+			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(cerror.ErrInvalidPassword, "failed to login"))
+			returnError(w, http.StatusUnauthorized)
 			return
 		}
 		if err := util.CompareHashAndPassword(user.HashedPassword, authRequestBody.Password); err != nil {
-			returnUnauthorized(w, c.Logger, err)
+			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(cerror.ErrInvalidPassword, "failed to login"))
+			returnError(w, http.StatusUnauthorized)
 			return
 		}
 
@@ -61,7 +112,7 @@ func Login(c *framework.Context) http.HandlerFunc {
 			Expires:  framework.Sessions[sessionId].ExpiredAt,
 		})
 
-		jsonResponse(w, user)
+		returnResponse(w, http.StatusNoContent, ContentTypeJson, nil)
 	}
 }
 
@@ -82,6 +133,6 @@ func Logout(c *framework.Context) http.HandlerFunc {
 			MaxAge:   -1,
 		})
 
-		jsonResponse(w, nil)
+		returnResponse(w, http.StatusNoContent, ContentTypeJson, nil)
 	}
 }

@@ -1,26 +1,30 @@
 get:
   tags:
     - .well-known
-  summary: WebFinger
+  description: WebFinger
   parameters:
     - $ref: '../../components/params/.well-known.yaml#/webfinger'
   responses:
     '200':
+      description: Resource URL
       content:
         application/json:
           schema:
             $ref: '../../components/schemas/.well-known.yaml#/wellknown-webfinger'
     '400':
+      description: Invalid Query Parameters
       content:
         application/json:
           schema:
             $ref: '../../components/schemas/errors.yaml#/error-400'
     '404':
+      description: Resource Not Found
       content:
         application/json:
           schema:
             $ref: '../../components/schemas/errors.yaml#/error-404'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

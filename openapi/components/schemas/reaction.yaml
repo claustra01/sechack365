@@ -1,0 +1,36 @@
+reaction:
+  type: object
+  properties:
+    id:
+      type: string
+    type:
+      type: string
+    user_id:
+      type: string
+    post_id:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+  required:
+    - id
+    - type
+    - user_id
+    - post_id
+    - created_at
+    - updated_at
+
+newlike:
+  type: object
+  properties:
+    type:
+      type: string
+      example: "Like"
+    post_id:
+      type: string
+  required:
+    - type
+    - post_id

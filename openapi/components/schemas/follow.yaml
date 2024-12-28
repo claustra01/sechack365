@@ -1,0 +1,29 @@
+follow:
+  type: object
+  properties:
+    id:
+      type: string
+    follower_id:
+      type: string
+    target_id:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+  required:
+    - id
+    - follower_id
+    - target_id
+    - created_at
+    - updated_at
+
+newfollow:
+  type: object
+  properties:
+    target_id:
+      type: string
+  required:
+    - target_id

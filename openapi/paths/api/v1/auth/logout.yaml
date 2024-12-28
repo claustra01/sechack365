@@ -1,25 +1,11 @@
 post:
   tags:
     - auth
-  summary: Logout
+  description: Logout
   responses:
-    '200':
+    '204':
+      description: Logout Successful
       content:
         application/json:
           schema:
             type: object
-    '400':
-      content:
-        application/json:
-          schema:
-            $ref: '../../../../components/schemas/errors.yaml#/error-400'
-    '404':
-      content:
-        application/json:
-          schema:
-            $ref: '../../../../components/schemas/errors.yaml#/error-404'
-    '500':
-      content:
-        application/json:
-          schema:
-            $ref: '../../../../components/schemas/errors.yaml#/error-500'

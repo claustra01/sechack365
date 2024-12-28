@@ -1,9 +1,10 @@
 get:
   tags:
     - users
-  summary: Get All Users (for debug)
+  description: Get All Users (for debug)
   responses:
     '200':
+      description: All Users
       content:
         application/json:
           schema:
@@ -11,6 +12,7 @@ get:
             items:
               $ref: '../../../../components/schemas/user.yaml#/user'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

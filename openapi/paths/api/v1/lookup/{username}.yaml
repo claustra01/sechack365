@@ -1,26 +1,30 @@
 get:
   tags:
     - users
-  summary: Lookup (Remote/Local) User
+  description: Lookup (Remote/Local) User
   parameters:
     - $ref: '../../../../components/params/lookup.yaml#/username'
   responses:
     '200':
+      description: User Found
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/user.yaml#/user'
     '400':
+      description: Invalid Query Parameters
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-400'
     '404':
+      description: User Not Found
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-404'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

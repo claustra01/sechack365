@@ -20,22 +20,13 @@ user:
       type: string
       format: date-time
     identifiers:
-      type: object
-      properties:
-        activitypub:
-          type: object
-          properties:
-            local_username:
-              type: string
-            host:
-              type: string
-            public_key:
-              type: string
-        nostr:
-          type: object
-          properties:
-            public_key:
-              type: string
+      $ref: '#/identifiers'
+    post_count:
+      type: integer
+    follow_count:
+      type: integer
+    follower_count:
+      type: integer
   required:
     - id
     - username
@@ -46,6 +37,58 @@ user:
     - created_at
     - updated_at
     - identifiers
+    - post_count
+    - follow_count
+    - follower_count
+
+identifiers:
+  type: object
+  properties:
+    activitypub:
+      $ref: '#/ap-identifier'
+    nostr:
+      $ref: '#/nostr-identifier'
+  # no required
+
+ap-identifier:
+  type: object
+  properties:
+    local_username:
+      type: string
+    host:
+      type: string
+    public_key:
+      type: string
+  required:
+    - local_username
+    - host
+    - public_key
+
+nostr-identifier:
+  type: object
+  properties:
+    public_key:
+      type: string
+  required:
+    - public_key
+
+
+simple-user:
+  type: object
+  properties:
+    username:
+      type: string
+    protocol:
+      type: string
+    display_name:
+      type: string
+    icon:
+      type: string
+  required:
+    - username
+    - protocol
+    - display_name
+    - icon
 
 auth:
   type: object

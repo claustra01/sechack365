@@ -1,29 +1,22 @@
 get:
   tags:
     - users
-  summary: Get Current User
+  description: Get Current User
   responses:
     '200':
+      description: Current User Found
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/user.yaml#/user'
-    '400':
-      content:
-        application/json:
-          schema:
-            $ref: '../../../../components/schemas/errors.yaml#/error-400'
-    '401':
-      content:
-        application/json:
-          schema:
-            $ref: '../../../../components/schemas/errors.yaml#/error-401'
     '404':
+      description: No User Logged In
       content:
         application/json:
           schema:
             $ref: '../../../../components/schemas/errors.yaml#/error-404'
     '500':
+      description: Internal Server Error
       content:
         application/json:
           schema:

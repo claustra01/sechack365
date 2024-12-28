@@ -13,40 +13,115 @@ import type { SWRMutationConfiguration } from "swr/mutation";
 import type {
 	Actor,
 	Auth,
+	DeleteApiV1ConfigsNostrRelay204,
+	DeleteApiV1FollowsFollow204,
+	DeleteApiV1PostsId204,
+	DeleteApiV1ReactionsLike204,
 	Error400,
 	Error401,
 	Error404,
+	Error409,
 	Error500,
-	GetApiV1DevMock200,
+	GetApiV1DevMock201,
 	GetApiV1DevMock404,
 	GetApiV1DevMock500,
-	GetApiV1DevReset200,
+	GetApiV1DevReset204,
 	GetApiV1DevReset404,
 	GetApiV1DevReset500,
+	GetApiV1TimelineParams,
+	GetApiV1UsersIdPostsParams,
 	GetWellKnownWebfingerParams,
+	Newfollow,
+	Newlike,
 	Newpost,
 	Nodeinfo,
+	NostrRelay,
 	Post,
-	PostApiV1AuthLogout200,
+	PostApiV1AuthLogin204,
+	PostApiV1AuthLogout204,
+	PostApiV1AuthRegister201,
+	PostApiV1ConfigsNostrRelay201,
+	PostApiV1FollowsFollow201,
+	PostApiV1Posts201,
+	PostApiV1ReactionsLike201,
+	SimpleUser,
 	User,
 	WellknownNodeinfo,
 	WellknownWebfinger,
 } from "./schemas";
 
 /**
- * @summary Login
+ * Create User
+ */
+export const postApiV1AuthRegister = (
+	auth: Auth,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PostApiV1AuthRegister201>> => {
+	return axios.post("/api/v1/auth/register", auth, options);
+};
+
+export const getPostApiV1AuthRegisterMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		{ arg }: { arg: Auth },
+	): Promise<AxiosResponse<PostApiV1AuthRegister201>> => {
+		return postApiV1AuthRegister(arg, options);
+	};
+};
+export const getPostApiV1AuthRegisterMutationKey = () =>
+	["/api/v1/auth/register"] as const;
+
+export type PostApiV1AuthRegisterMutationResult = NonNullable<
+	Awaited<ReturnType<typeof postApiV1AuthRegister>>
+>;
+export type PostApiV1AuthRegisterMutationError = AxiosError<
+	Error400 | Error409 | Error500
+>;
+
+export const usePostApiV1AuthRegister = <
+	TError = AxiosError<Error400 | Error409 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof postApiV1AuthRegister>>,
+		TError,
+		Key,
+		Auth,
+		Awaited<ReturnType<typeof postApiV1AuthRegister>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1AuthRegisterMutationKey();
+	const swrFn = getPostApiV1AuthRegisterMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Login
  */
 export const postApiV1AuthLogin = (
 	auth: Auth,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<User>> => {
+): Promise<AxiosResponse<PostApiV1AuthLogin204>> => {
 	return axios.post("/api/v1/auth/login", auth, options);
 };
 
 export const getPostApiV1AuthLoginMutationFetcher = (
 	options?: AxiosRequestConfig,
 ) => {
-	return (_: Key, { arg }: { arg: Auth }): Promise<AxiosResponse<User>> => {
+	return (
+		_: Key,
+		{ arg }: { arg: Auth },
+	): Promise<AxiosResponse<PostApiV1AuthLogin204>> => {
 		return postApiV1AuthLogin(arg, options);
 	};
 };
@@ -57,14 +132,11 @@ export type PostApiV1AuthLoginMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1AuthLogin>>
 >;
 export type PostApiV1AuthLoginMutationError = AxiosError<
-	Error400 | Error401 | Error404 | Error500
+	Error400 | Error401 | Error500
 >;
 
-/**
- * @summary Login
- */
 export const usePostApiV1AuthLogin = <
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+	TError = AxiosError<Error400 | Error401 | Error500>,
 >(options?: {
 	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1AuthLogin>>,
@@ -89,11 +161,11 @@ export const usePostApiV1AuthLogin = <
 };
 
 /**
- * @summary Logout
+ * Logout
  */
 export const postApiV1AuthLogout = (
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PostApiV1AuthLogout200>> => {
+): Promise<AxiosResponse<PostApiV1AuthLogout204>> => {
 	return axios.post("/api/v1/auth/logout", undefined, options);
 };
 
@@ -103,7 +175,7 @@ export const getPostApiV1AuthLogoutMutationFetcher = (
 	return (
 		_: Key,
 		__: { arg: Arguments },
-	): Promise<AxiosResponse<PostApiV1AuthLogout200>> => {
+	): Promise<AxiosResponse<PostApiV1AuthLogout204>> => {
 		return postApiV1AuthLogout(options);
 	};
 };
@@ -113,16 +185,9 @@ export const getPostApiV1AuthLogoutMutationKey = () =>
 export type PostApiV1AuthLogoutMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1AuthLogout>>
 >;
-export type PostApiV1AuthLogoutMutationError = AxiosError<
-	Error400 | Error404 | Error500
->;
+export type PostApiV1AuthLogoutMutationError = AxiosError<unknown>;
 
-/**
- * @summary Logout
- */
-export const usePostApiV1AuthLogout = <
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(options?: {
+export const usePostApiV1AuthLogout = <TError = AxiosError<unknown>>(options?: {
 	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1AuthLogout>>,
 		TError,
@@ -146,7 +211,7 @@ export const usePostApiV1AuthLogout = <
 };
 
 /**
- * @summary Get All Users (for debug)
+ * Get All Users (for debug)
  */
 export const getApiV1Users = (
 	options?: AxiosRequestConfig,
@@ -161,9 +226,6 @@ export type GetApiV1UsersQueryResult = NonNullable<
 >;
 export type GetApiV1UsersQueryError = AxiosError<Error500>;
 
-/**
- * @summary Get All Users (for debug)
- */
 export const useGetApiV1Users = <TError = AxiosError<Error500>>(options?: {
 	swr?: SWRConfiguration<Awaited<ReturnType<typeof getApiV1Users>>, TError> & {
 		swrKey?: Key;
@@ -191,7 +253,7 @@ export const useGetApiV1Users = <TError = AxiosError<Error500>>(options?: {
 };
 
 /**
- * @summary Get User by ID
+ * Get User by ID
  */
 export const getApiV1UsersId = (
 	id: string,
@@ -210,9 +272,6 @@ export type GetApiV1UsersIdQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary Get User by ID
- */
 export const useGetApiV1UsersId = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -246,7 +305,7 @@ export const useGetApiV1UsersId = <
 };
 
 /**
- * @summary Get Current User
+ * Get Current User
  */
 export const getApiV1UsersMe = (
 	options?: AxiosRequestConfig,
@@ -259,15 +318,10 @@ export const getGetApiV1UsersMeKey = () => ["/api/v1/users/me"] as const;
 export type GetApiV1UsersMeQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersMe>>
 >;
-export type GetApiV1UsersMeQueryError = AxiosError<
-	Error400 | Error401 | Error404 | Error500
->;
+export type GetApiV1UsersMeQueryError = AxiosError<Error404 | Error500>;
 
-/**
- * @summary Get Current User
- */
 export const useGetApiV1UsersMe = <
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+	TError = AxiosError<Error404 | Error500>,
 >(options?: {
 	swr?: SWRConfiguration<
 		Awaited<ReturnType<typeof getApiV1UsersMe>>,
@@ -295,12 +349,71 @@ export const useGetApiV1UsersMe = <
 };
 
 /**
- * @summary Get Follows of User
+ * Get Latest Posts of User
+ */
+export const getApiV1UsersIdPosts = (
+	id: string,
+	params?: GetApiV1UsersIdPostsParams,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<Post[]>> => {
+	return axios.get(`/api/v1/users/${id}/posts`, {
+		...options,
+		params: { ...params, ...options?.params },
+	});
+};
+
+export const getGetApiV1UsersIdPostsKey = (
+	id: string,
+	params?: GetApiV1UsersIdPostsParams,
+) => [`/api/v1/users/${id}/posts`, ...(params ? [params] : [])] as const;
+
+export type GetApiV1UsersIdPostsQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getApiV1UsersIdPosts>>
+>;
+export type GetApiV1UsersIdPostsQueryError = AxiosError<
+	Error400 | Error404 | Error500
+>;
+
+export const useGetApiV1UsersIdPosts = <
+	TError = AxiosError<Error400 | Error404 | Error500>,
+>(
+	id: string,
+	params?: GetApiV1UsersIdPostsParams,
+	options?: {
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
+		axios?: AxiosRequestConfig;
+	},
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1UsersIdPostsKey(id, params) : null));
+	const swrFn = () => getApiV1UsersIdPosts(id, params, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Get Follows of User
  */
 export const getApiV1UsersIdFollows = (
 	id: string,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<User[]>> => {
+): Promise<AxiosResponse<SimpleUser[]>> => {
 	return axios.get(`/api/v1/users/${id}/follows`, options);
 };
 
@@ -310,15 +423,10 @@ export const getGetApiV1UsersIdFollowsKey = (id: string) =>
 export type GetApiV1UsersIdFollowsQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersIdFollows>>
 >;
-export type GetApiV1UsersIdFollowsQueryError = AxiosError<
-	Error400 | Error404 | Error500
->;
+export type GetApiV1UsersIdFollowsQueryError = AxiosError<Error400 | Error500>;
 
-/**
- * @summary Get Follows of User
- */
 export const useGetApiV1UsersIdFollows = <
-	TError = AxiosError<Error400 | Error404 | Error500>,
+	TError = AxiosError<Error400 | Error500>,
 >(
 	id: string,
 	options?: {
@@ -350,12 +458,12 @@ export const useGetApiV1UsersIdFollows = <
 };
 
 /**
- * @summary Get Followers of User
+ * Get Followers of User
  */
 export const getApiV1UsersIdFollowers = (
 	id: string,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<User[]>> => {
+): Promise<AxiosResponse<SimpleUser[]>> => {
 	return axios.get(`/api/v1/users/${id}/followers`, options);
 };
 
@@ -366,14 +474,11 @@ export type GetApiV1UsersIdFollowersQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1UsersIdFollowers>>
 >;
 export type GetApiV1UsersIdFollowersQueryError = AxiosError<
-	Error400 | Error404 | Error500
+	Error400 | Error500
 >;
 
-/**
- * @summary Get Followers of User
- */
 export const useGetApiV1UsersIdFollowers = <
-	TError = AxiosError<Error400 | Error404 | Error500>,
+	TError = AxiosError<Error400 | Error500>,
 >(
 	id: string,
 	options?: {
@@ -405,62 +510,7 @@ export const useGetApiV1UsersIdFollowers = <
 };
 
 /**
- * @summary Get Latest Posts of User
- */
-export const getApiV1UsersIdPosts = (
-	id: string,
-	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Post[]>> => {
-	return axios.get(`/api/v1/users/${id}/posts`, options);
-};
-
-export const getGetApiV1UsersIdPostsKey = (id: string) =>
-	[`/api/v1/users/${id}/posts`] as const;
-
-export type GetApiV1UsersIdPostsQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getApiV1UsersIdPosts>>
->;
-export type GetApiV1UsersIdPostsQueryError = AxiosError<
-	Error400 | Error404 | Error500
->;
-
-/**
- * @summary Get Latest Posts of User
- */
-export const useGetApiV1UsersIdPosts = <
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(
-	id: string,
-	options?: {
-		swr?: SWRConfiguration<
-			Awaited<ReturnType<typeof getApiV1UsersIdPosts>>,
-			TError
-		> & { swrKey?: Key; enabled?: boolean };
-		axios?: AxiosRequestConfig;
-	},
-) => {
-	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
-
-	const isEnabled = swrOptions?.enabled !== false && !!id;
-	const swrKey =
-		swrOptions?.swrKey ??
-		(() => (isEnabled ? getGetApiV1UsersIdPostsKey(id) : null));
-	const swrFn = () => getApiV1UsersIdPosts(id, axiosOptions);
-
-	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
-		swrKey,
-		swrFn,
-		swrOptions,
-	);
-
-	return {
-		swrKey,
-		...query,
-	};
-};
-
-/**
- * @summary Lookup (Remote/Local) User
+ * Lookup (Remote/Local) User
  */
 export const getApiV1LookupUsername = (
 	username: string,
@@ -479,9 +529,6 @@ export type GetApiV1LookupUsernameQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary Lookup (Remote/Local) User
- */
 export const useGetApiV1LookupUsername = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -515,19 +562,131 @@ export const useGetApiV1LookupUsername = <
 };
 
 /**
- * @summary Create Post
+ * Follow
+ */
+export const postApiV1FollowsFollow = (
+	newfollow: Newfollow,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PostApiV1FollowsFollow201>> => {
+	return axios.post("/api/v1/follows/follow", newfollow, options);
+};
+
+export const getPostApiV1FollowsFollowMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		{ arg }: { arg: Newfollow },
+	): Promise<AxiosResponse<PostApiV1FollowsFollow201>> => {
+		return postApiV1FollowsFollow(arg, options);
+	};
+};
+export const getPostApiV1FollowsFollowMutationKey = () =>
+	["/api/v1/follows/follow"] as const;
+
+export type PostApiV1FollowsFollowMutationResult = NonNullable<
+	Awaited<ReturnType<typeof postApiV1FollowsFollow>>
+>;
+export type PostApiV1FollowsFollowMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const usePostApiV1FollowsFollow = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof postApiV1FollowsFollow>>,
+		TError,
+		Key,
+		Newfollow,
+		Awaited<ReturnType<typeof postApiV1FollowsFollow>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1FollowsFollowMutationKey();
+	const swrFn = getPostApiV1FollowsFollowMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Unfollow
+ */
+export const deleteApiV1FollowsFollow = (
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<DeleteApiV1FollowsFollow204>> => {
+	return axios.delete("/api/v1/follows/follow", options);
+};
+
+export const getDeleteApiV1FollowsFollowMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		__: { arg: Arguments },
+	): Promise<AxiosResponse<DeleteApiV1FollowsFollow204>> => {
+		return deleteApiV1FollowsFollow(options);
+	};
+};
+export const getDeleteApiV1FollowsFollowMutationKey = () =>
+	["/api/v1/follows/follow"] as const;
+
+export type DeleteApiV1FollowsFollowMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteApiV1FollowsFollow>>
+>;
+export type DeleteApiV1FollowsFollowMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const useDeleteApiV1FollowsFollow = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof deleteApiV1FollowsFollow>>,
+		TError,
+		Key,
+		Arguments,
+		Awaited<ReturnType<typeof deleteApiV1FollowsFollow>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getDeleteApiV1FollowsFollowMutationKey();
+	const swrFn = getDeleteApiV1FollowsFollowMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Create Post
  */
 export const postApiV1Posts = (
 	newpost: Newpost,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Post>> => {
+): Promise<AxiosResponse<PostApiV1Posts201>> => {
 	return axios.post("/api/v1/posts", newpost, options);
 };
 
 export const getPostApiV1PostsMutationFetcher = (
 	options?: AxiosRequestConfig,
 ) => {
-	return (_: Key, { arg }: { arg: Newpost }): Promise<AxiosResponse<Post>> => {
+	return (
+		_: Key,
+		{ arg }: { arg: Newpost },
+	): Promise<AxiosResponse<PostApiV1Posts201>> => {
 		return postApiV1Posts(arg, options);
 	};
 };
@@ -537,14 +696,11 @@ export type PostApiV1PostsMutationResult = NonNullable<
 	Awaited<ReturnType<typeof postApiV1Posts>>
 >;
 export type PostApiV1PostsMutationError = AxiosError<
-	Error400 | Error401 | Error404 | Error500
+	Error400 | Error401 | Error500
 >;
 
-/**
- * @summary Create Post
- */
 export const usePostApiV1Posts = <
-	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+	TError = AxiosError<Error400 | Error401 | Error500>,
 >(options?: {
 	swr?: SWRMutationConfiguration<
 		Awaited<ReturnType<typeof postApiV1Posts>>,
@@ -569,7 +725,7 @@ export const usePostApiV1Posts = <
 };
 
 /**
- * @summary Get Post by ID
+ * Get Post by ID
  */
 export const getApiV1PostsId = (
 	id: string,
@@ -588,9 +744,6 @@ export type GetApiV1PostsIdQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary Get Post by ID
- */
 export const useGetApiV1PostsId = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -624,41 +777,102 @@ export const useGetApiV1PostsId = <
 };
 
 /**
- * @summary Get Timeline
+ * Delete Post by ID
  */
-export const getApiV1Timeline = (
+export const deleteApiV1PostsId = (
+	id: string,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<Post[]>> => {
-	return axios.get("/api/v1/timeline", options);
+): Promise<AxiosResponse<DeleteApiV1PostsId204>> => {
+	return axios.delete(`/api/v1/posts/${id}`, options);
 };
 
-export const getGetApiV1TimelineKey = () => ["/api/v1/timeline"] as const;
+export const getDeleteApiV1PostsIdMutationFetcher = (
+	id: string,
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		__: { arg: Arguments },
+	): Promise<AxiosResponse<DeleteApiV1PostsId204>> => {
+		return deleteApiV1PostsId(id, options);
+	};
+};
+export const getDeleteApiV1PostsIdMutationKey = (id: string) =>
+	[`/api/v1/posts/${id}`] as const;
+
+export type DeleteApiV1PostsIdMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteApiV1PostsId>>
+>;
+export type DeleteApiV1PostsIdMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const useDeleteApiV1PostsId = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(
+	id: string,
+	options?: {
+		swr?: SWRMutationConfiguration<
+			Awaited<ReturnType<typeof deleteApiV1PostsId>>,
+			TError,
+			Key,
+			Arguments,
+			Awaited<ReturnType<typeof deleteApiV1PostsId>>
+		> & { swrKey?: string };
+		axios?: AxiosRequestConfig;
+	},
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getDeleteApiV1PostsIdMutationKey(id);
+	const swrFn = getDeleteApiV1PostsIdMutationFetcher(id, axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Get Timeline
+ */
+export const getApiV1Timeline = (
+	params?: GetApiV1TimelineParams,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<Post[]>> => {
+	return axios.get("/api/v1/timeline", {
+		...options,
+		params: { ...params, ...options?.params },
+	});
+};
+
+export const getGetApiV1TimelineKey = (params?: GetApiV1TimelineParams) =>
+	["/api/v1/timeline", ...(params ? [params] : [])] as const;
 
 export type GetApiV1TimelineQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1Timeline>>
 >;
-export type GetApiV1TimelineQueryError = AxiosError<
-	Error400 | Error404 | Error500
->;
+export type GetApiV1TimelineQueryError = AxiosError<Error500>;
 
-/**
- * @summary Get Timeline
- */
-export const useGetApiV1Timeline = <
-	TError = AxiosError<Error400 | Error404 | Error500>,
->(options?: {
-	swr?: SWRConfiguration<
-		Awaited<ReturnType<typeof getApiV1Timeline>>,
-		TError
-	> & { swrKey?: Key; enabled?: boolean };
-	axios?: AxiosRequestConfig;
-}) => {
+export const useGetApiV1Timeline = <TError = AxiosError<Error500>>(
+	params?: GetApiV1TimelineParams,
+	options?: {
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1Timeline>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
+		axios?: AxiosRequestConfig;
+	},
+) => {
 	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
 
 	const isEnabled = swrOptions?.enabled !== false;
 	const swrKey =
-		swrOptions?.swrKey ?? (() => (isEnabled ? getGetApiV1TimelineKey() : null));
-	const swrFn = () => getApiV1Timeline(axiosOptions);
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1TimelineKey(params) : null));
+	const swrFn = () => getApiV1Timeline(params, axiosOptions);
 
 	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
 		swrKey,
@@ -673,7 +887,275 @@ export const useGetApiV1Timeline = <
 };
 
 /**
- * @summary NodeInfo 2.0
+ * Like a Post
+ */
+export const postApiV1ReactionsLike = (
+	newlike: Newlike,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PostApiV1ReactionsLike201>> => {
+	return axios.post("/api/v1/reactions/like", newlike, options);
+};
+
+export const getPostApiV1ReactionsLikeMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		{ arg }: { arg: Newlike },
+	): Promise<AxiosResponse<PostApiV1ReactionsLike201>> => {
+		return postApiV1ReactionsLike(arg, options);
+	};
+};
+export const getPostApiV1ReactionsLikeMutationKey = () =>
+	["/api/v1/reactions/like"] as const;
+
+export type PostApiV1ReactionsLikeMutationResult = NonNullable<
+	Awaited<ReturnType<typeof postApiV1ReactionsLike>>
+>;
+export type PostApiV1ReactionsLikeMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const usePostApiV1ReactionsLike = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof postApiV1ReactionsLike>>,
+		TError,
+		Key,
+		Newlike,
+		Awaited<ReturnType<typeof postApiV1ReactionsLike>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1ReactionsLikeMutationKey();
+	const swrFn = getPostApiV1ReactionsLikeMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Unlike a Post
+ */
+export const deleteApiV1ReactionsLike = (
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<DeleteApiV1ReactionsLike204>> => {
+	return axios.delete("/api/v1/reactions/like", options);
+};
+
+export const getDeleteApiV1ReactionsLikeMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		__: { arg: Arguments },
+	): Promise<AxiosResponse<DeleteApiV1ReactionsLike204>> => {
+		return deleteApiV1ReactionsLike(options);
+	};
+};
+export const getDeleteApiV1ReactionsLikeMutationKey = () =>
+	["/api/v1/reactions/like"] as const;
+
+export type DeleteApiV1ReactionsLikeMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteApiV1ReactionsLike>>
+>;
+export type DeleteApiV1ReactionsLikeMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const useDeleteApiV1ReactionsLike = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof deleteApiV1ReactionsLike>>,
+		TError,
+		Key,
+		Arguments,
+		Awaited<ReturnType<typeof deleteApiV1ReactionsLike>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getDeleteApiV1ReactionsLikeMutationKey();
+	const swrFn = getDeleteApiV1ReactionsLikeMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Register a New Nostr Relay
+ */
+export const postApiV1ConfigsNostrRelay = (
+	nostrRelay: NostrRelay,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PostApiV1ConfigsNostrRelay201>> => {
+	return axios.post("/api/v1/configs/nostr-relay", nostrRelay, options);
+};
+
+export const getPostApiV1ConfigsNostrRelayMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		{ arg }: { arg: NostrRelay },
+	): Promise<AxiosResponse<PostApiV1ConfigsNostrRelay201>> => {
+		return postApiV1ConfigsNostrRelay(arg, options);
+	};
+};
+export const getPostApiV1ConfigsNostrRelayMutationKey = () =>
+	["/api/v1/configs/nostr-relay"] as const;
+
+export type PostApiV1ConfigsNostrRelayMutationResult = NonNullable<
+	Awaited<ReturnType<typeof postApiV1ConfigsNostrRelay>>
+>;
+export type PostApiV1ConfigsNostrRelayMutationError = AxiosError<
+	Error400 | Error401 | Error500
+>;
+
+export const usePostApiV1ConfigsNostrRelay = <
+	TError = AxiosError<Error400 | Error401 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof postApiV1ConfigsNostrRelay>>,
+		TError,
+		Key,
+		NostrRelay,
+		Awaited<ReturnType<typeof postApiV1ConfigsNostrRelay>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey =
+		swrOptions?.swrKey ?? getPostApiV1ConfigsNostrRelayMutationKey();
+	const swrFn = getPostApiV1ConfigsNostrRelayMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Get Nostr Relays List
+ */
+export const getApiV1ConfigsNostrRelay = (
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<NostrRelay[]>> => {
+	return axios.get("/api/v1/configs/nostr-relay", options);
+};
+
+export const getGetApiV1ConfigsNostrRelayKey = () =>
+	["/api/v1/configs/nostr-relay"] as const;
+
+export type GetApiV1ConfigsNostrRelayQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getApiV1ConfigsNostrRelay>>
+>;
+export type GetApiV1ConfigsNostrRelayQueryError = AxiosError<
+	Error401 | Error500
+>;
+
+export const useGetApiV1ConfigsNostrRelay = <
+	TError = AxiosError<Error401 | Error500>,
+>(options?: {
+	swr?: SWRConfiguration<
+		Awaited<ReturnType<typeof getApiV1ConfigsNostrRelay>>,
+		TError
+	> & { swrKey?: Key; enabled?: boolean };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1ConfigsNostrRelayKey() : null));
+	const swrFn = () => getApiV1ConfigsNostrRelay(axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Delete a Nostr Relay
+ */
+export const deleteApiV1ConfigsNostrRelay = (
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<DeleteApiV1ConfigsNostrRelay204>> => {
+	return axios.delete("/api/v1/configs/nostr-relay", options);
+};
+
+export const getDeleteApiV1ConfigsNostrRelayMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		__: { arg: Arguments },
+	): Promise<AxiosResponse<DeleteApiV1ConfigsNostrRelay204>> => {
+		return deleteApiV1ConfigsNostrRelay(options);
+	};
+};
+export const getDeleteApiV1ConfigsNostrRelayMutationKey = () =>
+	["/api/v1/configs/nostr-relay"] as const;
+
+export type DeleteApiV1ConfigsNostrRelayMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteApiV1ConfigsNostrRelay>>
+>;
+export type DeleteApiV1ConfigsNostrRelayMutationError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const useDeleteApiV1ConfigsNostrRelay = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof deleteApiV1ConfigsNostrRelay>>,
+		TError,
+		Key,
+		Arguments,
+		Awaited<ReturnType<typeof deleteApiV1ConfigsNostrRelay>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey =
+		swrOptions?.swrKey ?? getDeleteApiV1ConfigsNostrRelayMutationKey();
+	const swrFn = getDeleteApiV1ConfigsNostrRelayMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * NodeInfo 2.0
  */
 export const getApiV1Nodeinfo20 = (
 	options?: AxiosRequestConfig,
@@ -686,12 +1168,9 @@ export const getGetApiV1Nodeinfo20Key = () => ["/api/v1/nodeinfo/2.0"] as const;
 export type GetApiV1Nodeinfo20QueryResult = NonNullable<
 	Awaited<ReturnType<typeof getApiV1Nodeinfo20>>
 >;
-export type GetApiV1Nodeinfo20QueryError = AxiosError<unknown>;
+export type GetApiV1Nodeinfo20QueryError = AxiosError<Error500>;
 
-/**
- * @summary NodeInfo 2.0
- */
-export const useGetApiV1Nodeinfo20 = <TError = AxiosError<unknown>>(options?: {
+export const useGetApiV1Nodeinfo20 = <TError = AxiosError<Error500>>(options?: {
 	swr?: SWRConfiguration<
 		Awaited<ReturnType<typeof getApiV1Nodeinfo20>>,
 		TError
@@ -719,7 +1198,7 @@ export const useGetApiV1Nodeinfo20 = <TError = AxiosError<unknown>>(options?: {
 };
 
 /**
- * @summary NodeInfo
+ * NodeInfo
  */
 export const getWellKnownNodeinfo = (
 	options?: AxiosRequestConfig,
@@ -735,9 +1214,6 @@ export type GetWellKnownNodeinfoQueryResult = NonNullable<
 >;
 export type GetWellKnownNodeinfoQueryError = AxiosError<unknown>;
 
-/**
- * @summary NodeInfo
- */
 export const useGetWellKnownNodeinfo = <
 	TError = AxiosError<unknown>,
 >(options?: {
@@ -768,7 +1244,7 @@ export const useGetWellKnownNodeinfo = <
 };
 
 /**
- * @summary WebFinger
+ * WebFinger
  */
 export const getWellKnownWebfinger = (
 	params: GetWellKnownWebfingerParams,
@@ -791,9 +1267,6 @@ export type GetWellKnownWebfingerQueryError = AxiosError<
 	Error400 | Error404 | Error500
 >;
 
-/**
- * @summary WebFinger
- */
 export const useGetWellKnownWebfinger = <
 	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
@@ -827,11 +1300,11 @@ export const useGetWellKnownWebfinger = <
 };
 
 /**
- * @summary Generate Mock
+ * Generate Mock
  */
 export const getApiV1DevMock = (
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<GetApiV1DevMock200>> => {
+): Promise<AxiosResponse<GetApiV1DevMock201>> => {
 	return axios.get("/api/v1/dev/mock", options);
 };
 
@@ -844,9 +1317,6 @@ export type GetApiV1DevMockQueryError = AxiosError<
 	GetApiV1DevMock404 | GetApiV1DevMock500
 >;
 
-/**
- * @summary Generate Mock
- */
 export const useGetApiV1DevMock = <
 	TError = AxiosError<GetApiV1DevMock404 | GetApiV1DevMock500>,
 >(options?: {
@@ -876,11 +1346,11 @@ export const useGetApiV1DevMock = <
 };
 
 /**
- * @summary Reset Database
+ * Reset Database
  */
 export const getApiV1DevReset = (
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<GetApiV1DevReset200>> => {
+): Promise<AxiosResponse<GetApiV1DevReset204>> => {
 	return axios.get("/api/v1/dev/reset", options);
 };
 
@@ -893,9 +1363,6 @@ export type GetApiV1DevResetQueryError = AxiosError<
 	GetApiV1DevReset404 | GetApiV1DevReset500
 >;
 
-/**
- * @summary Reset Database
- */
 export const useGetApiV1DevReset = <
 	TError = AxiosError<GetApiV1DevReset404 | GetApiV1DevReset500>,
 >(options?: {

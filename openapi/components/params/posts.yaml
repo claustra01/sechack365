@@ -4,3 +4,9 @@ id:
   required: true
   schema:
     type: string
+
+offset:
+  name: offset
+  in: query
+  schema:
+    type: integer

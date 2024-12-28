@@ -13,10 +13,10 @@ func ActorOutbox(c *framework.Context) http.HandlerFunc {
 		username := r.PathValue("username")
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
+			returnError(w, http.StatusInternalServerError)
 			return
 		}
 		log.Println(username, string(body))
-		returnInternalServerError(w, c.Logger, nil)
+		returnError(w, http.StatusInternalServerError)
 	}
 }

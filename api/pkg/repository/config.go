@@ -17,18 +17,16 @@ func (r *NostrRelayRepository) FindAll() ([]*model.NostrRelay, error) {
 	return nostrRelays, nil
 }
 
-func (r *NostrRelayRepository) Create(url string) (*model.NostrRelay, error) {
-	nostrRelay := new(model.NostrRelay)
+func (r *NostrRelayRepository) Create(url string) error {
 	id := util.NewUuid()
 	query := `
 		INSERT INTO nostr_relays (id, url)
-		VALUES ($1, $2)
-		RETURNING *;
+		VALUES ($1, $2);
 	`
-	if err := r.SqlHandler.Get(nostrRelay, query, id, url); err != nil {
-		return nil, err
+	if _, err := r.SqlHandler.Exec(query, id, url); err != nil {
+		return err
 	}
-	return nostrRelay, nil
+	return nil
 }
 
 func (r *NostrRelayRepository) Delete(id string) error {

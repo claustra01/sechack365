@@ -4,7 +4,7 @@ post:
     id:
       type: string
     user:
-      $ref: './user.yaml#/user'
+      $ref: './user.yaml#/simple-user'
     content:
       type: string
     created_at:

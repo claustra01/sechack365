@@ -37,7 +37,7 @@ Table nostr_user_identifiers {
 Table follows {
   id varchar(255) [unique]
   follower_id varchar(255) [pk, ref: > users.id]
-  followee_id varchar(255) [pk, ref: > users.id]
+  target_id varchar(255) [pk, ref: > users.id]
   is_accepted boolean [not null, default: false]
   created_at timestamp [default: "CURRENT_TIMESTAMP"]
   updated_at timestamp [default: "CURRENT_TIMESTAMP"]
@@ -47,6 +47,15 @@ Table posts {
   id varchar(255) [pk]
   user_id varchar(255) [ref: > users.id]
   content text [not null]
+  created_at timestamp [default: "CURRENT_TIMESTAMP"]
+  updated_at timestamp [default: "CURRENT_TIMESTAMP"]
+}
+
+Table reactions {
+  id varchar(255) [pk]
+  type varchar(255) [not null]
+  user_id varchar(255) [not null, ref: > users.id]
+  post_id varchar(255) [not null, ref: > posts.id]
   created_at timestamp [default: "CURRENT_TIMESTAMP"]
   updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }

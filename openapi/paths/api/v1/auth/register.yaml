@@ -1,0 +1,35 @@
+post:
+  tags:
+    - auth
+  description: Create User
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../../components/schemas/user.yaml#/auth'
+  responses:
+    '201':
+      description: User Created
+      content:
+        application/json:
+          schema:
+            type: object
+    '400':
+      description: Invalid Request Body
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-400'
+    '409':
+      description: User Already Exists
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-409'
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-500'
