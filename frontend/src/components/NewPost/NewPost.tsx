@@ -44,6 +44,7 @@ export const NewPost = () => {
 				onChange={handleChange}
 			/>
 			<Button
+				disabled={text.length === 0}
 				color={colors.secondaryColor}
 				style={{ alignSelf: "flex-end" }}
 				onClick={handleSubmit}
