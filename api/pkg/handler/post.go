@@ -6,13 +6,35 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
+	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
 	"github.com/claustra01/sechack365/pkg/util"
 )
 
 // NOTE: timeline limit per request
 const TimelineLimit = 10
+
+func bindPost(p *model.PostWithUser) openapi.Post {
+	var user openapi.SimpleUser
+	if p.User != nil {
+		user = openapi.SimpleUser{
+			Username: p.User.Username,
+			Protocol: p.User.Protocol,
+			DisplayName: p.User.DisplayName,
+			Icon: p.User.Icon,
+		}
+	post := openapi.Post{
+		Id:        p.Id,
+		Content:   p.Content,
+		User: 	   user,
+		LikeCount: p.LikeCount,
+		CreatedAt: p.CreatedAt,
+		UpdatedAt: p.UpdatedAt,
+	}
+	return post
+}
 
 func CreatePost(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +46,8 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 		}
 		err := json.Unmarshal(body, &postRequsetBody)
 		if err != nil {
-			returnBadRequest(w, c.Logger, err)
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusBadRequest)
 			return
 		}
 

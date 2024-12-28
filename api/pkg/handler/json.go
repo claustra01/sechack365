@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	ContentTypeJson   = "application/json"
-	ContentTypeApJson = "application/activity+json"
+	ContentTypeJson    = "application/json"
+	ContentTypeApJson  = "application/activity+json"
+	ContentTypeJrdJson = "application/jrd+json"
 )
 
 var errorResponse = map[int]any{

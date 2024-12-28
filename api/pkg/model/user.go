@@ -52,3 +52,10 @@ type Identifiers struct {
 	Activitypub *ApUserIdentifier    `db:"activitypub"`
 	Nostr       *NostrUserIdentifier `db:"nostr"`
 }
+
+type SimpleUser struct {
+	Username    string `db:"username"`
+	Protocol    string `db:"protocol"`
+	DisplayName string `db:"display_name"`
+	Icon        string `db:"icon"`
+}
