@@ -20,9 +20,9 @@ export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 			<DesktopOnly>
 				<Flex
 					bg={colors.primaryColor}
-					direction={{ base: "row" }}
-					gap={{ base: "24px" }}
-					justify={{ base: "center" }}
+					direction="row"
+					gap={24}
+					justify="center"
 					pt={24}
 				>
 					<Box
