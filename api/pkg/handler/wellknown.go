@@ -11,7 +11,7 @@ import (
 func NodeinfoLinks(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		nodeinfo := c.Controllers.Webfinger.NewNodeInfoLinks(c.Config.Host)
-		jsonResponse(w, nodeinfo)
+		returnResponse(w, http.StatusOK, ContentTypeJson, nodeinfo)
 	}
 }
 
@@ -22,21 +22,24 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 		pattern := regexp.MustCompile(`^acct:([a-zA-Z0-9_]+)@([a-zA-Z0-9-.]+)$`)
 		matches := pattern.FindStringSubmatch(resource)
 		if len(matches) != 3 || matches[2] != c.Config.Host {
-			returnBadRequest(w, c.Logger, cerror.Wrap(cerror.ErrInvalidResourseQuery, resource))
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidResourseQuery, "failed to resolve webfinger"))
+			returnError(w, http.StatusBadRequest)
 			return
 		}
 
 		user, err := c.Controllers.User.FindByLocalUsername(matches[1])
 		if err != nil {
-			returnInternalServerError(w, c.Logger, err)
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to resolve webfinger"))
+			returnError(w, http.StatusInternalServerError)
 			return
 		}
 		if user == nil {
-			returnNotFound(w, c.Logger, cerror.ErrUserNotFound)
+			c.Logger.Warn("Not Found", "Error", cerror.Wrap(cerror.ErrUserNotFound, "failed to resolve webfinger"))
+			returnError(w, http.StatusNotFound)
 			return
 		}
 
 		webfinger := c.Controllers.Webfinger.NewWebfingerActorLinks(c.Config.Host, user.Id, user.Username)
-		jsonCustomContentTypeResponse(w, webfinger, "application/jrd+json")
+		returnResponse(w, http.StatusOK, ContentTypeJrdJson, webfinger)
 	}
 }
