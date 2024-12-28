@@ -10,7 +10,7 @@ export interface Post {
 	content: string;
 	created_at: string;
 	id: string;
-	like_count?: number;
+	like_count: number;
 	updated_at: string;
 	user: SimpleUser;
 }
