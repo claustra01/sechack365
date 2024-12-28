@@ -22,7 +22,7 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 		pattern := regexp.MustCompile(`^acct:([a-zA-Z0-9_]+)@([a-zA-Z0-9-.]+)$`)
 		matches := pattern.FindStringSubmatch(resource)
 		if len(matches) != 3 || matches[2] != c.Config.Host {
-			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidResourseQuery, "failed to resolve webfinger"))
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidQueryParam, "failed to resolve webfinger"))
 			returnError(w, http.StatusBadRequest)
 			return
 		}
