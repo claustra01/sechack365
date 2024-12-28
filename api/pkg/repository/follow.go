@@ -32,17 +32,49 @@ func (r *FollowRepository) UpdateAcceptFollow(followerId, targetId string) error
 	return nil
 }
 
-func (r *FollowRepository) FindFollowsByUserId(userId string) ([]*model.User, error) {
-	var users []*model.User
-	if err := r.SqlHandler.Select(&users, `SELECT users.* FROM users JOIN follows ON users.id = follows.followee_id WHERE follows.follower_id = $1;`, userId); err != nil {
+func (r *FollowRepository) FindFollowsByUserId(userId string) ([]*model.SimpleUser, error) {
+	var users []*model.SimpleUser
+	query := `
+		SELECT
+			CASE
+				WHEN users.protocol = 'local' THEN '@' || users.username
+				WHEN users.protocol = 'activitypub' THEN '@' ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
+				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.npub
+			END AS username,
+			users.protocol,
+			users.display_name,
+			users.icon
+		FROM users
+		JOIN follows ON users.id = follows.target_id
+		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
+		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
+		WHERE follows.follower_id = $1;
+	`
+	if err := r.SqlHandler.Select(&users, query, userId); err != nil {
 		return nil, err
 	}
 	return users, nil
 }
 
-func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.User, error) {
-	var users []*model.User
-	if err := r.SqlHandler.Select(&users, `SELECT users.* FROM users JOIN follows ON users.id = follows.follower_id WHERE follows.followee_id = $1;`, userId); err != nil {
+func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.SimpleUser, error) {
+	var users []*model.SimpleUser
+	query := `
+		SELECT
+			CASE
+				WHEN users.protocol = 'local' THEN '@' || users.username
+				WHEN users.protocol = 'activitypub' THEN '@' ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
+				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.npub
+			END AS username,
+			users.protocol,
+			users.display_name,
+			users.icon
+		FROM users
+		JOIN follows ON users.id = follows.target_id
+		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
+		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
+		WHERE follows.target_id = $1;
+	`
+	if err := r.SqlHandler.Select(&users, query, userId); err != nil {
 		return nil, err
 	}
 	return users, nil

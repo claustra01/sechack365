@@ -28,10 +28,10 @@ func (c *FollowController) UpdateAcceptFollow(followerId, targetId string) error
 	return c.FollowUsecase.UpdateAcceptFollow(followerId, targetId)
 }
 
-func (c *FollowController) FindFollowsByUserId(userId string) ([]*model.User, error) {
+func (c *FollowController) FindFollowsByUserId(userId string) ([]*model.SimpleUser, error) {
 	return c.FollowUsecase.FindFollowsByUserId(userId)
 }
 
-func (c *FollowController) FindFollowersByUserId(userId string) ([]*model.User, error) {
+func (c *FollowController) FindFollowersByUserId(userId string) ([]*model.SimpleUser, error) {
 	return c.FollowUsecase.FindFollowersByUserId(userId)
 }
