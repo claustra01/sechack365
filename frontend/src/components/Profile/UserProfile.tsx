@@ -1,5 +1,5 @@
 import type { User } from "@/openapi/schemas";
-import { Box, Image, Text } from "@mantine/core";
+import { Box, Text } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
 import { Header } from "../Header/Header";
 import { UserProfileCard } from "./UserProfileCard";

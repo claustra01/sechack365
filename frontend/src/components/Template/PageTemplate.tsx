@@ -25,7 +25,11 @@ export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 					justify={{ base: "center" }}
 					pt={24}
 				>
-					<Box bg={colors.white} w={720} style={{ minHeight: "calc( 100vh - 24px )" }}>
+					<Box
+						bg={colors.white}
+						w={720}
+						style={{ minHeight: "calc( 100vh - 24px )" }}
+					>
 						{children}
 					</Box>
 					<DesktopMenu isAuthenticated={isAuthenticated} />
