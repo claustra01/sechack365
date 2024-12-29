@@ -15,7 +15,9 @@ export const PostCard = (props: Post) => {
 			style={{ border: `2px solid ${colors.primaryColor}`, borderRadius: 8 }}
 		>
 			<PostUserCard {...props.user} />
-			<Text size="lg">{props.content}</Text>
+			<Text size="lg" style={{ wordBreak: "break-word" }}>
+				{props.content}
+			</Text>
 		</Flex>
 	);
 };

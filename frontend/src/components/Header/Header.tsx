@@ -9,7 +9,13 @@ export type HeaderProps = {
 
 export const Header = (props: HeaderProps) => {
 	return (
-		<Flex bg={colors.secondaryColor} align="center" w="100%" p={12} style={{ overflow: "hidden" }}>
+		<Flex
+			bg={colors.secondaryColor}
+			align="center"
+			w="100%"
+			p={12}
+			style={{ overflow: "hidden" }}
+		>
 			<ActionIcon
 				component={Link}
 				href="/"

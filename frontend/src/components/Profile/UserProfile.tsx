@@ -11,7 +11,9 @@ export const UserProfile = (props: User) => {
 			<Header title={props.display_name} icon={<IconArrowBackUp />} />
 			<Flex direction="column" gap={24} p={24}>
 				<UserProfileCard {...props} />
-				<Text size="lg">{props.profile}</Text>
+				<Text size="lg" style={{ wordBreak: "break-word" }}>
+					{props.profile}
+				</Text>
 				<Flex direction="row" align="center" gap={24}>
 					<UserProfileCounter value={props.post_count} label="Post" />
 					<UserProfileCounter value={props.follow_count} label="Follow" />
