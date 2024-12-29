@@ -1,22 +1,23 @@
 import type { Post } from "@/openapi/schemas";
 import { colors } from "@/styles/colors";
-import { Box, Text } from "@mantine/core";
+import { Flex, Text } from "@mantine/core";
 import { PostUserCard } from "./PostUserCard";
 
 export const PostCard = (props: Post) => {
 	console.log(props);
 	return (
-		<Box
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				padding: "24px",
-				gap: "24px",
-				borderTop: `2px solid ${colors.primaryColor}`,
-			}}
+		<Flex
+			direction="column"
+			gap={12}
+			p={24}
+			mx={12}
+			mt={12}
+			style={{ border: `2px solid ${colors.primaryColor}`, borderRadius: 8 }}
 		>
 			<PostUserCard {...props.user} />
-			<Text size="lg">{props.content}</Text>
-		</Box>
+			<Text size="lg" style={{ wordBreak: "break-word" }}>
+				{props.content}
+			</Text>
+		</Flex>
 	);
 };

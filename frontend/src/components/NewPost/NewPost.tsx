@@ -1,7 +1,7 @@
 import { postApiV1Posts } from "@/openapi/api";
 import type { Newpost } from "@/openapi/schemas";
 import { colors } from "@/styles/colors";
-import { Box, Button, Textarea } from "@mantine/core";
+import { Button, Flex, Textarea } from "@mantine/core";
 import { useState } from "react";
 
 export const NewPost = () => {
@@ -29,14 +29,7 @@ export const NewPost = () => {
 	};
 
 	return (
-		<Box
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				padding: "24px",
-				gap: "24px",
-			}}
-		>
+		<Flex direction="column" p={24} gap={24}>
 			<Textarea
 				placeholder="Your content here..."
 				autosize
@@ -44,12 +37,13 @@ export const NewPost = () => {
 				onChange={handleChange}
 			/>
 			<Button
+				disabled={text.length === 0}
 				color={colors.secondaryColor}
 				style={{ alignSelf: "flex-end" }}
 				onClick={handleSubmit}
 			>
 				New Post
 			</Button>
-		</Box>
+		</Flex>
 	);
 };

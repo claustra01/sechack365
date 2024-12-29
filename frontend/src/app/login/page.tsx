@@ -64,6 +64,7 @@ export default function LoginPage() {
 					onChange={handlePasswordChange}
 				/>
 				<Button
+					disabled={username.length === 0 || password.length === 0}
 					color={colors.secondaryColor}
 					style={{ alignSelf: "flex-end" }}
 					onClick={handleSubmit}

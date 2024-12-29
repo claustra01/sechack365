@@ -1,5 +1,5 @@
 import { colors } from "@/styles/colors";
-import { ActionIcon, Box, Title } from "@mantine/core";
+import { ActionIcon, Flex, Title } from "@mantine/core";
 import Link from "next/link";
 
 export type HeaderProps = {
@@ -9,9 +9,12 @@ export type HeaderProps = {
 
 export const Header = (props: HeaderProps) => {
 	return (
-		<Box
+		<Flex
 			bg={colors.secondaryColor}
-			style={{ display: "flex", alignItems: "center", padding: "12px" }}
+			align="center"
+			w="100%"
+			p={12}
+			style={{ overflow: "hidden" }}
 		>
 			<ActionIcon
 				component={Link}
@@ -25,6 +28,6 @@ export const Header = (props: HeaderProps) => {
 			<Title size="h3" fw={500} c={colors.primaryColor}>
 				{props.title}
 			</Title>
-		</Box>
+		</Flex>
 	);
 };

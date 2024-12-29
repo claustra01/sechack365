@@ -1,19 +1,22 @@
 import type { User } from "@/openapi/schemas";
-import { Avatar, Box, Text, Title } from "@mantine/core";
+import { colors } from "@/styles/colors";
+import { Avatar, Box, Flex, Text, Title } from "@mantine/core";
 import { bindUsername } from "../../../utils/strings";
 
 export const UserProfileCard = (props: User) => {
 	return (
-		<Box style={{ display: "flex", alignItems: "center", gap: "24px" }}>
-			<Avatar src={props.icon} size={84} />
-			<Box style={{ display: "flex", flexDirection: "column" }}>
-				<Title size="h2" fw={500}>
+		<Flex align="center" gap={20}>
+			<Avatar src={props.icon} size={80} />
+			<Flex direction="column" gap={4}>
+				<Title size="h3" fw={500}>
 					{props.display_name}
 				</Title>
-				<Box>
-					<Text size="md">{bindUsername(props)}</Text>
+				<Box style={{ maxWidth: "calc( 100vw - 144px )", overflowX: "auto" }}>
+					<Text size="sm" c={colors.black}>
+						{bindUsername(props)}
+					</Text>
 				</Box>
-			</Box>
-		</Box>
+			</Flex>
+		</Flex>
 	);
 };
