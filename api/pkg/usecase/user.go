@@ -16,6 +16,8 @@ type IUserRepository interface {
 	DeleteById(id string) error
 	// 認証でのみ使用
 	FindWithHashedPassword(username string) (*model.User, error)
+	// Nostr投稿用
+	GetNostrPrivKey(id string) (string, error)
 }
 
 type UserUsecase struct {
@@ -68,4 +70,8 @@ func (u *UserUsecase) DeleteById(id string) error {
 
 func (u *UserUsecase) FindWithHashedPassword(username string) (*model.User, error) {
 	return u.UserRepository.FindWithHashedPassword(username)
+}
+
+func (u *UserUsecase) GetNostrPrivKey(id string) (string, error) {
+	return u.UserRepository.GetNostrPrivKey(id)
 }

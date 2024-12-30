@@ -28,6 +28,9 @@ var ErrPushActivity = fmt.Errorf("failed to push activity")
 var ErrEmptyContent = fmt.Errorf("empty content")
 var ErrPostNotFound = fmt.Errorf("post not found")
 
+// nostr service
+var ErrNostrRelayResNotOk = fmt.Errorf("nostr relay response is not ok")
+
 // utils
 var ErrGeneratePasswordHash = fmt.Errorf("failed to generate password hash")
 var ErrGenerateRsaKey = fmt.Errorf("failed to generate RSA key pair")

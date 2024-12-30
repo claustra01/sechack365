@@ -23,3 +23,7 @@ func NewNostrController(ws model.IWsHandler) *NostrController {
 func (c *NostrController) GetUserProfile(id string) (*model.NostrProfile, error) {
 	return c.NostrUsecase.GetUserProfile(id)
 }
+
+func (c *NostrController) PostUserProfile(privKey string, profile *model.NostrProfile) error {
+	return c.NostrUsecase.PostUserProfile(privKey, profile)
+}

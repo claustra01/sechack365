@@ -67,3 +67,7 @@ func (c *UserController) DeleteById(id string) error {
 func (c *UserController) FindWithHashedPassword(username string) (*model.User, error) {
 	return c.UserUsecase.FindWithHashedPassword(username)
 }
+
+func (c *UserController) GetNostrPrivKey(id string) (string, error) {
+	return c.UserUsecase.GetNostrPrivKey(id)
+}
