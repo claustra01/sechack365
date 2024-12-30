@@ -71,7 +71,7 @@ func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.Simple
 			users.display_name,
 			users.icon
 		FROM users
-		JOIN follows ON users.id = follows.target_id
+		JOIN follows ON users.id = follows.follower_id
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
 		WHERE follows.target_id = $1;
