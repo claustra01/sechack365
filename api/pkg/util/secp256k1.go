@@ -1,36 +1,61 @@
 package util
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
+	"io"
+	"math/big"
 	"time"
 
+	"github.com/btcsuite/btcd/btcec/v2"
+	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/claustra01/sechack365/pkg/model"
-	"github.com/decred/dcrd/dcrec/secp256k1/v3"
-	"github.com/decred/dcrd/dcrec/secp256k1/v3/schnorr"
 )
 
+func GeneratePrivateKey() string {
+	params := btcec.S256().Params()
+	one := new(big.Int).SetInt64(1)
+
+	b := make([]byte, params.BitSize/8+8)
+	if _, err := io.ReadFull(rand.Reader, b); err != nil {
+		return ""
+	}
+
+	k := new(big.Int).SetBytes(b)
+	n := new(big.Int).Sub(params.N, one)
+	k.Mod(k, n)
+	k.Add(k, one)
+
+	return fmt.Sprintf("%064x", k.Bytes())
+}
+
+func GetPublicKey(sk string) (string, error) {
+	b, err := hex.DecodeString(sk)
+	if err != nil {
+		return "", err
+	}
+	_, pk := btcec.PrivKeyFromBytes(b)
+	return hex.EncodeToString(schnorr.SerializePubKey(pk)), nil
+}
+
 func GenerateNostrKeyPair() (string, string, error) {
-	rawPrivKey, err := secp256k1.GeneratePrivateKey()
+	privKey := GeneratePrivateKey()
+	pubKey, err := GetPublicKey(privKey)
 	if err != nil {
 		return "", "", err
 	}
-	privKey := hex.EncodeToString(rawPrivKey.Serialize())
-
-	rawPubKey := rawPrivKey.PubKey()
-	// prefix (0x02) is removed in nostr public key
-	pubKey := hex.EncodeToString(rawPubKey.SerializeCompressed())[2:]
-
-	return string(privKey), string(pubKey), nil
+	return privKey, pubKey, nil
 }
 
 func NostrVerify(pubKey string, digest string, sig string) (bool, error) {
-	rawPubKey, err := hex.DecodeString("02" + pubKey)
+	rawPubKey, err := hex.DecodeString(pubKey)
 	if err != nil {
 		return false, err
 	}
-	pubKeyObj, err := secp256k1.ParsePubKey(rawPubKey)
+	pubKeyObj, err := schnorr.ParsePubKey(rawPubKey)
 	if err != nil {
 		return false, err
 	}
@@ -56,6 +81,13 @@ func NostrSign(privKey string, pubKey string, createdAt time.Time, kind int, tag
 		return nil, err
 	}
 
+	// parse private key
+	rawPrivKey, err := hex.DecodeString(privKey)
+	if err != nil {
+		return nil, err
+	}
+	privKeyObj, _ := btcec.PrivKeyFromBytes(rawPrivKey)
+
 	// calculate digest
 	obj := []any{
 		0,
@@ -63,7 +95,7 @@ func NostrSign(privKey string, pubKey string, createdAt time.Time, kind int, tag
 		createdAt.Unix(),
 		kind,
 		tags,
-		content,
+		string(rawContent),
 	}
 	objStr, err := json.Marshal(obj)
 	if err != nil {
@@ -72,11 +104,7 @@ func NostrSign(privKey string, pubKey string, createdAt time.Time, kind int, tag
 	hash := sha256.Sum256(objStr)
 
 	// signature
-	rawPrivKey, err := hex.DecodeString(privKey)
-	if err != nil {
-		return nil, err
-	}
-	sig, err := schnorr.Sign(secp256k1.PrivKeyFromBytes(rawPrivKey), hash[:])
+	sig, err := schnorr.Sign(privKeyObj, hash[:], schnorr.FastSign())
 	if err != nil {
 		return nil, err
 	}
