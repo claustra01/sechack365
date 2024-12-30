@@ -195,9 +195,14 @@ func (r *UserRepository) FindByLocalUsername(username string) (*model.UserWithId
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
 		WHERE users.username = $1 AND users.protocol = $2;
 	`
-	if err := r.SqlHandler.Get(user, query, username, model.ProtocolLocal); err != nil {
+	err := r.SqlHandler.Get(user, query, username, model.ProtocolLocal)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
 		return nil, err
 	}
+
 	return user, nil
 }
 
