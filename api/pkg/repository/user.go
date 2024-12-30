@@ -325,3 +325,14 @@ func (r *UserRepository) FindWithHashedPassword(username string) (*model.User, e
 	}
 	return user, nil
 }
+
+func (r *UserRepository) GetNostrKeyPair(id string) (string, string, error) {
+	var privKey, pubKey string
+	if err := r.SqlHandler.Get(&privKey, "SELECT private_key FROM nostr_user_identifiers WHERE user_id = $1;", id); err != nil {
+		return "", "", err
+	}
+	if err := r.SqlHandler.Get(&pubKey, "SELECT public_key FROM nostr_user_identifiers WHERE user_id = $1;", id); err != nil {
+		return "", "", err
+	}
+	return privKey, pubKey, nil
+}
