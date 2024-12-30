@@ -44,6 +44,12 @@ delete:
   tags:
     - follows
   description: Unfollow
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../../components/schemas/follow.yaml#/newfollow'
   responses:
     '204':
       description: Unfollow Successful

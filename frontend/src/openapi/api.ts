@@ -621,9 +621,13 @@ export const usePostApiV1FollowsFollow = <
  * Unfollow
  */
 export const deleteApiV1FollowsFollow = (
+	newfollow: Newfollow,
 	options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<DeleteApiV1FollowsFollow204>> => {
-	return axios.delete("/api/v1/follows/follow", options);
+	return axios.delete("/api/v1/follows/follow", {
+		data: newfollow,
+		...options,
+	});
 };
 
 export const getDeleteApiV1FollowsFollowMutationFetcher = (
@@ -631,9 +635,9 @@ export const getDeleteApiV1FollowsFollowMutationFetcher = (
 ) => {
 	return (
 		_: Key,
-		__: { arg: Arguments },
+		{ arg }: { arg: Newfollow },
 	): Promise<AxiosResponse<DeleteApiV1FollowsFollow204>> => {
-		return deleteApiV1FollowsFollow(options);
+		return deleteApiV1FollowsFollow(arg, options);
 	};
 };
 export const getDeleteApiV1FollowsFollowMutationKey = () =>
@@ -653,7 +657,7 @@ export const useDeleteApiV1FollowsFollow = <
 		Awaited<ReturnType<typeof deleteApiV1FollowsFollow>>,
 		TError,
 		Key,
-		Arguments,
+		Newfollow,
 		Awaited<ReturnType<typeof deleteApiV1FollowsFollow>>
 	> & { swrKey?: string };
 	axios?: AxiosRequestConfig;
