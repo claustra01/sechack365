@@ -15,7 +15,7 @@ type NostrService struct {
 	Ws model.IWsHandler
 }
 
-func (s *NostrService) req(id string, filter model.NostrFilter) ([]string, error) {
+func (s *NostrService) sendReq(id string, filter model.NostrFilter) ([]string, error) {
 	reqObj := []any{"REQ", id, filter}
 	reqMsg, err := json.Marshal(reqObj)
 	if err != nil {
@@ -43,7 +43,7 @@ func (s *NostrService) req(id string, filter model.NostrFilter) ([]string, error
 	return msgs, nil
 }
 
-func (s *NostrService) event(event model.NostrEvent) error {
+func (s *NostrService) sendEvent(event model.NostrEvent) error {
 	eventObj := []any{"EVENT", event}
 	eventMsg, err := json.Marshal(eventObj)
 	if err != nil {
@@ -79,7 +79,7 @@ func (s *NostrService) GetUserProfile(pubkey string) (*model.NostrProfile, error
 		Since:   0,
 		Until:   time.Now().Unix(),
 	}
-	msgs, err := s.req(id.String(), filter)
+	msgs, err := s.sendReq(id.String(), filter)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func (s *NostrService) PostUserProfile(privKey string, profile *model.NostrProfi
 	if err != nil {
 		return err
 	}
-	if err := s.event(*event); err != nil {
+	if err := s.sendEvent(*event); err != nil {
 		return err
 	}
 	return nil
@@ -122,7 +122,7 @@ func (s *NostrService) PostText(privKey string, note string) error {
 	if err != nil {
 		return err
 	}
-	if err := s.event(*event); err != nil {
+	if err := s.sendEvent(*event); err != nil {
 		return err
 	}
 	return nil
@@ -138,7 +138,7 @@ func (s *NostrService) PostFollow(privKey string, pubKeys []string) error {
 	if err != nil {
 		return err
 	}
-	if err := s.event(*event); err != nil {
+	if err := s.sendEvent(*event); err != nil {
 		return err
 	}
 	return nil

@@ -30,7 +30,7 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 		user, _ := c.Controllers.User.FindByLocalUsername("mock")
 		privKey, _ := c.Controllers.User.GetNostrPrivKey(user.Id)
 		profile := &model.NostrProfile{
-			Name:        "Mock User",
+			Name:        "mock",
 			DisplayName: "Mock User",
 			About:       "This is mock user",
 			Picture:     "https://placehold.jp/150x150.png",
