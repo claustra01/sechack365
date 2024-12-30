@@ -17,7 +17,7 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 		// parse request body
 		var followRequestBody openapi.Newfollow
 		body := make([]byte, r.ContentLength)
-		if _, err := r.Body.Read(body); err != nil {
+		if _, err := r.Body.Read(body); err != nil && err.Error() != "EOF" {
 			// NOTE: err should be nil
 			panic(err)
 		}
