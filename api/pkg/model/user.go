@@ -28,6 +28,8 @@ type NostrUserIdentifier struct {
 	UserId     string    `db:"user_id"`
 	PublicKey  string    `db:"public_key"`
 	PrivateKey string    `db:"private_key"`
+	Npub       string    `db:"npub"`
+	Nsec       string    `db:"nsec"`
 	CreatedAt  time.Time `db:"created_at"`
 	UpdatedAt  time.Time `db:"updated_at"`
 }
