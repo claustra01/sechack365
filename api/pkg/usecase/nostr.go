@@ -4,6 +4,7 @@ import "github.com/claustra01/sechack365/pkg/model"
 
 type INostrService interface {
 	GetUserProfile(id string) (*model.NostrProfile, error)
+	PostUserProfile(privKey string, pubKey string, profile *model.NostrProfile) error
 }
 
 type NostrUsecase struct {
@@ -12,4 +13,8 @@ type NostrUsecase struct {
 
 func (u *NostrUsecase) GetUserProfile(id string) (*model.NostrProfile, error) {
 	return u.NostrService.GetUserProfile(id)
+}
+
+func (u *NostrUsecase) PostUserProfile(privKey string, pubKey string, profile *model.NostrProfile) error {
+	return u.NostrService.PostUserProfile(privKey, pubKey, profile)
 }

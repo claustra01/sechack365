@@ -13,7 +13,7 @@ type NostrService struct {
 	Ws model.IWsHandler
 }
 
-func (s *NostrService) Req(id string, filter model.NostrFilter) ([]string, error) {
+func (s *NostrService) req(id string, filter model.NostrFilter) ([]string, error) {
 	var arr []any
 	arr = append(arr, "REQ")
 	arr = append(arr, id)
@@ -40,6 +40,20 @@ func (s *NostrService) Req(id string, filter model.NostrFilter) ([]string, error
 	return msgs, nil
 }
 
+func (s *NostrService) event(event model.NostrEvent) error {
+	var arr []any
+	arr = append(arr, "EVENT")
+	arr = append(arr, event)
+	eventMsg, err := json.Marshal(arr)
+	if err != nil {
+		return err
+	}
+	if err := s.Ws.Send(string(eventMsg)); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *NostrService) GetUserProfile(pubkey string) (*model.NostrProfile, error) {
 	id := util.NewUuid()
 	filter := model.NostrFilter{
@@ -49,7 +63,7 @@ func (s *NostrService) GetUserProfile(pubkey string) (*model.NostrProfile, error
 		Since:   0,
 		Until:   time.Now().Unix(),
 	}
-	msgs, err := s.Req(id.String(), filter)
+	msgs, err := s.req(id.String(), filter)
 	if err != nil {
 		return nil, err
 	}
@@ -74,4 +88,15 @@ func (s *NostrService) GetUserProfile(pubkey string) (*model.NostrProfile, error
 		return nil, err
 	}
 	return &profile, nil
+}
+
+func (s *NostrService) PostUserProfile(privKey string, pubKey string, profile *model.NostrProfile) error {
+	event, err := util.NostrSign(privKey, pubKey, time.Now(), 0, []model.NostrEventTag{}, profile)
+	if err != nil {
+		return err
+	}
+	if err := s.event(*event); err != nil {
+		return err
+	}
+	return nil
 }
