@@ -10,6 +10,9 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 	api := r.Group("/api/v1")
 
 	auth := api.Group("/auth")
+	if err := auth.Post("/register", handler.Register); err != nil {
+		return err
+	}
 	if err := auth.Post("/login", handler.Login); err != nil {
 		return err
 	}

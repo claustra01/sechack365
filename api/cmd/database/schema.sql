@@ -28,8 +28,10 @@ CREATE TABLE "ap_user_identifiers" (
 
 CREATE TABLE "nostr_user_identifiers" (
   "user_id" varchar(255) PRIMARY KEY,
-  "public_key" text NOT NULL,
-  "private_key" text,
+  "public_key" varchar(255) NOT NULL,
+  "private_key" varchar(255),
+  "npub" varchar(255) NOT NULL,
+  "nsec" varchar(255),
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );
@@ -46,6 +48,7 @@ CREATE TABLE "follows" (
 
 CREATE TABLE "posts" (
   "id" varchar(255) PRIMARY KEY,
+  "protocol" protocol NOT NULL,
   "user_id" varchar(255),
   "content" text NOT NULL,
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,

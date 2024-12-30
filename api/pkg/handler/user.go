@@ -25,7 +25,7 @@ func bindUser(u *model.UserWithIdentifiers) openapi.User {
 	}
 	if u.Identifiers.Nostr != nil {
 		identifiers.Nostr = &openapi.NostrIdentifier{
-			PublicKey: u.Identifiers.Nostr.PublicKey,
+			Npub: u.Identifiers.Nostr.Npub,
 		}
 	}
 	user := openapi.User{
@@ -307,7 +307,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 		// nostr
 		if npub != "" {
 			// check cache
-			cachedUser, err := c.Controllers.User.FindByNostrPublicKey(npub)
+			cachedUser, err := c.Controllers.User.FindByNostrNpub(npub)
 			if err != nil {
 				c.Logger.Error("Internal Server Error", "error", cerror.Wrap(err, "failed to lookup user"))
 				returnError(w, http.StatusInternalServerError)
@@ -321,7 +321,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			}
 
 			// decode bech32
-			hrp, hexStr, err := util.DecodeBech32(npub)
+			hrp, pubKey, err := util.DecodeBech32(npub)
 			if err != nil {
 				c.Logger.Error("Internal Server Error", "error", cerror.Wrap(err, "failed to lookup user"))
 				returnError(w, http.StatusInternalServerError)
@@ -334,7 +334,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			}
 
 			// fetch from remote
-			profile, err := c.Controllers.Nostr.GetUserProfile(hexStr)
+			profile, err := c.Controllers.Nostr.GetUserProfile(pubKey)
 			if err != nil {
 				c.Logger.Error("Internal Server Error", "error", cerror.Wrap(err, "failed to lookup user"))
 				returnError(w, http.StatusInternalServerError)
@@ -352,7 +352,8 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				Icon:        profile.Picture,
 			}
 			i := &model.NostrUserIdentifier{
-				PublicKey: npub,
+				PublicKey: pubKey,
+				Npub:      npub,
 			}
 
 			// create user
@@ -362,7 +363,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 					returnError(w, http.StatusInternalServerError)
 					return
 				}
-				user, err := c.Controllers.User.FindByNostrPublicKey(npub)
+				user, err := c.Controllers.User.FindByNostrNpub(npub)
 				if err != nil {
 					c.Logger.Error("Internal Server Error", "error", cerror.Wrap(err, "failed to lookup user"))
 					returnError(w, http.StatusInternalServerError)
@@ -378,7 +379,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 				returnError(w, http.StatusInternalServerError)
 				return
 			}
-			user, err := c.Controllers.User.FindByNostrPublicKey(npub)
+			user, err := c.Controllers.User.FindByNostrNpub(npub)
 			if err != nil {
 				c.Logger.Error("Internal Server Error", "error", cerror.Wrap(err, "failed to lookup user"))
 				returnError(w, http.StatusInternalServerError)

@@ -75,10 +75,18 @@ func NostrVerify(pubKey string, digest string, sig string) (bool, error) {
 }
 
 func NostrSign(privKey string, createdAt time.Time, kind int, tags []model.NostrEventTag, content any) (*model.NostrEvent, error) {
-	// serialize content
-	rawContent, err := json.Marshal(content)
-	if err != nil {
-		return nil, err
+	var contentStr string
+	switch kind {
+	// text note
+	case 1:
+		contentStr = content.(string)
+	// others (e.g. profile)
+	default:
+		rawContent, err := json.Marshal(content)
+		if err != nil {
+			return nil, err
+		}
+		contentStr = string(rawContent)
 	}
 
 	// parse private key
@@ -96,7 +104,7 @@ func NostrSign(privKey string, createdAt time.Time, kind int, tags []model.Nostr
 		createdAt.Unix(),
 		kind,
 		tags,
-		string(rawContent),
+		contentStr,
 	}
 	objStr, err := json.Marshal(obj)
 	if err != nil {
@@ -117,7 +125,7 @@ func NostrSign(privKey string, createdAt time.Time, kind int, tags []model.Nostr
 		CreatedAt: int(createdAt.Unix()),
 		Kind:      kind,
 		Tags:      tags,
-		Content:   string(rawContent),
+		Content:   contentStr,
 		Sig:       hex.EncodeToString(sig.Serialize()),
 	}, nil
 }

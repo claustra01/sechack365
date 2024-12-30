@@ -48,8 +48,8 @@ func (c *UserController) FindByApUsername(username string, host string) (*model.
 	return c.UserUsecase.FindByApUsername(username, host)
 }
 
-func (c *UserController) FindByNostrPublicKey(publicKey string) (*model.UserWithIdentifiers, error) {
-	return c.UserUsecase.FindByNostrPublicKey(publicKey)
+func (c *UserController) FindByNostrNpub(publicKey string) (*model.UserWithIdentifiers, error) {
+	return c.UserUsecase.FindByNostrNpub(publicKey)
 }
 
 func (c *UserController) UpdateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) error {

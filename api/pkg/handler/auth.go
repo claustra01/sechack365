@@ -8,6 +8,7 @@ import (
 
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
+	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
 	"github.com/claustra01/sechack365/pkg/util"
 )
@@ -47,7 +48,32 @@ func Register(c *framework.Context) http.HandlerFunc {
 		}
 
 		// TODO: set default icon url
-		if err := c.Controllers.User.CreateLocalUser(authRequestBody.Username, authRequestBody.Password, authRequestBody.Username, "", "", c.Config.Host); err != nil {
+		if err := c.Controllers.User.CreateLocalUser(authRequestBody.Username, authRequestBody.Password, authRequestBody.Username, "", "https://placehold.jp/150x150.png", c.Config.Host); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+
+		// create nostr profile
+		user, err = c.Controllers.User.FindByLocalUsername(authRequestBody.Username)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		privKey, err := c.Controllers.User.GetNostrPrivKey(user.Id)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		profile := &model.NostrProfile{
+			Name:        user.Username,
+			DisplayName: user.DisplayName,
+			About:       user.Profile,
+			Picture:     user.Icon,
+		}
+		if err := c.Controllers.Nostr.PostUserProfile(privKey, profile); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
 			returnError(w, http.StatusInternalServerError)
 			return

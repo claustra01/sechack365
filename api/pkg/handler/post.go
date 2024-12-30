@@ -68,6 +68,18 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
+		privKey, err := c.Controllers.User.GetNostrPrivKey(user.Id)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		if err := c.Controllers.Nostr.PostText(privKey, postRequsetBody.Content); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+
 		returnResponse(w, http.StatusCreated, ContentTypeJson, nil)
 	}
 }

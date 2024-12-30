@@ -67,10 +67,10 @@ ap-identifier:
 nostr-identifier:
   type: object
   properties:
-    public_key:
+    npub:
       type: string
   required:
-    - public_key
+    - npub
 
 
 simple-user:

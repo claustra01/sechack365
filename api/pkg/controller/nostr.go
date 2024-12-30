@@ -27,3 +27,7 @@ func (c *NostrController) GetUserProfile(id string) (*model.NostrProfile, error)
 func (c *NostrController) PostUserProfile(privKey string, profile *model.NostrProfile) error {
 	return c.NostrUsecase.PostUserProfile(privKey, profile)
 }
+
+func (c *NostrController) PostText(privKey string, note string) error {
+	return c.NostrUsecase.PostText(privKey, note)
+}
