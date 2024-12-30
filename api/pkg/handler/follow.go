@@ -60,45 +60,45 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 		}
 
 		// activitypub remote follow
-		if target.Protocol == model.ProtocolActivityPub {
-			// get signer key params
-			// keyId := c.Controllers.ActivityPub.NewKeyIdUrl(follower.Host, follower.Username)
-			// followerIdentifier, err := c.Controllers.ApUserIdentifier.FindById(follower.Id)
-			// if err != nil {
-			// 	returnInternalServerError(w, c.Logger, err)
-			// 	return
-			// }
-			// privateKey, err := util.DecodePrivateKeyPem(followerIdentifier.PrivateKey)
-			// if err != nil {
-			// 	returnInternalServerError(w, c.Logger, err)
-			// 	return
-			// }
+		// if target.Protocol == model.ProtocolActivityPub {
+		// 	get signer key params
+		// 	keyId := c.Controllers.ActivityPub.NewKeyIdUrl(follower.Host, follower.Username)
+		// 	followerIdentifier, err := c.Controllers.ApUserIdentifier.FindById(follower.Id)
+		// 	if err != nil {
+		// 		returnInternalServerError(w, c.Logger, err)
+		// 		return
+		// 	}
+		// 	privateKey, err := util.DecodePrivateKeyPem(followerIdentifier.PrivateKey)
+		// 	if err != nil {
+		// 		returnInternalServerError(w, c.Logger, err)
+		// 		return
+		// 	}
 
-			// // get followee actor url
-			// followeeUrl, err := c.Controllers.ActivityPub.ResolveWebfinger(followee.Username, followee.Host)
-			// if err != nil {
-			// 	returnInternalServerError(w, c.Logger, err)
-			// 	return
-			// }
+		// 	// get followee actor url
+		// 	followeeUrl, err := c.Controllers.ActivityPub.ResolveWebfinger(followee.Username, followee.Host)
+		// 	if err != nil {
+		// 		returnInternalServerError(w, c.Logger, err)
+		// 		return
+		// 	}
 
-			// // send follow activity
-			// followActivity := c.Controllers.ActivityPub.NewFollowActivity(follow.Id, follower.Host, follower.Id, followeeUrl)
-			// followeeActor, err := c.Controllers.ActivityPub.ResolveRemoteActor(followActivity.Object)
-			// if err != nil {
-			// 	returnInternalServerError(w, c.Logger, err)
-			// 	return
-			// }
-			// respBody, err := c.Controllers.ActivityPub.SendActivity(followeeActor.Inbox, followActivity, c.Config.Host, keyId, privateKey)
-			// if err != nil {
-			// 	c.Logger.Error("Remote follow error", "ERROR", string(respBody))
-			// 	returnInternalServerError(w, c.Logger, err)
-			// 	return
-			// }
+		// 	// send follow activity
+		// 	followActivity := c.Controllers.ActivityPub.NewFollowActivity(follow.Id, follower.Host, follower.Id, followeeUrl)
+		// 	followeeActor, err := c.Controllers.ActivityPub.ResolveRemoteActor(followActivity.Object)
+		// 	if err != nil {
+		// 		returnInternalServerError(w, c.Logger, err)
+		// 		return
+		// 	}
+		// 	respBody, err := c.Controllers.ActivityPub.SendActivity(followeeActor.Inbox, followActivity, c.Config.Host, keyId, privateKey)
+		// 	if err != nil {
+		// 		c.Logger.Error("Remote follow error", "ERROR", string(respBody))
+		// 		returnInternalServerError(w, c.Logger, err)
+		// 		return
+		// 	}
 
-			// // FIXME: This is debug
-			// log.Println(string(respBody))
-			// return
-		}
+		// 	// FIXME: This is debug
+		// 	log.Println(string(respBody))
+		// 	return
+		// }
 
 		// nostr remote follow
 		if target.Protocol == model.ProtocolNostr {
@@ -189,9 +189,47 @@ func DeleteFollow(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
+		// check target user's protocol
+		target, err := c.Controllers.User.FindById(unfollowRequestBody.TargetId)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		if target == nil {
+			c.Logger.Warn("Not Found", "Error", cerror.Wrap(cerror.ErrUserNotFound, "failed to create follow"))
+			returnError(w, http.StatusNotFound)
+			return
+		}
+
+		// delete follow
 		if err := c.Controllers.Follow.Delete(user.Id, unfollowRequestBody.TargetId); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to delete follow"))
 			returnError(w, http.StatusInternalServerError)
+			return
+		}
+
+		// nostr remote unfollow
+		if target.Protocol == model.ProtocolNostr {
+			pubKeys, err := c.Controllers.Follow.FindNostrFollowPublicKeys(user.Id)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to delete follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			privKey, err := c.Controllers.User.GetNostrPrivKey(user.Id)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to delete follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			if err := c.Controllers.Nostr.PostFollow(privKey, pubKeys); err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to delete follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			// success
+			returnResponse(w, http.StatusNoContent, ContentTypeJson, nil)
 			return
 		}
 

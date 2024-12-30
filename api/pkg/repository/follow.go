@@ -93,6 +93,9 @@ func (r *FollowRepository) FindNostrFollowPublicKeys(userId string) ([]string, e
 	if err := r.SqlHandler.Select(&publicKeys, query, userId); err != nil {
 		return nil, err
 	}
+	if len(publicKeys) == 0 {
+		return []string{}, nil
+	}
 	return publicKeys, nil
 }
 
