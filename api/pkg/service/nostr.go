@@ -2,9 +2,11 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 
+	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/util"
 )
@@ -14,25 +16,26 @@ type NostrService struct {
 }
 
 func (s *NostrService) req(id string, filter model.NostrFilter) ([]string, error) {
-	var arr []any
-	arr = append(arr, "REQ")
-	arr = append(arr, id)
-	arr = append(arr, filter)
-	reqMsg, err := json.Marshal(arr)
+	reqObj := []any{"REQ", id, filter}
+	reqMsg, err := json.Marshal(reqObj)
 	if err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to request nostr event")
 	}
 	if err := s.Ws.Send(string(reqMsg)); err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to request nostr event")
 	}
 
 	var msgs []string
 	for {
 		resMsg, err := s.Ws.Receive()
 		if err != nil {
-			return nil, err
+			return nil, cerror.Wrap(err, "failed to request nostr event")
 		}
-		if strings.HasPrefix(resMsg, `["EOSE",`) {
+		var resObj []any
+		if err := json.Unmarshal([]byte(resMsg), &resObj); err != nil {
+			return nil, cerror.Wrap(err, "failed to request nostr event")
+		}
+		if resObj[0] == "EOSE" {
 			break
 		}
 		msgs = append(msgs, resMsg)
@@ -41,15 +44,28 @@ func (s *NostrService) req(id string, filter model.NostrFilter) ([]string, error
 }
 
 func (s *NostrService) event(event model.NostrEvent) error {
-	var arr []any
-	arr = append(arr, "EVENT")
-	arr = append(arr, event)
-	eventMsg, err := json.Marshal(arr)
+	eventObj := []any{"EVENT", event}
+	eventMsg, err := json.Marshal(eventObj)
 	if err != nil {
-		return err
+		return cerror.Wrap(err, "failed to post nostr event")
 	}
 	if err := s.Ws.Send(string(eventMsg)); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to post nostr event")
+	}
+
+	resMsg, err := s.Ws.Receive()
+	if err != nil {
+		return cerror.Wrap(err, "failed to post nostr event")
+	}
+	var resObj []any
+	if err := json.Unmarshal([]byte(resMsg), &resObj); err != nil {
+		return cerror.Wrap(err, "failed to post nostr event")
+	}
+	if resObj[0] != "OK" {
+		return cerror.Wrap(cerror.ErrNostrRelayResNotOk, "failed to post nostr event")
+	}
+	if resObj[2] != true {
+		return cerror.Wrap(fmt.Errorf("%v", resObj[3]), "failed to post nostr event")
 	}
 	return nil
 }
