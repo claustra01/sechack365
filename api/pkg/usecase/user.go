@@ -17,7 +17,7 @@ type IUserRepository interface {
 	// 認証でのみ使用
 	FindWithHashedPassword(username string) (*model.User, error)
 	// Nostr投稿用
-	GetNostrKeyPair(id string) (string, string, error)
+	GetNostrPrivKey(id string) (string, error)
 }
 
 type UserUsecase struct {
@@ -72,6 +72,6 @@ func (u *UserUsecase) FindWithHashedPassword(username string) (*model.User, erro
 	return u.UserRepository.FindWithHashedPassword(username)
 }
 
-func (u *UserUsecase) GetNostrKeyPair(id string) (string, string, error) {
-	return u.UserRepository.GetNostrKeyPair(id)
+func (u *UserUsecase) GetNostrPrivKey(id string) (string, error) {
+	return u.UserRepository.GetNostrPrivKey(id)
 }

@@ -68,6 +68,6 @@ func (c *UserController) FindWithHashedPassword(username string) (*model.User, e
 	return c.UserUsecase.FindWithHashedPassword(username)
 }
 
-func (c *UserController) GetNostrKeyPair(id string) (string, string, error) {
-	return c.UserUsecase.GetNostrKeyPair(id)
+func (c *UserController) GetNostrPrivKey(id string) (string, error) {
+	return c.UserUsecase.GetNostrPrivKey(id)
 }

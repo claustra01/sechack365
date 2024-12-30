@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/claustra01/sechack365/pkg/framework"
+	"github.com/claustra01/sechack365/pkg/model"
+	"github.com/claustra01/sechack365/pkg/util"
 )
 
 func GenerateMock(c *framework.Context) http.HandlerFunc {
@@ -25,6 +27,20 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 		if err := c.Controllers.NostrRelay.Create("wss://yabu.me"); err != nil {
 			panic(err)
 		}
+
+		user, _ := c.Controllers.User.FindByLocalUsername("mock")
+		privKey, _ := c.Controllers.User.GetNostrPrivKey(user.Id)
+		_, hexPrivKey, _ := util.DecodeBech32(privKey)
+		profile := &model.NostrProfile{
+			Name:        "Mock User",
+			DisplayName: "Mock User",
+			About:       "This is mock user",
+			Picture:     "https://placehold.jp/150x150.png",
+		}
+		if err := c.Controllers.Nostr.PostUserProfile(hexPrivKey, profile); err != nil {
+			panic(err)
+		}
+
 		if _, err := w.Write([]byte("Mock Data Created")); err != nil {
 			// NOTE: err should be nil
 			panic(err)
