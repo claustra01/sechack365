@@ -4,6 +4,7 @@ import { colors } from "@/styles/colors";
 import { Avatar, Box, Button, Flex, Text, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { bindUsername } from "../../../utils/strings";
+import { FollowButton } from "./FollowButton";
 
 const followButton = (props: User) => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -18,12 +19,13 @@ const followButton = (props: User) => {
 		getApiV1FollowsFollowingId(props.id).then((response) => {
 			setIsFollowed(response.data.found);
 		});
-	}, []);
+	}, [props.id]);
 
 	if (!isAuthenticated) {
 		return null;
 	}
 
+	// TODO: edit profile
 	if (currentUser?.id === props.id) {
 		return (
 			<Button color={colors.secondaryColor} size="lg">
@@ -32,6 +34,7 @@ const followButton = (props: User) => {
 		);
 	}
 
+	// TODO: unfollow
 	if (isFollowed) {
 		return (
 			<Button color={colors.secondaryColor} size="lg">
@@ -40,11 +43,7 @@ const followButton = (props: User) => {
 		);
 	}
 
-	return (
-		<Button color={colors.secondaryColor} size="lg">
-			Follow
-		</Button>
-	);
+	return <FollowButton targetId={props.id} />;
 };
 
 export const UserProfileCard = (props: User) => {
