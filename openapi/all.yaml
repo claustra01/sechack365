@@ -27,7 +27,7 @@ paths:
   /api/v1/lookup/{username}:
     $ref: ./paths/api/v1/lookup/{username}.yaml
   
-  /api/v1/follows/follow:
+  /api/v1/follows:
     $ref: ./paths/api/v1/follows/follow.yaml
   /api/v1/follows/following/{id}:
     $ref: ./paths/api/v1/follows/following.yaml

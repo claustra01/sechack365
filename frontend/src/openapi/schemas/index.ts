@@ -75,3 +75,5 @@ export * from "./wellknownNodeinfo";
 export * from "./wellknownNodeinfoLink";
 export * from "./wellknownWebfinger";
 export * from "./wellknownWebfingerLink";
+export * from "./deleteApiV1Follows204";
+export * from "./postApiV1Follows201";
