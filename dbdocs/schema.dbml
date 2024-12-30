@@ -28,8 +28,10 @@ Table ap_user_identifiers {
 
 Table nostr_user_identifiers {
   user_id varchar(255) [pk, ref: - users.id]
-  public_key text [not null]
-  private_key text
+  public_key varchar(255) [not null]
+  private_key varchar(255)
+  npub varchar(255) [not null]
+  nsec varchar(255)
   created_at timestamp [default: "CURRENT_TIMESTAMP"]
   updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }
