@@ -128,3 +128,36 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 		returnResponse(w, http.StatusCreated, ContentTypeJson, nil)
 	}
 }
+
+func CheckIsFollowing(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		targetId := r.PathValue("id")
+		if targetId == "" {
+			c.Logger.Warn("Bad Request", "error", cerror.Wrap(cerror.ErrInvalidQueryParam, "failed to find user"))
+			returnError(w, http.StatusBadRequest)
+		}
+
+		user, err := c.CurrentUser(r)
+		if errors.Is(err, cerror.ErrUserNotFound) {
+			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to check is following"))
+			returnError(w, http.StatusUnauthorized)
+			return
+		} else if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to check is following"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+
+		isFollowing, err := c.Controllers.Follow.CheckIsFollowing(user.Id, targetId)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to check is following"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+
+		resp := openapi.Found{
+			Found: isFollowing,
+		}
+		returnResponse(w, http.StatusOK, ContentTypeJson, resp)
+	}
+}

@@ -8,6 +8,7 @@ type IFollowRepository interface {
 	FindFollowsByUserId(userId string) ([]*model.SimpleUser, error)
 	FindFollowersByUserId(userId string) ([]*model.SimpleUser, error)
 	FindNostrFollowPublicKeys(userId string) ([]string, error)
+	CheckIsFollowing(followerId, targetId string) (bool, error)
 }
 
 type FollowUsecase struct {
@@ -32,4 +33,8 @@ func (u *FollowUsecase) FindFollowersByUserId(userId string) ([]*model.SimpleUse
 
 func (u *FollowUsecase) FindNostrFollowPublicKeys(userId string) ([]string, error) {
 	return u.FollowRepository.FindNostrFollowPublicKeys(userId)
+}
+
+func (u *FollowUsecase) CheckIsFollowing(followerId, targetId string) (bool, error) {
+	return u.FollowRepository.CheckIsFollowing(followerId, targetId)
 }

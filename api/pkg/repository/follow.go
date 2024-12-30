@@ -93,3 +93,18 @@ func (r *FollowRepository) FindNostrFollowPublicKeys(userId string) ([]string, e
 	}
 	return publicKeys, nil
 }
+
+func (r *FollowRepository) CheckIsFollowing(followerId, targetId string) (bool, error) {
+	var followed bool
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM follows
+			WHERE follower_id = $1 AND target_id = $2
+		);
+	`
+	if err := r.SqlHandler.Get(&followed, query, followerId, targetId); err != nil {
+		return false, err
+	}
+	return followed, nil
+}
