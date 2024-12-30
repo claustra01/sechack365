@@ -15,13 +15,13 @@ export const UserProfile = (props: User) => {
 					{props.profile}
 				</Text>
 				<Flex direction="row" align="center" gap={24}>
-					<Anchor href="#posts">
+					<Anchor href="#posts" style={{ textDecoration: "none" }}>
 						<UserProfileCounter value={props.post_count} label="Post" />
 					</Anchor>
-					<Anchor href="#follows">
+					<Anchor href="#follows" style={{ textDecoration: "none" }}>
 						<UserProfileCounter value={props.follow_count} label="Follow" />
 					</Anchor>
-					<Anchor href="#followers">
+					<Anchor href="#followers" style={{ textDecoration: "none" }}>
 						<UserProfileCounter value={props.follower_count} label="Follower" />
 					</Anchor>
 				</Flex>
