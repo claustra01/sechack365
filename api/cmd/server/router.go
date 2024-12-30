@@ -46,10 +46,10 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 		return err
 	}
 
-	// follow := api.Group("/follows")
-	// if err := follow.Post("", handler.CreateFollow); err != nil {
-	// 	return err
-	// }
+	follow := api.Group("/follows")
+	if err := follow.Post("", handler.CreateFollow); err != nil {
+		return err
+	}
 
 	if err := api.Get("/lookup/{username}", handler.LookupUser); err != nil {
 		return err
