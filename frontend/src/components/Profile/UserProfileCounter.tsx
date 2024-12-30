@@ -12,7 +12,9 @@ export const UserProfileCounter = (props: UserProfileCounterProps) => {
 			<Text size="lg" fw={500} c={colors.black}>
 				{props.value}
 			</Text>
-			<Text size="lg" c={colors.black}>{props.label}</Text>
+			<Text size="lg" c={colors.black}>
+				{props.label}
+			</Text>
 		</Flex>
 	);
 };
