@@ -6,6 +6,7 @@ type INostrService interface {
 	GetUserProfile(id string) (*model.NostrProfile, error)
 	PostUserProfile(privKey string, profile *model.NostrProfile) error
 	PostText(privKey string, note string) error
+	PostFollow(privKey string, pubKeys []string) error
 }
 
 type NostrUsecase struct {
@@ -22,4 +23,8 @@ func (u *NostrUsecase) PostUserProfile(privKey string, profile *model.NostrProfi
 
 func (u *NostrUsecase) PostText(privKey string, note string) error {
 	return u.NostrService.PostText(privKey, note)
+}
+
+func (u *NostrUsecase) PostFollow(privKey string, pubKeys []string) error {
+	return u.NostrService.PostFollow(privKey, pubKeys)
 }

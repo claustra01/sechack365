@@ -127,3 +127,19 @@ func (s *NostrService) PostText(privKey string, note string) error {
 	}
 	return nil
 }
+
+func (s *NostrService) PostFollow(privKey string, pubKeys []string) error {
+	followList := []model.NostrEventTag{}
+	for _, pubKey := range pubKeys {
+		// NOTE: "p", pubKey, mainRelay, petName (Ref: NIP-02)
+		followList = append(followList, model.NostrEventTag{"p", pubKey, "", ""})
+	}
+	event, err := util.NostrSign(privKey, time.Now(), 3, followList, "")
+	if err != nil {
+		return err
+	}
+	if err := s.event(*event); err != nil {
+		return err
+	}
+	return nil
+}
