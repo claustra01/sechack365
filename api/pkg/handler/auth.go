@@ -67,19 +67,13 @@ func Register(c *framework.Context) http.HandlerFunc {
 			returnError(w, http.StatusInternalServerError)
 			return
 		}
-		_, hexPrivKey, err := util.DecodeBech32(privKey)
-		if err != nil {
-			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
-			returnError(w, http.StatusInternalServerError)
-			return
-		}
 		profile := &model.NostrProfile{
 			Name:        user.Username,
 			DisplayName: user.DisplayName,
 			About:       user.Profile,
 			Picture:     user.Icon,
 		}
-		if err := c.Controllers.Nostr.PostUserProfile(hexPrivKey, profile); err != nil {
+		if err := c.Controllers.Nostr.PostUserProfile(privKey, profile); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
 			returnError(w, http.StatusInternalServerError)
 			return

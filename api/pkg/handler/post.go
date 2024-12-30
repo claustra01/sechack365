@@ -9,7 +9,6 @@ import (
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
-	"github.com/claustra01/sechack365/pkg/util"
 )
 
 // NOTE: timeline limit per request
@@ -75,13 +74,7 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 			returnError(w, http.StatusInternalServerError)
 			return
 		}
-		_, hexPrivKey, err := util.DecodeBech32(privKey)
-		if err != nil {
-			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
-			returnError(w, http.StatusInternalServerError)
-			return
-		}
-		if err := c.Controllers.Nostr.PostText(hexPrivKey, postRequsetBody.Content); err != nil {
+		if err := c.Controllers.Nostr.PostText(privKey, postRequsetBody.Content); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
 			returnError(w, http.StatusInternalServerError)
 			return
