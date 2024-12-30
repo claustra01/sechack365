@@ -116,3 +116,14 @@ func (s *NostrService) PostUserProfile(privKey string, profile *model.NostrProfi
 	}
 	return nil
 }
+
+func (s *NostrService) PostText(privKey string, note string) error {
+	event, err := util.NostrSign(privKey, time.Now(), 1, []model.NostrEventTag{}, note)
+	if err != nil {
+		return err
+	}
+	if err := s.event(*event); err != nil {
+		return err
+	}
+	return nil
+}
