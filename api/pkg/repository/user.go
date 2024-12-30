@@ -41,7 +41,7 @@ func (r *UserRepository) CreateLocalUser(username, password, displayName, profil
 	}
 
 	// create nostr_user_identifier record
-	pubKey, prvKey, err = util.GenerateNostrKeyPair()
+	prvKey, pubKey, err = util.GenerateNostrKeyPair()
 	if err != nil {
 		return err
 	}
