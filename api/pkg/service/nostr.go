@@ -106,8 +106,8 @@ func (s *NostrService) GetUserProfile(pubkey string) (*model.NostrProfile, error
 	return &profile, nil
 }
 
-func (s *NostrService) PostUserProfile(privKey string, pubKey string, profile *model.NostrProfile) error {
-	event, err := util.NostrSign(privKey, pubKey, time.Now(), 0, []model.NostrEventTag{}, profile)
+func (s *NostrService) PostUserProfile(privKey string, profile *model.NostrProfile) error {
+	event, err := util.NostrSign(privKey, time.Now(), 0, []model.NostrEventTag{}, profile)
 	if err != nil {
 		return err
 	}

@@ -74,7 +74,7 @@ func NostrVerify(pubKey string, digest string, sig string) (bool, error) {
 	return sigObj.Verify(hash, pubKeyObj), nil
 }
 
-func NostrSign(privKey string, pubKey string, createdAt time.Time, kind int, tags []model.NostrEventTag, content any) (*model.NostrEvent, error) {
+func NostrSign(privKey string, createdAt time.Time, kind int, tags []model.NostrEventTag, content any) (*model.NostrEvent, error) {
 	// serialize content
 	rawContent, err := json.Marshal(content)
 	if err != nil {
@@ -86,7 +86,8 @@ func NostrSign(privKey string, pubKey string, createdAt time.Time, kind int, tag
 	if err != nil {
 		return nil, err
 	}
-	privKeyObj, _ := btcec.PrivKeyFromBytes(rawPrivKey)
+	privKeyObj, pubKeyObj := btcec.PrivKeyFromBytes(rawPrivKey)
+	pubKey := hex.EncodeToString(pubKeyObj.SerializeCompressed()[1:])
 
 	// calculate digest
 	obj := []any{

@@ -24,6 +24,6 @@ func (c *NostrController) GetUserProfile(id string) (*model.NostrProfile, error)
 	return c.NostrUsecase.GetUserProfile(id)
 }
 
-func (c *NostrController) PostUserProfile(privKey string, pubKey string, profile *model.NostrProfile) error {
-	return c.NostrUsecase.PostUserProfile(privKey, pubKey, profile)
+func (c *NostrController) PostUserProfile(privKey string, profile *model.NostrProfile) error {
+	return c.NostrUsecase.PostUserProfile(privKey, profile)
 }

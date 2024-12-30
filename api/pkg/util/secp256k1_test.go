@@ -8,9 +8,9 @@ import (
 )
 
 func TestVerify(t *testing.T) {
-	id := "2eb85ddf6ceb5dece487a250ed98993fba5e94f69a88d3438e2afb42a8c9d729"
-	pubKey := "48b8d2a8f1fc8784e02919a194cc9d2f498a56b5a2aa59476ddf14d76ee536cc"
-	sig := "63d45c3e09d8026e357951bd86bf1dfe5acfa61f704f5bc032bb5622a59a7539ef234383bbbda2b06275e51fc466d1a690890cb8c8a1923fbd8e472d12002254"
+	id := "e60d885074b910cc93d63be506d95144661ef83b4e45cc00cf6d217ca41eb95e"
+	pubKey := "f81611363554b64306467234d7396ec88455707633f54738f6c4683535098cd3"
+	sig := "6b83ad045de1aac986566e34f63efe53104f9892c001869c3e720515ad6cc589dfd22cf4a04e93223135de815e545d4f8446848aa323fcaf1060e32b72dd8aa8"
 	ok, err := NostrVerify(pubKey, id, sig)
 	if err != nil {
 		t.Error(err)
@@ -33,7 +33,7 @@ func TestSign(t *testing.T) {
 	content := model.NostrProfile{
 		Name: "test",
 	}
-	event, err := NostrSign(privKey, pubKey, createdAt, kind, tags, content)
+	event, err := NostrSign(privKey, createdAt, kind, tags, content)
 	if err != nil {
 		t.Error(err)
 	}
