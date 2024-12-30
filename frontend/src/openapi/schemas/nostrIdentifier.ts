@@ -6,5 +6,5 @@
  */
 
 export interface NostrIdentifier {
-	public_key: string;
+	npub: string;
 }
