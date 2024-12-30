@@ -1,4 +1,4 @@
-import { postApiV1FollowsFollow } from "@/openapi/api";
+import { postApiV1Follows } from "@/openapi/api";
 import { colors } from "@/styles/colors";
 import { Button } from "@mantine/core";
 
@@ -7,7 +7,7 @@ export const FollowButton = (props: { targetId: string }) => {
 		const newFollow = {
 			target_id: props.targetId,
 		};
-		postApiV1FollowsFollow(newFollow)
+		postApiV1Follows(newFollow)
 			.then(() => {
 				window.location.reload();
 			})

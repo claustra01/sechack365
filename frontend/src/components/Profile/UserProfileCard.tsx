@@ -5,6 +5,7 @@ import { Avatar, Box, Button, Flex, Text, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { bindUsername } from "../../../utils/strings";
 import { FollowButton } from "./FollowButton";
+import { UnfollowButton } from "./UnfollowButton";
 
 const followButton = (props: User) => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -34,13 +35,8 @@ const followButton = (props: User) => {
 		);
 	}
 
-	// TODO: unfollow
 	if (isFollowed) {
-		return (
-			<Button color={colors.secondaryColor} size="lg">
-				Unfollow
-			</Button>
-		);
+		return <UnfollowButton targetId={props.id} />;
 	}
 
 	return <FollowButton targetId={props.id} />;
