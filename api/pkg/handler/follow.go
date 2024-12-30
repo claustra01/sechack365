@@ -101,7 +101,7 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 		}
 
 		// nostr remote follow
-		if target.Protocol == model.ProtocolActivityPub {
+		if target.Protocol == model.ProtocolNostr {
 			pubKeys, err := c.Controllers.Follow.FindNostrFollowPublicKeys(user.Id)
 			if err != nil {
 				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
