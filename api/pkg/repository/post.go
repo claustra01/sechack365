@@ -32,7 +32,7 @@ func (r *PostRepository) FindById(id string) (*model.PostWithUser, error) {
 		CASE
 			WHEN users.protocol = 'local' THEN '@' || users.username
 			WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
-			WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
+			WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.npub
 		END AS "user.username",
 		users.protocol AS "user.protocol",
 		users.display_name AS "user.display_name",
@@ -61,7 +61,7 @@ func (r *PostRepository) FindTimeline(offset int, limit int) ([]*model.PostWithU
 		CASE
 			WHEN users.protocol = 'local' THEN '@' || users.username
 			WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
-			WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
+			WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.npub
 		END AS "user.username",
 		users.protocol AS "user.protocol",
 		users.display_name AS "user.display_name",
@@ -86,7 +86,7 @@ func (r *PostRepository) FindUserTimeline(userId string, offset int, limit int) 
 		CASE
 			WHEN users.protocol = 'local' THEN '@' || users.username
 			WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
-			WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
+			WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.npub
 		END AS "user.username",
 		users.protocol AS "user.protocol",
 		users.display_name AS "user.display_name",

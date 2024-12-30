@@ -40,7 +40,7 @@ func (r *FollowRepository) FindFollowsByUserId(userId string) ([]*model.SimpleUs
 			CASE
 				WHEN users.protocol = 'local' THEN '@' || users.username
 				WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
-				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
+				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.npub
 			END AS username,
 			users.protocol,
 			users.display_name,
@@ -65,7 +65,7 @@ func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.Simple
 			CASE
 				WHEN users.protocol = 'local' THEN '@' || users.username
 				WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
-				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
+				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.npub
 			END AS username,
 			users.protocol,
 			users.display_name,
