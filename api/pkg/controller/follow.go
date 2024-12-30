@@ -35,3 +35,7 @@ func (c *FollowController) FindFollowsByUserId(userId string) ([]*model.SimpleUs
 func (c *FollowController) FindFollowersByUserId(userId string) ([]*model.SimpleUser, error) {
 	return c.FollowUsecase.FindFollowersByUserId(userId)
 }
+
+func (c *FollowController) FindNostrFollowPublicKeys(userId string) ([]string, error) {
+	return c.FollowUsecase.FindNostrFollowPublicKeys(userId)
+}

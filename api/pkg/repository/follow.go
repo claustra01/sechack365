@@ -79,3 +79,17 @@ func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.Simple
 	}
 	return users, nil
 }
+
+func (r *FollowRepository) FindNostrFollowPublicKeys(userId string) ([]string, error) {
+	var publicKeys []string
+	query := `
+		SELECT nostr_user_identifiers.public_key
+		FROM nostr_user_identifiers
+		JOIN follows ON nostr_user_identifiers.user_id = follows.target_id
+		WHERE follows.follower_id = $1;
+	`
+	if err := r.SqlHandler.Select(&publicKeys, query, userId); err != nil {
+		return nil, err
+	}
+	return publicKeys, nil
+}
