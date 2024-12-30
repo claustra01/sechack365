@@ -45,6 +45,7 @@ Table follows {
 
 Table posts {
   id varchar(255) [pk]
+  protocol protocol [not null]
   user_id varchar(255) [ref: > users.id]
   content text [not null]
   created_at timestamp [default: "CURRENT_TIMESTAMP"]

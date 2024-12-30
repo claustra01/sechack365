@@ -46,6 +46,7 @@ CREATE TABLE "follows" (
 
 CREATE TABLE "posts" (
   "id" varchar(255) PRIMARY KEY,
+  "protocol" protocol NOT NULL,
   "user_id" varchar(255),
   "content" text NOT NULL,
   "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
