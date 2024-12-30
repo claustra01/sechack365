@@ -15,11 +15,10 @@ type PostRepository struct {
 func (r *PostRepository) Create(userId, content string) error {
 	uuid := util.NewUuid()
 	query := `
-		INSERT INTO posts (id, user_id, content)
-		VALUES ($1, $2, $3)
-		RETURNING *;
+		INSERT INTO posts (id, protocol, user_id, content)
+		VALUES ($1, $2, $3, $4);
 	`
-	if _, err := r.SqlHandler.Exec(query, uuid, userId, content); err != nil {
+	if _, err := r.SqlHandler.Exec(query, uuid, model.ProtocolLocal, userId, content); err != nil {
 		return err
 	}
 	return nil

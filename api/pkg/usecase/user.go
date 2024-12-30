@@ -10,7 +10,7 @@ type IUserRepository interface {
 	FindById(id string) (*model.UserWithIdentifiers, error)
 	FindByLocalUsername(username string) (*model.UserWithIdentifiers, error)
 	FindByApUsername(username string, host string) (*model.UserWithIdentifiers, error)
-	FindByNostrPublicKey(publicKey string) (*model.UserWithIdentifiers, error)
+	FindByNostrNpub(publicKey string) (*model.UserWithIdentifiers, error)
 	UpdateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) error
 	UpdateRemoteNostrUser(user *model.User, identifier *model.NostrUserIdentifier) error
 	DeleteById(id string) error
@@ -52,8 +52,8 @@ func (u *UserUsecase) FindByApUsername(username string, host string) (*model.Use
 	return u.UserRepository.FindByApUsername(username, host)
 }
 
-func (u *UserUsecase) FindByNostrPublicKey(publicKey string) (*model.UserWithIdentifiers, error) {
-	return u.UserRepository.FindByNostrPublicKey(publicKey)
+func (u *UserUsecase) FindByNostrNpub(publicKey string) (*model.UserWithIdentifiers, error) {
+	return u.UserRepository.FindByNostrNpub(publicKey)
 }
 
 func (u *UserUsecase) UpdateRemoteApUser(user *model.User, identifier *model.ApUserIdentifier) error {
