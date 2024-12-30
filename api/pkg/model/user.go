@@ -56,6 +56,7 @@ type Identifiers struct {
 }
 
 type SimpleUser struct {
+	Id          string `db:"id"`
 	Username    string `db:"username"`
 	Protocol    string `db:"protocol"`
 	DisplayName string `db:"display_name"`

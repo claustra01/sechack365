@@ -36,10 +36,11 @@ func (r *FollowRepository) FindFollowsByUserId(userId string) ([]*model.SimpleUs
 	var users []*model.SimpleUser
 	query := `
 		SELECT
+			users.id,
 			CASE
 				WHEN users.protocol = 'local' THEN '@' || users.username
 				WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
-				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
+				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.npub
 			END AS username,
 			users.protocol,
 			users.display_name,
@@ -60,16 +61,17 @@ func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.Simple
 	var users []*model.SimpleUser
 	query := `
 		SELECT
+			users.id,
 			CASE
 				WHEN users.protocol = 'local' THEN '@' || users.username
 				WHEN users.protocol = 'activitypub' THEN '@' || ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
-				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.public_key
+				WHEN users.protocol = 'nostr' THEN nostr_user_identifiers.npub
 			END AS username,
 			users.protocol,
 			users.display_name,
 			users.icon
 		FROM users
-		JOIN follows ON users.id = follows.target_id
+		JOIN follows ON users.id = follows.follower_id
 		LEFT JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
 		WHERE follows.target_id = $1;
@@ -78,4 +80,47 @@ func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.Simple
 		return nil, err
 	}
 	return users, nil
+}
+
+func (r *FollowRepository) FindNostrFollowPublicKeys(userId string) ([]string, error) {
+	var publicKeys []string
+	query := `
+		SELECT nostr_user_identifiers.public_key
+		FROM nostr_user_identifiers
+		JOIN follows ON nostr_user_identifiers.user_id = follows.target_id
+		WHERE follows.follower_id = $1;
+	`
+	if err := r.SqlHandler.Select(&publicKeys, query, userId); err != nil {
+		return nil, err
+	}
+	if len(publicKeys) == 0 {
+		return []string{}, nil
+	}
+	return publicKeys, nil
+}
+
+func (r *FollowRepository) CheckIsFollowing(followerId, targetId string) (bool, error) {
+	var followed bool
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM follows
+			WHERE follower_id = $1 AND target_id = $2
+		);
+	`
+	if err := r.SqlHandler.Get(&followed, query, followerId, targetId); err != nil {
+		return false, err
+	}
+	return followed, nil
+}
+
+func (r *FollowRepository) Delete(followerId, targetId string) error {
+	query := `
+		DELETE FROM follows
+		WHERE follower_id = $1 AND target_id = $2;
+	`
+	if _, err := r.SqlHandler.Exec(query, followerId, targetId); err != nil {
+		return err
+	}
+	return nil
 }

@@ -31,3 +31,7 @@ func (c *NostrController) PostUserProfile(privKey string, profile *model.NostrPr
 func (c *NostrController) PostText(privKey string, note string) error {
 	return c.NostrUsecase.PostText(privKey, note)
 }
+
+func (c *NostrController) PostFollow(privKey string, pubKeys []string) error {
+	return c.NostrUsecase.PostFollow(privKey, pubKeys)
+}

@@ -1,5 +1,5 @@
 import type { User } from "@/openapi/schemas";
-import { Flex, Text } from "@mantine/core";
+import { Anchor, Flex, Text } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
 import { Header } from "../Header/Header";
 import { UserProfileCard } from "./UserProfileCard";
@@ -15,9 +15,15 @@ export const UserProfile = (props: User) => {
 					{props.profile}
 				</Text>
 				<Flex direction="row" align="center" gap={24}>
-					<UserProfileCounter value={props.post_count} label="Post" />
-					<UserProfileCounter value={props.follow_count} label="Follow" />
-					<UserProfileCounter value={props.follower_count} label="Follower" />
+					<Anchor href="#posts" style={{ textDecoration: "none" }}>
+						<UserProfileCounter value={props.post_count} label="Post" />
+					</Anchor>
+					<Anchor href="#follows" style={{ textDecoration: "none" }}>
+						<UserProfileCounter value={props.follow_count} label="Follow" />
+					</Anchor>
+					<Anchor href="#followers" style={{ textDecoration: "none" }}>
+						<UserProfileCounter value={props.follower_count} label="Follower" />
+					</Anchor>
 				</Flex>
 			</Flex>
 		</>
