@@ -108,3 +108,14 @@ func (r *FollowRepository) CheckIsFollowing(followerId, targetId string) (bool, 
 	}
 	return followed, nil
 }
+
+func (r *FollowRepository) Delete(followerId, targetId string) error {
+	query := `
+		DELETE FROM follows
+		WHERE follower_id = $1 AND target_id = $2;
+	`
+	if _, err := r.SqlHandler.Exec(query, followerId, targetId); err != nil {
+		return err
+	}
+	return nil
+}

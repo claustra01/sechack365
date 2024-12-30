@@ -161,3 +161,40 @@ func CheckIsFollowing(c *framework.Context) http.HandlerFunc {
 		returnResponse(w, http.StatusOK, ContentTypeJson, resp)
 	}
 }
+
+func DeleteFollow(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// parse request body
+		var unfollowRequestBody openapi.Newfollow
+		body := make([]byte, r.ContentLength)
+		if _, err := r.Body.Read(body); err != nil && err.Error() != "EOF" {
+			// NOTE: err should be nil
+			panic(err)
+		}
+		err := json.Unmarshal(body, &unfollowRequestBody)
+		if err != nil {
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(err, "failed to delete follow"))
+			returnError(w, http.StatusBadRequest)
+			return
+		}
+
+		user, err := c.CurrentUser(r)
+		if errors.Is(err, cerror.ErrUserNotFound) {
+			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to delete follow"))
+			returnError(w, http.StatusUnauthorized)
+			return
+		} else if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to delete follow"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+
+		if err := c.Controllers.Follow.Delete(user.Id, unfollowRequestBody.TargetId); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to delete follow"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+
+		returnResponse(w, http.StatusNoContent, ContentTypeJson, nil)
+	}
+}

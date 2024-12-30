@@ -43,3 +43,7 @@ func (c *FollowController) FindNostrFollowPublicKeys(userId string) ([]string, e
 func (c *FollowController) CheckIsFollowing(followerId, targetId string) (bool, error) {
 	return c.FollowUsecase.CheckIsFollowing(followerId, targetId)
 }
+
+func (c *FollowController) Delete(followerId, targetId string) error {
+	return c.FollowUsecase.Delete(followerId, targetId)
+}
