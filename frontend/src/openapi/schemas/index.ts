@@ -73,3 +73,4 @@ export * from "./wellknownNodeinfo";
 export * from "./wellknownNodeinfoLink";
 export * from "./wellknownWebfinger";
 export * from "./wellknownWebfingerLink";
+export * from "./getApiV1FollowsFollowingId200";

@@ -1,0 +1,37 @@
+get:
+  tags:
+    - follows
+  description: Check if User is Following
+  parameters:
+    - $ref: '../../../../components/params/follows.yaml#/id'
+  responses:
+    '200':
+      description: User is Following
+      content:
+        application/json:
+          schema:
+            type: object
+    '400':
+      description: Invalid Path Parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-400'
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-401'
+    '404':
+      description: User Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-404'
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-500'

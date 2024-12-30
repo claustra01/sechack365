@@ -28,6 +28,7 @@ import type {
 	GetApiV1DevReset204,
 	GetApiV1DevReset404,
 	GetApiV1DevReset500,
+	GetApiV1FollowsFollowingId200,
 	GetApiV1TimelineParams,
 	GetApiV1UsersIdPostsParams,
 	GetWellKnownWebfingerParams,
@@ -663,6 +664,58 @@ export const useDeleteApiV1FollowsFollow = <
 	const swrFn = getDeleteApiV1FollowsFollowMutationFetcher(axiosOptions);
 
 	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Check if User is Following
+ */
+export const getApiV1FollowsFollowingId = (
+	id: string,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<GetApiV1FollowsFollowingId200>> => {
+	return axios.get(`/api/v1/follows/following/${id}`, options);
+};
+
+export const getGetApiV1FollowsFollowingIdKey = (id: string) =>
+	[`/api/v1/follows/following/${id}`] as const;
+
+export type GetApiV1FollowsFollowingIdQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getApiV1FollowsFollowingId>>
+>;
+export type GetApiV1FollowsFollowingIdQueryError = AxiosError<
+	Error400 | Error401 | Error404 | Error500
+>;
+
+export const useGetApiV1FollowsFollowingId = <
+	TError = AxiosError<Error400 | Error401 | Error404 | Error500>,
+>(
+	id: string,
+	options?: {
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1FollowsFollowingId>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
+		axios?: AxiosRequestConfig;
+	},
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1FollowsFollowingIdKey(id) : null));
+	const swrFn = () => getApiV1FollowsFollowingId(id, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
 
 	return {
 		swrKey,

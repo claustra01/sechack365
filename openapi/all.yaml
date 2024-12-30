@@ -29,6 +29,8 @@ paths:
   
   /api/v1/follows/follow:
     $ref: ./paths/api/v1/follows/follow.yaml
+  /api/v1/follows/following/{id}:
+    $ref: ./paths/api/v1/follows/following.yaml
 
   /api/v1/posts:
     $ref: ./paths/api/v1/posts/new.yaml
