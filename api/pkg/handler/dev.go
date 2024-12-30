@@ -72,6 +72,15 @@ func ResetMock(c *framework.Context) http.HandlerFunc {
 			}
 		}
 		for _, user := range users {
+			follows, err := c.Controllers.Follow.FindFollowersByUserId(user.Id)
+			if err != nil {
+				panic(err)
+			}
+			for _, follow := range follows {
+				if err := c.Controllers.Follow.Delete(user.Id, follow.Id); err != nil {
+					panic(err)
+				}
+			}
 			if err := c.Controllers.User.DeleteById(user.Id); err != nil {
 				panic(err)
 			}
