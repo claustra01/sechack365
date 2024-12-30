@@ -27,3 +27,11 @@ newfollow:
       type: string
   required:
     - target_id
+
+found:
+  type: object
+  properties:
+    found:
+      type: boolean
+  required:
+    - found

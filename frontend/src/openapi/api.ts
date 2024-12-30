@@ -22,13 +22,13 @@ import type {
 	Error404,
 	Error409,
 	Error500,
+	Found,
 	GetApiV1DevMock201,
 	GetApiV1DevMock404,
 	GetApiV1DevMock500,
 	GetApiV1DevReset204,
 	GetApiV1DevReset404,
 	GetApiV1DevReset500,
-	GetApiV1FollowsFollowingId200,
 	GetApiV1TimelineParams,
 	GetApiV1UsersIdPostsParams,
 	GetWellKnownWebfingerParams,
@@ -677,7 +677,7 @@ export const useDeleteApiV1FollowsFollow = <
 export const getApiV1FollowsFollowingId = (
 	id: string,
 	options?: AxiosRequestConfig,
-): Promise<AxiosResponse<GetApiV1FollowsFollowingId200>> => {
+): Promise<AxiosResponse<Found>> => {
 	return axios.get(`/api/v1/follows/following/${id}`, options);
 };
 
