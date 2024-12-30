@@ -7,7 +7,7 @@ import { bindUsername } from "../../../utils/strings";
 import { FollowButton } from "./FollowButton";
 import { UnfollowButton } from "./UnfollowButton";
 
-const followButton = (props: User) => {
+export const UserProfileCard = (props: User) => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 	const [isFollowed, setIsFollowed] = useState<boolean>(false);
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -22,32 +22,21 @@ const followButton = (props: User) => {
 		});
 	}, [props.id]);
 
-	if (!isAuthenticated) {
-		return null;
-	}
-
-	// TODO: edit profile
-	if (currentUser?.id === props.id) {
-		return (
-			<Button color={colors.secondaryColor} size="lg">
-				Edit
-			</Button>
-		);
-	}
-
-	if (isFollowed) {
-		return <UnfollowButton targetId={props.id} />;
-	}
-
-	return <FollowButton targetId={props.id} />;
-};
-
-export const UserProfileCard = (props: User) => {
 	return (
 		<Flex direction="column" gap={12}>
 			<Flex direction="row" align="center" justify="space-between">
 				<Avatar src={props.icon} size={80} />
-				{followButton(props)}
+				{isAuthenticated &&
+					(currentUser?.id === props.id ? (
+						// TODO: edit profile
+						<Button color={colors.secondaryColor} size="lg">
+							Edit
+						</Button>
+					) : isFollowed ? (
+						<UnfollowButton targetId={props.id} />
+					) : (
+						<FollowButton targetId={props.id} />
+					))}
 			</Flex>
 			<Flex direction="column" gap={4}>
 				<Title size="h3" fw={500}>
