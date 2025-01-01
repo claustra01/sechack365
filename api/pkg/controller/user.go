@@ -68,6 +68,10 @@ func (c *UserController) FindWithHashedPassword(username string) (*model.User, e
 	return c.UserUsecase.FindWithHashedPassword(username)
 }
 
+func (c *UserController) GetAllFollowingNostrPubKeys() ([]string, error) {
+	return c.UserUsecase.GetAllFollowingNostrPubKeys()
+}
+
 func (c *UserController) GetNostrPrivKey(id string) (string, error) {
 	return c.UserUsecase.GetNostrPrivKey(id)
 }
