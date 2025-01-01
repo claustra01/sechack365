@@ -26,7 +26,7 @@ func UpdateNostrRemotePosts(c *framework.Context) {
 			}
 			if latest == nil {
 				latest = &model.Post{
-					CreatedAt: time.Now().Add(-30 * time.Minute),
+					CreatedAt: time.Now().Add(-5 * time.Minute),
 				}
 			}
 
