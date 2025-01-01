@@ -10,6 +10,9 @@ type IPostRepository interface {
 	FindTimeline(offset int, limit int) ([]*model.PostWithUser, error)
 	FindUserTimeline(userId string, offset int, limit int) ([]*model.PostWithUser, error)
 	DeleteById(id string) error
+	// Nostr用
+	GetLatestNostrRemotePost() (*model.Post, error)
+	InsertNostrRemotePosts(events []*model.NostrEvent) error
 }
 
 type PostUsecase struct {
@@ -34,4 +37,12 @@ func (u *PostUsecase) FindUserTimeline(userId string, offset int, limit int) ([]
 
 func (u *PostUsecase) DeleteById(id string) error {
 	return u.PostRepository.DeleteById(id)
+}
+
+func (u *PostUsecase) GetLatestNostrRemotePost() (*model.Post, error) {
+	return u.PostRepository.GetLatestNostrRemotePost()
+}
+
+func (u *PostUsecase) InsertNostrRemotePosts(events []*model.NostrEvent) error {
+	return u.PostRepository.InsertNostrRemotePosts(events)
 }
