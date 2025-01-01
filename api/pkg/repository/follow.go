@@ -1,6 +1,10 @@
 package repository
 
 import (
+	"database/sql"
+	"errors"
+
+	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/util"
 )
@@ -16,7 +20,7 @@ func (r *FollowRepository) Create(followerId, targetId string) error {
 		VALUES ($1, $2, $3);
 	`
 	if _, err := r.SqlHandler.Exec(query, uuid, followerId, targetId); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create follow")
 	}
 	return nil
 }
@@ -27,7 +31,7 @@ func (r *FollowRepository) UpdateAcceptFollow(followerId, targetId string) error
 		WHERE follower_id = $1 AND target_id = $2;
 	`
 	if _, err := r.SqlHandler.Exec(query, followerId, targetId); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to accept follow")
 	}
 	return nil
 }
@@ -52,7 +56,7 @@ func (r *FollowRepository) FindFollowsByUserId(userId string) ([]*model.SimpleUs
 		WHERE follows.follower_id = $1;
 	`
 	if err := r.SqlHandler.Select(&users, query, userId); err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get follows")
 	}
 	return users, nil
 }
@@ -77,7 +81,7 @@ func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.Simple
 		WHERE follows.target_id = $1;
 	`
 	if err := r.SqlHandler.Select(&users, query, userId); err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get followers")
 	}
 	return users, nil
 }
@@ -91,7 +95,7 @@ func (r *FollowRepository) FindNostrFollowPublicKeys(userId string) ([]string, e
 		WHERE follows.follower_id = $1;
 	`
 	if err := r.SqlHandler.Select(&publicKeys, query, userId); err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get follows by public keys")
 	}
 	if len(publicKeys) == 0 {
 		return []string{}, nil
@@ -109,7 +113,7 @@ func (r *FollowRepository) CheckIsFollowing(followerId, targetId string) (bool, 
 		);
 	`
 	if err := r.SqlHandler.Get(&followed, query, followerId, targetId); err != nil {
-		return false, err
+		return false, cerror.Wrap(err, "failed to get if following")
 	}
 	return followed, nil
 }
@@ -119,8 +123,12 @@ func (r *FollowRepository) Delete(followerId, targetId string) error {
 		DELETE FROM follows
 		WHERE follower_id = $1 AND target_id = $2;
 	`
-	if _, err := r.SqlHandler.Exec(query, followerId, targetId); err != nil {
-		return err
+	_, err := r.SqlHandler.Exec(query, followerId, targetId)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil
+	}
+	if err != nil {
+		return cerror.Wrap(err, "failed to delete follow")
 	}
 	return nil
 }
