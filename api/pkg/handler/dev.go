@@ -35,7 +35,7 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 			About:       "This is mock user",
 			Picture:     "https://placehold.jp/150x150.png",
 		}
-		if err := c.Controllers.Nostr.PostUserProfile(privKey, profile); err != nil {
+		if err := c.Controllers.Nostr.PublishProfile(privKey, profile); err != nil {
 			panic(err)
 		}
 

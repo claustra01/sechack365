@@ -114,7 +114,7 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 				returnError(w, http.StatusInternalServerError)
 				return
 			}
-			if err := c.Controllers.Nostr.PostFollow(privKey, pubKeys); err != nil {
+			if err := c.Controllers.Nostr.PublishFollow(privKey, pubKeys); err != nil {
 				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
 				returnError(w, http.StatusInternalServerError)
 				return
@@ -223,7 +223,7 @@ func DeleteFollow(c *framework.Context) http.HandlerFunc {
 				returnError(w, http.StatusInternalServerError)
 				return
 			}
-			if err := c.Controllers.Nostr.PostFollow(privKey, pubKeys); err != nil {
+			if err := c.Controllers.Nostr.PublishFollow(privKey, pubKeys); err != nil {
 				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to delete follow"))
 				returnError(w, http.StatusInternalServerError)
 				return
