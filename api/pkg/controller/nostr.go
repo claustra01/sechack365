@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"time"
+
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/service"
 	"github.com/claustra01/sechack365/pkg/usecase"
@@ -20,18 +22,22 @@ func NewNostrController(ws model.IWsHandler) *NostrController {
 	}
 }
 
-func (c *NostrController) GetUserProfile(id string) (*model.NostrProfile, error) {
-	return c.NostrUsecase.GetUserProfile(id)
+func (c *NostrController) GetRemoteProfile(id string) (*model.NostrProfile, error) {
+	return c.NostrUsecase.GetRemoteProfile(id)
 }
 
-func (c *NostrController) PostUserProfile(privKey string, profile *model.NostrProfile) error {
-	return c.NostrUsecase.PostUserProfile(privKey, profile)
+func (c *NostrController) GetRemotePosts(pubKeys []string, since time.Time) ([]*model.NostrEvent, error) {
+	return c.NostrUsecase.GetRemotePosts(pubKeys, since)
 }
 
-func (c *NostrController) PostText(privKey string, note string) error {
-	return c.NostrUsecase.PostText(privKey, note)
+func (c *NostrController) PublishProfile(privKey string, profile *model.NostrProfile) error {
+	return c.NostrUsecase.PublishProfile(privKey, profile)
 }
 
-func (c *NostrController) PostFollow(privKey string, pubKeys []string) error {
-	return c.NostrUsecase.PostFollow(privKey, pubKeys)
+func (c *NostrController) PublishPost(privKey string, note string) error {
+	return c.NostrUsecase.PublishPost(privKey, note)
+}
+
+func (c *NostrController) PublishFollow(privKey string, pubKeys []string) error {
+	return c.NostrUsecase.PublishFollow(privKey, pubKeys)
 }

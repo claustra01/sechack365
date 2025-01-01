@@ -70,7 +70,7 @@ func (s *NostrService) sendEvent(event model.NostrEvent) error {
 	return nil
 }
 
-func (s *NostrService) GetUserProfile(pubkey string) (*model.NostrProfile, error) {
+func (s *NostrService) GetRemoteProfile(pubkey string) (*model.NostrProfile, error) {
 	id := util.NewUuid()
 	filter := model.NostrFilter{
 		Kinds:   []int{0},
@@ -106,7 +106,32 @@ func (s *NostrService) GetUserProfile(pubkey string) (*model.NostrProfile, error
 	return &profile, nil
 }
 
-func (s *NostrService) PostUserProfile(privKey string, profile *model.NostrProfile) error {
+func (s *NostrService) GetRemotePosts(pubKeys []string, since time.Time) ([]*model.NostrEvent, error) {
+	id := util.NewUuid()
+	filter := model.NostrFilter{
+		Kinds:   []int{1},
+		Authors: pubKeys,
+		// TODO: Limit should be configurable
+		Limit: 100,
+		Since: since.Unix(),
+		Until: time.Now().Unix(),
+	}
+	msgs, err := s.sendReq(id.String(), filter)
+	if err != nil {
+		return []*model.NostrEvent{}, err
+	}
+	var events []*model.NostrEvent
+	for _, msg := range msgs {
+		var event model.NostrEvent
+		if err := json.Unmarshal([]byte(msg), &event); err != nil {
+			return nil, err
+		}
+		events = append(events, &event)
+	}
+	return events, nil
+}
+
+func (s *NostrService) PublishProfile(privKey string, profile *model.NostrProfile) error {
 	event, err := util.NostrSign(privKey, time.Now(), 0, []model.NostrEventTag{}, profile)
 	if err != nil {
 		return err
@@ -117,7 +142,7 @@ func (s *NostrService) PostUserProfile(privKey string, profile *model.NostrProfi
 	return nil
 }
 
-func (s *NostrService) PostText(privKey string, note string) error {
+func (s *NostrService) PublishPost(privKey string, note string) error {
 	event, err := util.NostrSign(privKey, time.Now(), 1, []model.NostrEventTag{}, note)
 	if err != nil {
 		return err
@@ -128,7 +153,7 @@ func (s *NostrService) PostText(privKey string, note string) error {
 	return nil
 }
 
-func (s *NostrService) PostFollow(privKey string, pubKeys []string) error {
+func (s *NostrService) PublishFollow(privKey string, pubKeys []string) error {
 	followList := []model.NostrEventTag{}
 	for _, pubKey := range pubKeys {
 		// NOTE: "p", pubKey, mainRelay, petName (Ref: NIP-02)
