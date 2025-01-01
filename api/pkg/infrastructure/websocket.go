@@ -13,7 +13,11 @@ type WsHandler struct {
 	lock sync.Mutex
 }
 
-func NewWsHandler(urls []string, logger model.ILogger) (model.IWsHandler, error) {
+func NewWsHandler(relays []*model.NostrRelay, logger model.ILogger) (model.IWsHandler, error) {
+	urls := make([]string, 0, len(relays))
+	for _, r := range relays {
+		urls = append(urls, r.Url)
+	}
 	ws := make(map[string]*websocket.Conn)
 	for _, url := range urls {
 		conn, err := websocket.Dial(url, "", "http://localhost")
