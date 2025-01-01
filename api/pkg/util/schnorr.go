@@ -12,6 +12,7 @@ import (
 
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
+	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/model"
 )
 
@@ -45,33 +46,9 @@ func GenerateNostrKeyPair() (string, string, error) {
 	privKey := GeneratePrivateKey()
 	pubKey, err := GetPublicKey(privKey)
 	if err != nil {
-		return "", "", err
+		return "", "", cerror.Wrap(err, "failed to generate nostr key pair")
 	}
 	return privKey, pubKey, nil
-}
-
-func NostrVerify(pubKey string, digest string, sig string) (bool, error) {
-	rawPubKey, err := hex.DecodeString(pubKey)
-	if err != nil {
-		return false, err
-	}
-	pubKeyObj, err := schnorr.ParsePubKey(rawPubKey)
-	if err != nil {
-		return false, err
-	}
-	rawSig, err := hex.DecodeString(sig)
-	if err != nil {
-		return false, err
-	}
-	sigObj, err := schnorr.ParseSignature(rawSig)
-	if err != nil {
-		return false, err
-	}
-	hash, err := hex.DecodeString(digest)
-	if err != nil {
-		return false, err
-	}
-	return sigObj.Verify(hash, pubKeyObj), nil
 }
 
 func NostrSign(privKey string, createdAt time.Time, kind int, tags []model.NostrEventTag, content any) (*model.NostrEvent, error) {
@@ -84,7 +61,7 @@ func NostrSign(privKey string, createdAt time.Time, kind int, tags []model.Nostr
 	default:
 		rawContent, err := json.Marshal(content)
 		if err != nil {
-			return nil, err
+			return nil, cerror.Wrap(err, "failed to sign nostr event")
 		}
 		contentStr = string(rawContent)
 	}
@@ -92,12 +69,12 @@ func NostrSign(privKey string, createdAt time.Time, kind int, tags []model.Nostr
 	// parse private key
 	rawPrivKey, err := hex.DecodeString(privKey)
 	if err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to sign nostr event")
 	}
 	privKeyObj, pubKeyObj := btcec.PrivKeyFromBytes(rawPrivKey)
 	pubKey := hex.EncodeToString(pubKeyObj.SerializeCompressed()[1:])
 
-	// calculate digest
+	// calculate event id
 	obj := []any{
 		0,
 		pubKey,
@@ -108,14 +85,14 @@ func NostrSign(privKey string, createdAt time.Time, kind int, tags []model.Nostr
 	}
 	objStr, err := json.Marshal(obj)
 	if err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to sign nostr event")
 	}
 	hash := sha256.Sum256(objStr)
 
 	// signature
 	sig, err := schnorr.Sign(privKeyObj, hash[:], schnorr.FastSign())
 	if err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to sign nostr event")
 	}
 
 	// return
@@ -128,4 +105,47 @@ func NostrSign(privKey string, createdAt time.Time, kind int, tags []model.Nostr
 		Content:   contentStr,
 		Sig:       hex.EncodeToString(sig.Serialize()),
 	}, nil
+}
+
+func NostrVerify(event model.NostrEvent) (bool, error) {
+	// check event id
+	obj := []any{
+		0,
+		event.Pubkey,
+		event.CreatedAt,
+		event.Kind,
+		event.Tags,
+		event.Content,
+	}
+	objStr, err := json.Marshal(obj)
+	if err != nil {
+		return false, cerror.Wrap(err, "failed to verify nostr event")
+	}
+	hash := sha256.Sum256(objStr)
+	if hex.EncodeToString(hash[:]) != event.Id {
+		return false, cerror.Wrap(cerror.ErrInvalidNostrEventId, "failed to verify nostr event")
+	}
+
+	// check signature
+	rawPubKey, err := hex.DecodeString(event.Pubkey)
+	if err != nil {
+		return false, cerror.Wrap(err, "failed to verify nostr event")
+	}
+	pubKeyObj, err := schnorr.ParsePubKey(rawPubKey)
+	if err != nil {
+		return false, cerror.Wrap(err, "failed to verify nostr event")
+	}
+	rawSig, err := hex.DecodeString(event.Sig)
+	if err != nil {
+		return false, cerror.Wrap(err, "failed to verify nostr event")
+	}
+	sigObj, err := schnorr.ParseSignature(rawSig)
+	if err != nil {
+		return false, cerror.Wrap(err, "failed to verify nostr event")
+	}
+	verified := sigObj.Verify(hash[:], pubKeyObj)
+	if !verified {
+		return false, cerror.Wrap(cerror.ErrInvalidNostrEventSig, "failed to verify nostr event")
+	}
+	return true, nil
 }
