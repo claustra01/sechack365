@@ -90,10 +90,10 @@ func (s *NostrService) GetRemoteProfile(pubkey string) (*model.NostrProfile, err
 	if err := json.Unmarshal([]byte(msgs[0]), &arr); err != nil {
 		return nil, err
 	}
-	obj, ok := arr[2].(map[string]any)
-	if !ok {
+	if len(arr) != 3 {
 		return nil, nil
 	}
+	obj := arr[2].(map[string]any)
 	var profile model.NostrProfile
 	content, ok := obj["content"].(string)
 	if !ok {
@@ -129,10 +129,10 @@ func (s *NostrService) GetRemotePosts(pubKeys []string, since time.Time) ([]*mod
 		if err := json.Unmarshal([]byte(msg), &arr); err != nil {
 			return nil, err
 		}
-		eventRaw, ok := arr[2].(map[string]any)
-		if !ok {
+		if len(arr) != 3 {
 			continue
 		}
+		eventRaw := arr[2].(map[string]any)
 		event := model.NostrEvent{
 			Id:        eventRaw["id"].(string),
 			Pubkey:    eventRaw["pubkey"].(string),
