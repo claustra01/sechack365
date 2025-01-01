@@ -32,6 +32,7 @@ func main() {
 		panic(err)
 	}
 	ctx.SetNostrRelays(ws)
+	defer ws.Close()
 
 	// Batch
 	batch.UpdateNostrRemotePosts(ctx)
