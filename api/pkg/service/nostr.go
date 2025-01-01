@@ -113,18 +113,35 @@ func (s *NostrService) GetRemotePosts(pubKeys []string, since time.Time) ([]*mod
 		Authors: pubKeys,
 		// TODO: Limit should be configurable
 		Limit: 100,
-		Since: since.Unix(),
+		Since: since.Unix() + 1,
 		Until: time.Now().Unix(),
 	}
 	msgs, err := s.sendReq(id.String(), filter)
 	if err != nil {
 		return []*model.NostrEvent{}, err
 	}
+	if len(msgs) == 0 {
+		return []*model.NostrEvent{}, nil
+	}
 	var events []*model.NostrEvent
 	for _, msg := range msgs {
-		var event model.NostrEvent
-		if err := json.Unmarshal([]byte(msg), &event); err != nil {
+		var arr []any
+		if err := json.Unmarshal([]byte(msg), &arr); err != nil {
 			return nil, err
+		}
+		eventRaw, ok := arr[2].(map[string]any)
+		if !ok {
+			continue
+		}
+		event := model.NostrEvent{
+			Id:        eventRaw["id"].(string),
+			Pubkey:    eventRaw["pubkey"].(string),
+			CreatedAt: int(eventRaw["created_at"].(float64)),
+			Kind:      int(eventRaw["kind"].(float64)),
+			// TODO: Tags should be parsed
+			Tags:    []model.NostrEventTag{},
+			Content: eventRaw["content"].(string),
+			Sig:     eventRaw["sig"].(string),
 		}
 		events = append(events, &event)
 	}

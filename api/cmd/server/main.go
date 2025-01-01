@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/claustra01/sechack365/cmd/batch"
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/infrastructure"
 )
@@ -31,6 +32,9 @@ func main() {
 		panic(err)
 	}
 	ctx.SetNostrRelays(ws)
+
+	// Batch
+	batch.UpdateNostrRemotePosts(ctx)
 
 	// Server
 	server := framework.NewServer(ctx)
