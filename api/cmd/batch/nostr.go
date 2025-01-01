@@ -17,6 +17,9 @@ func UpdateNostrRemotePosts(c *framework.Context) {
 				c.Logger.Error("failed to update remote nostr posts", err)
 				continue
 			}
+			if len(pubKeys) == 0 {
+				continue
+			}
 
 			// get latest remote post in local db
 			latest, err := c.Controllers.Post.GetLatestNostrRemotePost()

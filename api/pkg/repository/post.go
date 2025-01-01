@@ -138,7 +138,10 @@ func (r *PostRepository) InsertNostrRemotePosts(events []*model.NostrEvent) erro
 			JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
 			WHERE nostr_user_identifiers.public_key = $1;
 		`
-		if err := r.SqlHandler.Get(&userId, query, event.Pubkey); err != nil {
+		err := r.SqlHandler.Get(&userId, query, event.Pubkey)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil
+		} else if err != nil {
 			return cerror.Wrap(err, "failed to insert nostr remote posts")
 		}
 
