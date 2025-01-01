@@ -334,7 +334,7 @@ func LookupUser(c *framework.Context) http.HandlerFunc {
 			}
 
 			// fetch from remote
-			profile, err := c.Controllers.Nostr.GetUserProfile(pubKey)
+			profile, err := c.Controllers.Nostr.GetRemoteProfile(pubKey)
 			if err != nil {
 				c.Logger.Error("Internal Server Error", "error", cerror.Wrap(err, "failed to lookup user"))
 				returnError(w, http.StatusInternalServerError)

@@ -73,7 +73,7 @@ func Register(c *framework.Context) http.HandlerFunc {
 			About:       user.Profile,
 			Picture:     user.Icon,
 		}
-		if err := c.Controllers.Nostr.PostUserProfile(privKey, profile); err != nil {
+		if err := c.Controllers.Nostr.PublishProfile(privKey, profile); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
 			returnError(w, http.StatusInternalServerError)
 			return

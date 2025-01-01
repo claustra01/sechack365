@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/util"
 )
@@ -17,48 +18,48 @@ func (r *UserRepository) CreateLocalUser(username, password, displayName, profil
 	uuid := util.NewUuid()
 	hashedPassword, err := util.GenerateHash(password)
 	if err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create local user")
 	}
 	query := `
 		INSERT INTO users (id, username, protocol, hashed_password, display_name, profile, icon)
 		VALUES ($1, $2, $3, $4, $5, $6, $7);
 	`
 	if _, err := r.SqlHandler.Exec(query, uuid, username, model.ProtocolLocal, hashedPassword, displayName, profile, icon); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create local user")
 	}
 
 	// create ap_user_identifier record
 	pubKey, prvKey, err := util.GenerateApKeyPair()
 	if err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create local user")
 	}
 	query = `
 		INSERT INTO ap_user_identifiers (user_id, local_username, host, public_key, private_key)
 		VALUES ($1, $2, $3, $4, $5);
 	`
 	if _, err := r.SqlHandler.Exec(query, uuid, username, host, pubKey, prvKey); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create local user")
 	}
 
 	// create nostr_user_identifier record
 	prvKey, pubKey, err = util.GenerateNostrKeyPair()
 	if err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create local user")
 	}
 	npub, err := util.EncodeNpub(pubKey)
 	if err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create local user")
 	}
 	nsec, err := util.EncodeNsec(prvKey)
 	if err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create local user")
 	}
 	query = `
 		INSERT INTO nostr_user_identifiers (user_id, public_key, private_key, npub, nsec)
 		VALUES ($1, $2, $3, $4, $5);
 	`
 	if _, err := r.SqlHandler.Exec(query, uuid, pubKey, prvKey, npub, nsec); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create local user")
 	}
 
 	return nil
@@ -72,7 +73,7 @@ func (r *UserRepository) CreateRemoteApUser(user *model.User, identifier *model.
 		VALUES ($1, $2, $3, $4, $5);
 	`
 	if _, err := r.SqlHandler.Exec(query, uuid, model.ProtocolActivityPub, user.DisplayName, user.Profile, user.Icon); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create activitypub remote user")
 	}
 
 	// create ap_user_identifier record
@@ -81,7 +82,7 @@ func (r *UserRepository) CreateRemoteApUser(user *model.User, identifier *model.
 		VALUES ($1, $2, $3);
 	`
 	if _, err := r.SqlHandler.Exec(query, uuid, identifier.LocalUsername, identifier.Host); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create activitypub remote user")
 	}
 
 	return nil
@@ -95,7 +96,7 @@ func (r *UserRepository) CreateRemoteNostrUser(user *model.User, identifier *mod
 		VALUES ($1, $2, $3, $4, $5);
 	`
 	if _, err := r.SqlHandler.Exec(query, uuid, model.ProtocolNostr, user.DisplayName, user.Profile, user.Icon); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create nostr remote user")
 	}
 
 	// create nostr_user_identifier record
@@ -104,7 +105,7 @@ func (r *UserRepository) CreateRemoteNostrUser(user *model.User, identifier *mod
 		VALUES ($1, $2, $3);
 	`
 	if _, err := r.SqlHandler.Exec(query, uuid, identifier.PublicKey, identifier.Npub); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create nostr remote user")
 	}
 
 	return nil
@@ -134,7 +135,7 @@ func (r *UserRepository) FindAll() ([]*model.UserWithIdentifiers, error) {
 		LEFT JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id;
 	`
 	if err := r.SqlHandler.Select(&users, query); err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get all users")
 	}
 	return users, nil
 }
@@ -164,7 +165,7 @@ func (r *UserRepository) FindById(id string) (*model.UserWithIdentifiers, error)
 		WHERE users.id = $1;
 	`
 	if err := r.SqlHandler.Get(user, query, id); err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get user by id")
 	}
 	return user, nil
 }
@@ -198,7 +199,7 @@ func (r *UserRepository) FindByLocalUsername(username string) (*model.UserWithId
 		return nil, nil
 	}
 	if err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get user by local username")
 	}
 
 	return user, nil
@@ -231,7 +232,7 @@ func (r *UserRepository) FindByApUsername(username, host string) (*model.UserWit
 		return nil, nil
 	}
 	if err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get user by activitypub username")
 	}
 	return user, nil
 }
@@ -261,7 +262,7 @@ func (r *UserRepository) FindByNostrNpub(npub string) (*model.UserWithIdentifier
 		return nil, nil
 	}
 	if err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get user by nostr npub")
 	}
 	return user, nil
 }
@@ -271,7 +272,7 @@ func (r *UserRepository) UpdateRemoteApUser(user *model.User, identifier *model.
 	var userId string
 	query := "SELECT user_id FROM ap_user_identifiers WHERE local_username = $1 AND host = $2;"
 	if err := r.SqlHandler.Get(&userId, query, user.Username, identifier.Host); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to update activitypub remote user")
 	}
 	// update user record
 	query = `
@@ -280,7 +281,7 @@ func (r *UserRepository) UpdateRemoteApUser(user *model.User, identifier *model.
 		WHERE id = $4;
 	`
 	if _, err := r.SqlHandler.Exec(query, user.DisplayName, user.Profile, user.Icon, userId); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to update activitypub remote user")
 	}
 	return nil
 }
@@ -290,7 +291,7 @@ func (r *UserRepository) UpdateRemoteNostrUser(user *model.User, identifier *mod
 	var userId string
 	query := "SELECT user_id FROM nostr_user_identifiers WHERE npub = $1;"
 	if err := r.SqlHandler.Get(&userId, query, identifier.Npub); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to update nostr remote user")
 	}
 	// update user record
 	query = `
@@ -299,20 +300,20 @@ func (r *UserRepository) UpdateRemoteNostrUser(user *model.User, identifier *mod
 		WHERE id = $4;
 	`
 	if _, err := r.SqlHandler.Exec(query, user.DisplayName, user.Profile, user.Icon, userId); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to update nostr remote user")
 	}
 	return nil
 }
 
 func (r *UserRepository) DeleteById(id string) error {
 	if _, err := r.SqlHandler.Exec("DELETE FROM ap_user_identifiers WHERE user_id = $1;", id); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to delete user")
 	}
 	if _, err := r.SqlHandler.Exec("DELETE FROM nostr_user_identifiers WHERE user_id = $1;", id); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to delete user")
 	}
 	if _, err := r.SqlHandler.Exec("DELETE FROM users WHERE id = $1;", id); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to delete user")
 	}
 	return nil
 }
@@ -324,15 +325,28 @@ func (r *UserRepository) FindWithHashedPassword(username string) (*model.User, e
 		SELECT * FROM users WHERE username = $1 AND protocol = $2;
 	`
 	if err := r.SqlHandler.Get(user, query, username, model.ProtocolLocal); err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get user with hashed password")
 	}
 	return user, nil
+}
+
+func (r *UserRepository) GetAllFollowingNostrPubKeys() ([]string, error) {
+	var pubKeys []string
+	query := `
+		SELECT nostr_user_identifiers.public_key
+		FROM nostr_user_identifiers
+		JOIN follows ON nostr_user_identifiers.user_id = follows.target_id;
+	`
+	if err := r.SqlHandler.Select(&pubKeys, query); err != nil {
+		return nil, cerror.Wrap(err, "failed to get following nostr public keys")
+	}
+	return pubKeys, nil
 }
 
 func (r *UserRepository) GetNostrPrivKey(id string) (string, error) {
 	var privKey string
 	if err := r.SqlHandler.Get(&privKey, "SELECT private_key FROM nostr_user_identifiers WHERE user_id = $1;", id); err != nil {
-		return "", err
+		return "", cerror.Wrap(err, "failed to get nostr private key")
 	}
 	return privKey, nil
 }

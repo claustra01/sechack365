@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/claustra01/sechack365/cmd/batch"
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/infrastructure"
 )
@@ -22,19 +23,19 @@ func main() {
 	ctx := framework.NewContext(logger, conn)
 
 	// Websocket Connection
-	nostrRelays, err := ctx.Controllers.NostrRelay.FindAll()
+	relays, err := ctx.Controllers.NostrRelay.FindAll()
 	if err != nil {
 		panic(err)
 	}
-	urls := make([]string, 0, len(nostrRelays))
-	for _, r := range nostrRelays {
-		urls = append(urls, r.Url)
-	}
-	ws, err := infrastructure.NewWsHandler(urls, logger)
+	ws, err := infrastructure.NewWsHandler(relays, logger)
 	if err != nil {
 		panic(err)
 	}
 	ctx.SetNostrRelays(ws)
+	defer ws.Close()
+
+	// Batch
+	batch.UpdateNostrRemotePosts(ctx)
 
 	// Server
 	server := framework.NewServer(ctx)

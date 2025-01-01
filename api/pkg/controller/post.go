@@ -36,6 +36,14 @@ func (c *PostController) FindUserTimeline(userId string, offset int, limit int) 
 	return c.PostUsecase.FindUserTimeline(userId, offset, limit)
 }
 
-func (c *PostController) Delete(id string) error {
-	return c.PostUsecase.Delete(id)
+func (c *PostController) DeleteById(id string) error {
+	return c.PostUsecase.DeleteById(id)
+}
+
+func (c *PostController) GetLatestNostrRemotePost() (*model.Post, error) {
+	return c.PostUsecase.GetLatestNostrRemotePost()
+}
+
+func (c *PostController) InsertNostrRemotePosts(events []*model.NostrEvent) error {
+	return c.PostUsecase.InsertNostrRemotePosts(events)
 }

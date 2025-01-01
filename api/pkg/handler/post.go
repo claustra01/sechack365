@@ -74,7 +74,7 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 			returnError(w, http.StatusInternalServerError)
 			return
 		}
-		if err := c.Controllers.Nostr.PostText(privKey, postRequsetBody.Content); err != nil {
+		if err := c.Controllers.Nostr.PublishPost(privKey, postRequsetBody.Content); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
 			returnError(w, http.StatusInternalServerError)
 			return

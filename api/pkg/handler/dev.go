@@ -35,7 +35,7 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 			About:       "This is mock user",
 			Picture:     "https://placehold.jp/150x150.png",
 		}
-		if err := c.Controllers.Nostr.PostUserProfile(privKey, profile); err != nil {
+		if err := c.Controllers.Nostr.PublishProfile(privKey, profile); err != nil {
 			panic(err)
 		}
 
@@ -67,20 +67,11 @@ func ResetMock(c *framework.Context) http.HandlerFunc {
 		}
 
 		for _, post := range posts {
-			if err := c.Controllers.Post.Delete(post.Id); err != nil {
+			if err := c.Controllers.Post.DeleteById(post.Id); err != nil {
 				panic(err)
 			}
 		}
 		for _, user := range users {
-			follows, err := c.Controllers.Follow.FindFollowersByUserId(user.Id)
-			if err != nil {
-				panic(err)
-			}
-			for _, follow := range follows {
-				if err := c.Controllers.Follow.Delete(user.Id, follow.Id); err != nil {
-					panic(err)
-				}
-			}
 			if err := c.Controllers.User.DeleteById(user.Id); err != nil {
 				panic(err)
 			}

@@ -3,7 +3,9 @@ package repository
 import (
 	"database/sql"
 	"errors"
+	"time"
 
+	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/util"
 )
@@ -19,7 +21,7 @@ func (r *PostRepository) Create(userId, content string) error {
 		VALUES ($1, $2, $3, $4);
 	`
 	if _, err := r.SqlHandler.Exec(query, uuid, model.ProtocolLocal, userId, content); err != nil {
-		return err
+		return cerror.Wrap(err, "failed to create post")
 	}
 	return nil
 }
@@ -48,7 +50,7 @@ func (r *PostRepository) FindById(id string) (*model.PostWithUser, error) {
 		return nil, nil
 	}
 	if err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get post by id")
 	}
 	return post, nil
 }
@@ -73,7 +75,7 @@ func (r *PostRepository) FindTimeline(offset int, limit int) ([]*model.PostWithU
 		ORDER BY posts.created_at DESC LIMIT $1 OFFSET $2;
 	`
 	if err := r.SqlHandler.Select(&posts, query, limit, offset); err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get timeline")
 	}
 	return posts, nil
 }
@@ -99,12 +101,59 @@ func (r *PostRepository) FindUserTimeline(userId string, offset int, limit int) 
 		ORDER BY posts.created_at DESC LIMIT $2 OFFSET $3;
 	`
 	if err := r.SqlHandler.Select(&posts, query, userId, limit, offset); err != nil {
-		return nil, err
+		return nil, cerror.Wrap(err, "failed to get user's timeline")
 	}
 	return posts, nil
 }
 
-func (r *PostRepository) Delete(id string) error {
+func (r *PostRepository) DeleteById(id string) error {
 	_, err := r.SqlHandler.Exec(`DELETE FROM posts WHERE id = $1;`, id)
-	return err
+	return cerror.Wrap(err, "failed to delete post")
+}
+
+func (r *PostRepository) GetLatestNostrRemotePost() (*model.Post, error) {
+	post := new(model.Post)
+	query := `
+		SELECT * FROM posts
+		WHERE protocol = $1
+		ORDER BY posts.created_at DESC LIMIT 1;
+	`
+	err := r.SqlHandler.Get(post, query, model.ProtocolNostr)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, cerror.Wrap(err, "failed to get latest nostr remote post")
+	}
+	return post, nil
+}
+
+func (r *PostRepository) InsertNostrRemotePosts(events []*model.NostrEvent) error {
+	// FIXME: resolve N+1
+	for _, event := range events {
+		// get local user id
+		var userId string
+		query := `
+			SELECT users.id FROM users
+			JOIN nostr_user_identifiers ON users.id = nostr_user_identifiers.user_id
+			WHERE nostr_user_identifiers.public_key = $1;
+		`
+		err := r.SqlHandler.Get(&userId, query, event.Pubkey)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil
+		} else if err != nil {
+			return cerror.Wrap(err, "failed to insert nostr remote posts")
+		}
+
+		// insert post
+		uuid := util.NewUuid()
+		query = `
+			INSERT INTO posts (id, protocol, user_id, content, created_at)
+			VALUES ($1, $2, $3, $4, $5);
+		`
+		if _, err := r.SqlHandler.Exec(query, uuid, model.ProtocolNostr, userId, event.Content, time.Unix(int64(event.CreatedAt), 0)); err != nil {
+			return cerror.Wrap(err, "failed to insert nostr remote posts")
+		}
+	}
+	return nil
 }

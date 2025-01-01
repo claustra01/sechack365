@@ -1,30 +1,39 @@
 package usecase
 
-import "github.com/claustra01/sechack365/pkg/model"
+import (
+	"time"
+
+	"github.com/claustra01/sechack365/pkg/model"
+)
 
 type INostrService interface {
-	GetUserProfile(id string) (*model.NostrProfile, error)
-	PostUserProfile(privKey string, profile *model.NostrProfile) error
-	PostText(privKey string, note string) error
-	PostFollow(privKey string, pubKeys []string) error
+	GetRemoteProfile(id string) (*model.NostrProfile, error)
+	GetRemotePosts(pubKeys []string, since time.Time) ([]*model.NostrEvent, error)
+	PublishProfile(privKey string, profile *model.NostrProfile) error
+	PublishPost(privKey string, note string) error
+	PublishFollow(privKey string, pubKeys []string) error
 }
 
 type NostrUsecase struct {
 	NostrService INostrService
 }
 
-func (u *NostrUsecase) GetUserProfile(id string) (*model.NostrProfile, error) {
-	return u.NostrService.GetUserProfile(id)
+func (u *NostrUsecase) GetRemoteProfile(id string) (*model.NostrProfile, error) {
+	return u.NostrService.GetRemoteProfile(id)
 }
 
-func (u *NostrUsecase) PostUserProfile(privKey string, profile *model.NostrProfile) error {
-	return u.NostrService.PostUserProfile(privKey, profile)
+func (u *NostrUsecase) GetRemotePosts(pubKeys []string, since time.Time) ([]*model.NostrEvent, error) {
+	return u.NostrService.GetRemotePosts(pubKeys, since)
 }
 
-func (u *NostrUsecase) PostText(privKey string, note string) error {
-	return u.NostrService.PostText(privKey, note)
+func (u *NostrUsecase) PublishProfile(privKey string, profile *model.NostrProfile) error {
+	return u.NostrService.PublishProfile(privKey, profile)
 }
 
-func (u *NostrUsecase) PostFollow(privKey string, pubKeys []string) error {
-	return u.NostrService.PostFollow(privKey, pubKeys)
+func (u *NostrUsecase) PublishPost(privKey string, note string) error {
+	return u.NostrService.PublishPost(privKey, note)
+}
+
+func (u *NostrUsecase) PublishFollow(privKey string, pubKeys []string) error {
+	return u.NostrService.PublishFollow(privKey, pubKeys)
 }
