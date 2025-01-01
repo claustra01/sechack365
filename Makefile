@@ -13,6 +13,10 @@ lint-api:
 	fi
 	cd api && $$(go env GOPATH)/bin/golangci-lint run ./...
 
+# backend test
+test-api:
+	cd api && go test -v ./...
+
 # lint all
 lint:
 	make lint-api
