@@ -67,7 +67,7 @@ func ResetMock(c *framework.Context) http.HandlerFunc {
 		}
 
 		for _, post := range posts {
-			if err := c.Controllers.Post.Delete(post.Id); err != nil {
+			if err := c.Controllers.Post.DeleteById(post.Id); err != nil {
 				panic(err)
 			}
 		}

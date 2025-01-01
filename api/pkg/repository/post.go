@@ -104,7 +104,7 @@ func (r *PostRepository) FindUserTimeline(userId string, offset int, limit int) 
 	return posts, nil
 }
 
-func (r *PostRepository) Delete(id string) error {
+func (r *PostRepository) DeleteById(id string) error {
 	_, err := r.SqlHandler.Exec(`DELETE FROM posts WHERE id = $1;`, id)
 	return err
 }

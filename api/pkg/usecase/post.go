@@ -9,7 +9,7 @@ type IPostRepository interface {
 	FindById(id string) (*model.PostWithUser, error)
 	FindTimeline(offset int, limit int) ([]*model.PostWithUser, error)
 	FindUserTimeline(userId string, offset int, limit int) ([]*model.PostWithUser, error)
-	Delete(id string) error
+	DeleteById(id string) error
 }
 
 type PostUsecase struct {
@@ -32,6 +32,6 @@ func (u *PostUsecase) FindUserTimeline(userId string, offset int, limit int) ([]
 	return u.PostRepository.FindUserTimeline(userId, offset, limit)
 }
 
-func (u *PostUsecase) Delete(id string) error {
-	return u.PostRepository.Delete(id)
+func (u *PostUsecase) DeleteById(id string) error {
+	return u.PostRepository.DeleteById(id)
 }
