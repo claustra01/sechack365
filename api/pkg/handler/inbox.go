@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"regexp"
 
+	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/util"
 )
@@ -16,14 +17,14 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 		re := regexp.MustCompile(`keyId="([^"]+)"`)
 		match := re.FindStringSubmatch(sigHeader)
 		if len(match) <= 1 {
-			c.Logger.Warn("Unauthorized", "Error", "failed to verify http signature")
+			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(cerror.ErrInvalidHttpSig, "failed to verify http signature"))
 			returnError(w, http.StatusUnauthorized)
 			return
 		}
 		keyId := match[1]
 		actor, err := c.Controllers.ActivityPub.ResolveRemoteActor(keyId)
 		if err != nil {
-			c.Logger.Warn("Unauthorized", "Error", "failed to verify http signature")
+			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to verify http signature"))
 			returnError(w, http.StatusUnauthorized)
 			return
 		}
@@ -33,7 +34,7 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 		// verify signature
 		_, pubKey, err := util.DecodePem(pubKeyPem)
 		if err != nil {
-			c.Logger.Warn("Unauthorized", "Error", "failed to verify http signature")
+			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to verify http signature"))
 			returnError(w, http.StatusUnauthorized)
 			return
 		}
@@ -44,7 +45,7 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 		}
 		keyname, err := util.HttpSigVerify(r, body, pubKey)
 		if err != nil {
-			c.Logger.Warn("Unauthorized", "Error", "failed to verify http signature")
+			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to verify http signature"))
 			returnError(w, http.StatusUnauthorized)
 			return
 		}
