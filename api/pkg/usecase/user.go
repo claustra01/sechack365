@@ -16,6 +16,8 @@ type IUserRepository interface {
 	DeleteById(id string) error
 	// 認証でのみ使用
 	FindWithHashedPassword(username string) (*model.User, error)
+	// ActivityPub用
+	GetActivityPubPrivKey(id string) (string, error)
 	// Nostr用
 	GetAllFollowingNostrPubKeys() ([]string, error)
 	GetNostrPrivKey(id string) (string, error)
@@ -67,6 +69,10 @@ func (u *UserUsecase) UpdateRemoteNostrUser(user *model.User, identifier *model.
 
 func (u *UserUsecase) DeleteById(id string) error {
 	return u.UserRepository.DeleteById(id)
+}
+
+func (u *UserUsecase) GetActivityPubPrivKey(id string) (string, error) {
+	return u.UserRepository.GetActivityPubPrivKey(id)
 }
 
 func (u *UserUsecase) FindWithHashedPassword(username string) (*model.User, error) {

@@ -330,6 +330,14 @@ func (r *UserRepository) FindWithHashedPassword(username string) (*model.User, e
 	return user, nil
 }
 
+func (r *UserRepository) GetActivityPubPrivKey(id string) (string, error) {
+	var privKey string
+	if err := r.SqlHandler.Get(&privKey, "SELECT private_key FROM ap_user_identifiers WHERE user_id = $1;", id); err != nil {
+		return "", cerror.Wrap(err, "failed to get activitypub private key")
+	}
+	return privKey, nil
+}
+
 func (r *UserRepository) GetAllFollowingNostrPubKeys() ([]string, error) {
 	var pubKeys []string
 	query := `
