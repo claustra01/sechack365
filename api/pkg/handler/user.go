@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
@@ -74,6 +75,7 @@ func GetAllUsers(c *framework.Context) http.HandlerFunc {
 
 func GetUser(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(r.Header)
 		id := r.PathValue("id")
 		acceptHeader := r.Header.Get("Accept")
 
