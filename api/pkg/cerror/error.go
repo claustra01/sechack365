@@ -28,6 +28,9 @@ var ErrPushActivity = fmt.Errorf("failed to push activity")
 var ErrEmptyContent = fmt.Errorf("empty content")
 var ErrPostNotFound = fmt.Errorf("post not found")
 
+// inbox handler
+var ErrInvalidActivityType = fmt.Errorf("invalid activity type")
+
 // nostr service
 var ErrNostrRelayResNotOk = fmt.Errorf("nostr relay response is not ok")
 

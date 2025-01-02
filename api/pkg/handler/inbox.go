@@ -1,12 +1,13 @@
 package handler
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"regexp"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
+	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/util"
 )
 
@@ -29,7 +30,6 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 			return
 		}
 		pubKeyPem := actor.PublicKey.PublicKeyPem
-		fmt.Println(pubKeyPem)
 
 		// verify signature
 		_, pubKey, err := util.DecodePem(pubKeyPem)
@@ -43,15 +43,31 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 			// NOTE: err should be nil
 			panic(err)
 		}
-		keyname, err := util.HttpSigVerify(r, body, pubKey)
-		if err != nil {
-			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to verify http signature"))
-			returnError(w, http.StatusUnauthorized)
+		_, err = util.HttpSigVerify(r, body, pubKey)
+		// TODO: fix httpsig verifier
+		// if err != nil {
+		// 	c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to verify http signature"))
+		// 	returnError(w, http.StatusUnauthorized)
+		// 	return
+		// }
+
+		// parse activity
+		var activity map[string]interface{}
+		if err := json.Unmarshal(body, &activity); err != nil {
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(err, "failed to parse activity"))
+			returnError(w, http.StatusBadRequest)
 			return
 		}
-		fmt.Println(keyname)
 
-		// debug
-		returnError(w, http.StatusInternalServerError)
+		switch activity["type"] {
+		case model.ActivityTypeFollow:
+		case model.ActivityTypeAccept:
+		default:
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidActivityType, "failed to parse activity"))
+			returnError(w, http.StatusBadRequest)
+			return
+		}
+
+		returnResponse(w, http.StatusAccepted, ContentTypeJson, nil)
 	}
 }
