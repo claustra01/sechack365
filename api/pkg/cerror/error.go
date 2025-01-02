@@ -34,14 +34,9 @@ var ErrNostrRelayResNotOk = fmt.Errorf("nostr relay response is not ok")
 // bcrypt
 var ErrGeneratePasswordHash = fmt.Errorf("failed to generate password hash")
 
-// rsa
-var ErrGenerateRsaKey = fmt.Errorf("failed to generate RSA key pair")
-var ErrEncodePublicKey = fmt.Errorf("failed to encode public key")
-var ErrEncodePrivateKey = fmt.Errorf("failed to encode private key")
-var ErrDecodePublicKey = fmt.Errorf("failed to decode public key")
-var ErrDecodePrivateKey = fmt.Errorf("failed to decode private key")
-var ErrInvalidKeyPair = fmt.Errorf("invalid key pair")
-var ErrGenerateSignature = fmt.Errorf("failed to generate signature")
+// httpsig
+var ErrUnknownKeyType = fmt.Errorf("unknown key type")
+var ErrInvalidKeyPem = fmt.Errorf("invalid key pem")
 
 // schnorr
 var ErrInvalidNostrEventId = fmt.Errorf("invalid nostr event id")
