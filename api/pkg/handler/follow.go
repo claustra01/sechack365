@@ -212,13 +212,6 @@ func DeleteFollow(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		// delete follow
-		if err := c.Controllers.Follow.Delete(user.Id, unfollowRequestBody.TargetId); err != nil {
-			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to delete follow"))
-			returnError(w, http.StatusInternalServerError)
-			return
-		}
-
 		// activitypub remote unfollow
 		if target.Protocol == model.ProtocolActivityPub {
 			// get keyId and privKey
@@ -297,6 +290,13 @@ func DeleteFollow(c *framework.Context) http.HandlerFunc {
 			}
 			// success
 			returnResponse(w, http.StatusNoContent, ContentTypeJson, nil)
+			return
+		}
+
+		// delete follow
+		if err := c.Controllers.Follow.Delete(user.Id, unfollowRequestBody.TargetId); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to delete follow"))
+			returnError(w, http.StatusInternalServerError)
 			return
 		}
 
