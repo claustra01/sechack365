@@ -37,6 +37,7 @@ var ErrGeneratePasswordHash = fmt.Errorf("failed to generate password hash")
 // httpsig
 var ErrUnknownKeyType = fmt.Errorf("unknown key type")
 var ErrInvalidKeyPem = fmt.Errorf("invalid key pem")
+var ErrInvalidHttpSig = fmt.Errorf("invalid http signature")
 
 // schnorr
 var ErrInvalidNostrEventId = fmt.Errorf("invalid nostr event id")

@@ -81,7 +81,7 @@ func GenerateKeyPemPair() (string, string, error) {
 	return privKeyPem, pubKeyPem, nil
 }
 
-func SignRequest(keyname string, privKey *rsa.PrivateKey, req *http.Request, content []byte) error {
+func HttpSigSign(keyname string, privKey *rsa.PrivateKey, req *http.Request, content []byte) error {
 	// headers
 	headers := []string{"(request-target)", "date", "host"}
 	if strings.ToLower(req.Method) != "get" {
@@ -132,4 +132,96 @@ func SignRequest(keyname string, privKey *rsa.PrivateKey, req *http.Request, con
 	sigHeader := fmt.Sprintf(`keyId="%s",algorithm="%s",headers="%s",signature="%s"`, keyname, "rsa-sha256", strings.Join(headers, " "), b64sig)
 	req.Header.Set("Signature", sigHeader)
 	return nil
+}
+
+func HttpSigVerify(req *http.Request, content []byte, pubKey *rsa.PublicKey) (string, error) {
+	sigHeader := req.Header.Get("Signature")
+	if sigHeader == "" {
+		return "", cerror.Wrap(cerror.ErrInvalidHttpSig, "failed to verify request")
+	}
+
+	// parse headers
+	var keyname, algo, heads, b64sig string
+	for _, v := range strings.Split(sigHeader, ",") {
+		name, val, ok := strings.Cut(v, "=")
+		if !ok {
+			return "", fmt.Errorf("bad scan: %s from %s", v, sigHeader)
+		}
+		val = strings.TrimPrefix(val, `"`)
+		val = strings.TrimSuffix(val, `"`)
+		switch name {
+		case "keyId":
+			keyname = val
+		case "algorithm":
+			algo = val
+		case "headers":
+			heads = val
+		case "signature":
+			b64sig = val
+		default:
+			return "", fmt.Errorf("bad sig val: %s from %s", name, sigHeader)
+		}
+	}
+	if keyname == "" || algo == "" || heads == "" || b64sig == "" {
+		return "", fmt.Errorf("missing a sig value")
+	}
+
+	required := make(map[string]bool)
+	required["(request-target)"] = true
+	required["date"] = true
+	required["host"] = true
+	if strings.ToLower(req.Method) != "get" {
+		required["digest"] = true
+	}
+	headers := strings.Split(heads, " ")
+	var stuff []string
+	for _, h := range headers {
+		var s string
+		switch h {
+		case "(request-target)":
+			s = strings.ToLower(req.Method) + " " + req.URL.RequestURI()
+		case "host":
+			s = req.Host
+			if s == "" {
+				return "", fmt.Errorf("httpsig: no host header value")
+			}
+		case "digest":
+			s = req.Header.Get(h)
+			hash := sha256.New()
+			hash.Write(content)
+			expv := "SHA-256=" + EncodeBase64(hash.Sum(nil))
+			if s != expv {
+				return "", fmt.Errorf("digest header '%s' did not match content", s)
+			}
+		case "date":
+			s = req.Header.Get(h)
+			d, err := time.Parse(http.TimeFormat, s)
+			if err != nil {
+				return "", fmt.Errorf("error parsing date header: %s", err)
+			}
+			now := time.Now()
+			if d.Before(now.Add(-30*time.Minute)) || d.After(now.Add(30*time.Minute)) {
+				return "", fmt.Errorf("date header '%s' out of range", s)
+			}
+		default:
+			s = req.Header.Get(h)
+		}
+		delete(required, h)
+		stuff = append(stuff, h+": "+s)
+	}
+	if len(required) > 0 {
+		var missing []string
+		for h := range required {
+			missing = append(missing, h)
+		}
+		return "", fmt.Errorf("required httpsig headers missing (%s)", strings.Join(missing, ","))
+	}
+
+	hash := sha256.New()
+	hash.Write([]byte(strings.Join(stuff, "\n")))
+	sig := DecodeBase64(b64sig)
+	if err := rsa.VerifyPKCS1v15(pubKey, crypto.SHA256, hash.Sum(nil), sig); err != nil {
+		return keyname, err
+	}
+	return keyname, nil
 }
