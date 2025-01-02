@@ -45,11 +45,11 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 		}
 		_, err = util.HttpSigVerify(r, body, pubKey)
 		// TODO: fix httpsig verifier
-		// if err != nil {
-		// 	c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to verify http signature"))
-		// 	returnError(w, http.StatusUnauthorized)
-		// 	return
-		// }
+		if err != nil {
+			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to verify http signature"))
+			// returnError(w, http.StatusUnauthorized)
+			// return
+		}
 
 		// parse activity
 		var activity map[string]interface{}
@@ -61,6 +61,8 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 
 		switch activity["type"] {
 		case model.ActivityTypeFollow:
+			// TODO: accept follow request
+			returnError(w, http.StatusInternalServerError)
 		case model.ActivityTypeAccept:
 		default:
 			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidActivityType, "failed to parse activity"))
