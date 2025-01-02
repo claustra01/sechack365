@@ -26,5 +26,5 @@ type ApActivity struct {
 	Type    string `json:"type"`
 	Id      string `json:"id"`
 	Actor   string `json:"actor"`
-	Object  string `json:"object"`
+	Object  any    `json:"object"`
 }

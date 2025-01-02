@@ -8,10 +8,10 @@ import (
 )
 
 type IActivityPubService interface {
+	NewApContext() *openapi.Actor_Context
 	NewActor(user model.UserWithIdentifiers) *openapi.Actor
 	NewActorUrl(host, id string) string
 	NewKeyIdUrl(host, name string) string
-	NewFollowActivity(id, host, followerId, targetUrl string) *model.ApActivity
 	NewNodeInfo(userUsage int) *openapi.Nodeinfo
 	ResolveWebfinger(username, host string) (string, error)
 	ResolveRemoteActor(link string) (*openapi.Actor, error)
@@ -20,6 +20,10 @@ type IActivityPubService interface {
 
 type ActivityPubUsecase struct {
 	ActivityPubService IActivityPubService
+}
+
+func (u *ActivityPubUsecase) NewApContext() *openapi.Actor_Context {
+	return u.ActivityPubService.NewApContext()
 }
 
 func (u *ActivityPubUsecase) NewActor(user model.UserWithIdentifiers) *openapi.Actor {
@@ -32,10 +36,6 @@ func (u *ActivityPubUsecase) NewActorUrl(host, id string) string {
 
 func (u *ActivityPubUsecase) NewKeyIdUrl(host string, name string) string {
 	return u.ActivityPubService.NewKeyIdUrl(host, name)
-}
-
-func (u *ActivityPubUsecase) NewFollowActivity(id, host, followerId, targetUrl string) *model.ApActivity {
-	return u.ActivityPubService.NewFollowActivity(id, host, followerId, targetUrl)
 }
 
 func (u *ActivityPubUsecase) NewNodeInfo(userUsage int) *openapi.Nodeinfo {

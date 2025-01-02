@@ -21,6 +21,10 @@ func NewActivityPubController() *ActivityPubController {
 	}
 }
 
+func (c *ActivityPubController) NewApContext() *openapi.Actor_Context {
+	return c.ActivityPubUsecase.NewApContext()
+}
+
 func (c *ActivityPubController) NewActor(user model.UserWithIdentifiers) *openapi.Actor {
 	return c.ActivityPubUsecase.NewActor(user)
 }
@@ -31,10 +35,6 @@ func (c *ActivityPubController) NewActorUrl(host, id string) string {
 
 func (c *ActivityPubController) NewKeyIdUrl(host string, name string) string {
 	return c.ActivityPubUsecase.NewKeyIdUrl(host, name)
-}
-
-func (c *ActivityPubController) NewFollowActivity(id, host, followerId, targetUrl string) *model.ApActivity {
-	return c.ActivityPubUsecase.NewFollowActivity(id, host, followerId, targetUrl)
 }
 
 func (c *ActivityPubController) NewNodeInfo(userUsage int) *openapi.Nodeinfo {

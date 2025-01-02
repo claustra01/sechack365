@@ -16,12 +16,12 @@ import (
 
 type ActivitypubService struct{}
 
-func NewApContext() openapi.Actor_Context {
+func (s *ActivitypubService) NewApContext() *openapi.Actor_Context {
 	var ApContext openapi.Actor_Context
 	if err := ApContext.FromActorContext1(model.ApContext); err != nil {
 		panic(err)
 	}
-	return ApContext
+	return &ApContext
 }
 
 func (s *ActivitypubService) NewNodeInfo(userUsage int) *openapi.Nodeinfo {
@@ -49,7 +49,7 @@ func (s *ActivitypubService) NewNodeInfo(userUsage int) *openapi.Nodeinfo {
 func (s *ActivitypubService) NewActor(user model.UserWithIdentifiers) *openapi.Actor {
 	baseUrl := s.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id)
 	actor := &openapi.Actor{
-		Context:           NewApContext(),
+		Context:           *s.NewApContext(),
 		Type:              model.ActivityTypePerson,
 		Id:                baseUrl,
 		Inbox:             baseUrl + "/inbox",
@@ -77,16 +77,6 @@ func (s *ActivitypubService) NewActorUrl(host, id string) string {
 
 func (s *ActivitypubService) NewKeyIdUrl(host string, name string) string {
 	return s.NewActorUrl(host, name) + "#main-key"
-}
-
-func (s *ActivitypubService) NewFollowActivity(id, host, followerId, targetUrl string) *model.ApActivity {
-	return &model.ApActivity{
-		Context: NewApContext(),
-		Type:    model.ActivityTypeFollow,
-		Id:      fmt.Sprintf("https://%s/follows/%s", host, id),
-		Actor:   s.NewActorUrl(host, followerId),
-		Object:  targetUrl,
-	}
 }
 
 func (s *ActivitypubService) ResolveWebfinger(username, host string) (string, error) {
