@@ -33,8 +33,8 @@ func (c *ActivityPubController) NewKeyIdUrl(host string, name string) string {
 	return c.ActivityPubUsecase.NewKeyIdUrl(host, name)
 }
 
-func (c *ActivityPubController) NewFollowActivity(id, host, followerId, followeeUrl string) *usecase.FollowActivity {
-	return c.ActivityPubUsecase.NewFollowActivity(id, host, followerId, followeeUrl)
+func (c *ActivityPubController) NewFollowActivity(id, host, followerId, targetUrl string) *model.ApActivity {
+	return c.ActivityPubUsecase.NewFollowActivity(id, host, followerId, targetUrl)
 }
 
 func (c *ActivityPubController) NewNodeInfo(userUsage int) *openapi.Nodeinfo {

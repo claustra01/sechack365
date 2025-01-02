@@ -11,39 +11,45 @@ import (
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
-	"github.com/claustra01/sechack365/pkg/usecase"
 	"github.com/claustra01/sechack365/pkg/util"
 )
 
 type ActivitypubService struct{}
 
-// NOTE: const values: start
-
 func NewApContext() openapi.Actor_Context {
 	var ApContext openapi.Actor_Context
-	if err := ApContext.FromActorContext1([]string{"https://www.w3.org/ns/activitystreams", "https://w3id.org/security/v1"}); err != nil {
+	if err := ApContext.FromActorContext1(model.ApContext); err != nil {
 		panic(err)
 	}
 	return ApContext
 }
 
-var ApContext = NewApContext()
-
-var Protocols = []string{
-	"activitypub",
+func (s *ActivitypubService) NewNodeInfo(userUsage int) *openapi.Nodeinfo {
+	return &openapi.Nodeinfo{
+		OpenRegistrations: false,
+		Protocols:         model.Protocols,
+		Software: openapi.NodeinfoSoftware{
+			Name:    model.SoftWareName,
+			Version: model.SoftWareVersion,
+		},
+		Usage: openapi.NodeinfoUsage{
+			Users: openapi.NodeinfoUsageUsers{
+				Total: userUsage,
+			},
+		},
+		Services: openapi.NodeinfoService{
+			Inbound:  map[string]interface{}{},
+			Outbound: map[string]interface{}{},
+		},
+		Metadata: openapi.NodeinfoMetadata{},
+		Version:  model.NodeInfoVersion,
+	}
 }
-
-const SoftWareName = "sechack365"
-const SoftWareVersion = "0.1.0"
-
-const NodeInfoVersion = "2.0"
-
-// NOTE: const values: end
 
 func (s *ActivitypubService) NewActor(user model.UserWithIdentifiers) *openapi.Actor {
 	baseUrl := s.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id)
 	actor := &openapi.Actor{
-		Context:           ApContext,
+		Context:           NewApContext(),
 		Type:              "Person",
 		Id:                baseUrl,
 		Inbox:             baseUrl + "/inbox",
@@ -73,36 +79,13 @@ func (s *ActivitypubService) NewKeyIdUrl(host string, name string) string {
 	return s.NewActorUrl(host, name) + "#main-key"
 }
 
-func (s *ActivitypubService) NewFollowActivity(id, host, followerId, followeeUrl string) *usecase.FollowActivity {
-	// object is followee actor
-	return &usecase.FollowActivity{
-		Context: ApContext,
+func (s *ActivitypubService) NewFollowActivity(id, host, followerId, targetUrl string) *model.ApActivity {
+	return &model.ApActivity{
+		Context: NewApContext(),
 		Type:    "Follow",
 		Id:      fmt.Sprintf("https://%s/follows/%s", host, id),
 		Actor:   s.NewActorUrl(host, followerId),
-		Object:  followeeUrl,
-	}
-}
-
-func (s *ActivitypubService) NewNodeInfo(userUsage int) *openapi.Nodeinfo {
-	return &openapi.Nodeinfo{
-		OpenRegistrations: false,
-		Protocols:         Protocols,
-		Software: openapi.NodeinfoSoftware{
-			Name:    SoftWareName,
-			Version: SoftWareVersion,
-		},
-		Usage: openapi.NodeinfoUsage{
-			Users: openapi.NodeinfoUsageUsers{
-				Total: 1,
-			},
-		},
-		Services: openapi.NodeinfoService{
-			Inbound:  map[string]interface{}{},
-			Outbound: map[string]interface{}{},
-		},
-		Metadata: openapi.NodeinfoMetadata{},
-		Version:  NodeInfoVersion,
+		Object:  targetUrl,
 	}
 }
 
