@@ -18,7 +18,7 @@ func GenerateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 }
 
 func EncodePem(key any) (string, error) {
-	var b *pem.Block
+	var b pem.Block
 	var err error
 	switch key.(type) {
 	case *rsa.PrivateKey:
@@ -33,7 +33,7 @@ func EncodePem(key any) (string, error) {
 	default:
 		return "", cerror.Wrap(cerror.ErrUnknownKeyType, "failed to encode pem")
 	}
-	return string(pem.EncodeToMemory(b)), nil
+	return string(pem.EncodeToMemory(&b)), nil
 }
 
 func DecodePem(p string) (*rsa.PrivateKey, *rsa.PublicKey, error) {
