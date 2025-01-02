@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
@@ -75,7 +74,6 @@ func GetAllUsers(c *framework.Context) http.HandlerFunc {
 
 func GetUser(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(r.Header)
 		id := r.PathValue("id")
 		acceptHeader := r.Header.Get("Accept")
 
@@ -97,11 +95,10 @@ func GetUser(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		switch acceptHeader {
-		case "application/activity+json":
+		if strings.Contains(acceptHeader, "application/activity+json") {
 			actor := c.Controllers.ActivityPub.NewActor(*user)
 			returnResponse(w, http.StatusOK, ContentTypeApJson, actor)
-		default:
+		} else {
 			returnResponse(w, http.StatusOK, ContentTypeJson, bindUser(user))
 		}
 	}
