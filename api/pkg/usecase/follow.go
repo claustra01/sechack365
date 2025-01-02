@@ -5,6 +5,7 @@ import "github.com/claustra01/sechack365/pkg/model"
 type IFollowRepository interface {
 	Create(followerId, targetId string) error
 	UpdateAcceptFollow(followerId, targetId string) error
+	FindFollowByFollowerAndTarget(followerId, targetId string) (*model.Follow, error)
 	FindFollowsByUserId(userId string) ([]*model.SimpleUser, error)
 	FindFollowersByUserId(userId string) ([]*model.SimpleUser, error)
 	FindNostrFollowPublicKeys(userId string) ([]string, error)
@@ -22,6 +23,10 @@ func (u *FollowUsecase) Create(followerId, targetId string) error {
 
 func (u *FollowUsecase) UpdateAcceptFollow(followerId, targetId string) error {
 	return u.FollowRepository.UpdateAcceptFollow(followerId, targetId)
+}
+
+func (u *FollowUsecase) FindFollowByFollowerAndTarget(followerId, targetId string) (*model.Follow, error) {
+	return u.FollowRepository.FindFollowByFollowerAndTarget(followerId, targetId)
 }
 
 func (u *FollowUsecase) FindFollowsByUserId(userId string) ([]*model.SimpleUser, error) {
