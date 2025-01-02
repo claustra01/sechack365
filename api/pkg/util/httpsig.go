@@ -26,13 +26,14 @@ func GenerateRsaKeyPair() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 func EncodePem(key any) (string, error) {
 	var b pem.Block
 	var err error
-	switch key.(type) {
+	switch key := key.(type) {
 	case *rsa.PrivateKey:
 		b.Type = "RSA PRIVATE KEY"
-		b.Bytes = x509.MarshalPKCS1PrivateKey(key.(*rsa.PrivateKey))
+		//
+		b.Bytes = x509.MarshalPKCS1PrivateKey(key)
 	case *rsa.PublicKey:
 		b.Type = "PUBLIC KEY"
-		b.Bytes, err = x509.MarshalPKIXPublicKey(key.(*rsa.PublicKey))
+		b.Bytes, err = x509.MarshalPKIXPublicKey(key)
 		if err != nil {
 			return "", cerror.Wrap(err, "failed to encode pem")
 		}
