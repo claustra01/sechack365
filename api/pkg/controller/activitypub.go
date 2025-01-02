@@ -33,8 +33,8 @@ func (c *ActivityPubController) NewKeyIdUrl(host string, name string) string {
 	return c.ActivityPubUsecase.NewKeyIdUrl(host, name)
 }
 
-func (c *ActivityPubController) NewFollowActivity(id, host, followerId, followeeUrl string) *usecase.FollowActivity {
-	return c.ActivityPubUsecase.NewFollowActivity(id, host, followerId, followeeUrl)
+func (c *ActivityPubController) NewFollowActivity(id, host, followerId, targetUrl string) *model.ApActivity {
+	return c.ActivityPubUsecase.NewFollowActivity(id, host, followerId, targetUrl)
 }
 
 func (c *ActivityPubController) NewNodeInfo(userUsage int) *openapi.Nodeinfo {
@@ -49,6 +49,6 @@ func (c *ActivityPubController) ResolveRemoteActor(link string) (*openapi.Actor,
 	return c.ActivityPubUsecase.ResolveRemoteActor(link)
 }
 
-func (c *ActivityPubController) SendActivity(url string, activity any, host string, keyId string, prvKey *rsa.PrivateKey) ([]byte, error) {
-	return c.ActivityPubUsecase.SendActivity(url, activity, host, keyId, prvKey)
+func (c *ActivityPubController) SendActivity(keyId string, privKey *rsa.PrivateKey, targetHost string, activity any) ([]byte, error) {
+	return c.ActivityPubUsecase.SendActivity(keyId, privKey, targetHost, activity)
 }

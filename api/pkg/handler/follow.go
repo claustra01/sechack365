@@ -3,9 +3,11 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/claustra01/sechack365/pkg/openapi"
+	"github.com/claustra01/sechack365/pkg/util"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
@@ -60,45 +62,54 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 		}
 
 		// activitypub remote follow
-		// if target.Protocol == model.ProtocolActivityPub {
-		// 	get signer key params
-		// 	keyId := c.Controllers.ActivityPub.NewKeyIdUrl(follower.Host, follower.Username)
-		// 	followerIdentifier, err := c.Controllers.ApUserIdentifier.FindById(follower.Id)
-		// 	if err != nil {
-		// 		returnInternalServerError(w, c.Logger, err)
-		// 		return
-		// 	}
-		// 	privateKey, err := util.DecodePrivateKeyPem(followerIdentifier.PrivateKey)
-		// 	if err != nil {
-		// 		returnInternalServerError(w, c.Logger, err)
-		// 		return
-		// 	}
+		if target.Protocol == model.ProtocolActivityPub {
+			// get keyId and privKey
+			keyId := c.Controllers.ActivityPub.NewKeyIdUrl(user.Identifiers.Activitypub.Host, user.Identifiers.Activitypub.LocalUsername)
+			privKeyPem, err := c.Controllers.User.GetActivityPubPrivKey(user.Id)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			privKey, _, err := util.DecodePem(privKeyPem)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
 
-		// 	// get followee actor url
-		// 	followeeUrl, err := c.Controllers.ActivityPub.ResolveWebfinger(followee.Username, followee.Host)
-		// 	if err != nil {
-		// 		returnInternalServerError(w, c.Logger, err)
-		// 		return
-		// 	}
+			// resolve remote actor
+			targetUrl, err := c.Controllers.ActivityPub.ResolveWebfinger(target.Identifiers.Activitypub.Host, target.Identifiers.Activitypub.LocalUsername)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			targetActor, err := c.Controllers.ActivityPub.ResolveRemoteActor(targetUrl)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
 
-		// 	// send follow activity
-		// 	followActivity := c.Controllers.ActivityPub.NewFollowActivity(follow.Id, follower.Host, follower.Id, followeeUrl)
-		// 	followeeActor, err := c.Controllers.ActivityPub.ResolveRemoteActor(followActivity.Object)
-		// 	if err != nil {
-		// 		returnInternalServerError(w, c.Logger, err)
-		// 		return
-		// 	}
-		// 	respBody, err := c.Controllers.ActivityPub.SendActivity(followeeActor.Inbox, followActivity, c.Config.Host, keyId, privateKey)
-		// 	if err != nil {
-		// 		c.Logger.Error("Remote follow error", "ERROR", string(respBody))
-		// 		returnInternalServerError(w, c.Logger, err)
-		// 		return
-		// 	}
+			// send activity
+			follow, err := c.Controllers.Follow.FindFollowByFollowerAndTarget(user.Id, target.Id)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			activity := c.Controllers.ActivityPub.NewFollowActivity(follow.Id, user.Identifiers.Activitypub.Host, user.Identifiers.Activitypub.LocalUsername, targetUrl)
+			respBody, err := c.Controllers.ActivityPub.SendActivity(keyId, privKey, targetActor.Inbox, activity)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
 
-		// 	// FIXME: This is debug
-		// 	log.Println(string(respBody))
-		// 	return
-		// }
+			// FIXME: This is debug
+			log.Println(string(respBody))
+		}
 
 		// nostr remote follow
 		if target.Protocol == model.ProtocolNostr {
@@ -119,12 +130,9 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 				returnError(w, http.StatusInternalServerError)
 				return
 			}
-			// success
-			returnResponse(w, http.StatusCreated, ContentTypeJson, nil)
-			return
 		}
 
-		// local follow
+		// success
 		returnResponse(w, http.StatusCreated, ContentTypeJson, nil)
 	}
 }

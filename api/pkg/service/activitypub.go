@@ -2,52 +2,54 @@ package service
 
 import (
 	"bytes"
-	"crypto"
-	"crypto/rand"
 	"crypto/rsa"
-	"crypto/sha256"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
-	"github.com/claustra01/sechack365/pkg/usecase"
+	"github.com/claustra01/sechack365/pkg/util"
 )
 
 type ActivitypubService struct{}
 
-// NOTE: const values: start
-
 func NewApContext() openapi.Actor_Context {
 	var ApContext openapi.Actor_Context
-	if err := ApContext.FromActorContext1([]string{"https://www.w3.org/ns/activitystreams", "https://w3id.org/security/v1"}); err != nil {
+	if err := ApContext.FromActorContext1(model.ApContext); err != nil {
 		panic(err)
 	}
 	return ApContext
 }
 
-var ApContext = NewApContext()
-
-var Protocols = []string{
-	"activitypub",
+func (s *ActivitypubService) NewNodeInfo(userUsage int) *openapi.Nodeinfo {
+	return &openapi.Nodeinfo{
+		OpenRegistrations: false,
+		Protocols:         model.Protocols,
+		Software: openapi.NodeinfoSoftware{
+			Name:    model.SoftWareName,
+			Version: model.SoftWareVersion,
+		},
+		Usage: openapi.NodeinfoUsage{
+			Users: openapi.NodeinfoUsageUsers{
+				Total: userUsage,
+			},
+		},
+		Services: openapi.NodeinfoService{
+			Inbound:  map[string]interface{}{},
+			Outbound: map[string]interface{}{},
+		},
+		Metadata: openapi.NodeinfoMetadata{},
+		Version:  model.NodeInfoVersion,
+	}
 }
-
-const SoftWareName = "sechack365"
-const SoftWareVersion = "0.1.0"
-
-const NodeInfoVersion = "2.0"
-
-// NOTE: const values: end
 
 func (s *ActivitypubService) NewActor(user model.UserWithIdentifiers) *openapi.Actor {
 	baseUrl := s.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id)
 	actor := &openapi.Actor{
-		Context:           ApContext,
+		Context:           NewApContext(),
 		Type:              "Person",
 		Id:                baseUrl,
 		Inbox:             baseUrl + "/inbox",
@@ -77,36 +79,13 @@ func (s *ActivitypubService) NewKeyIdUrl(host string, name string) string {
 	return s.NewActorUrl(host, name) + "#main-key"
 }
 
-func (s *ActivitypubService) NewFollowActivity(id, host, followerId, followeeUrl string) *usecase.FollowActivity {
-	// object is followee actor
-	return &usecase.FollowActivity{
-		Context: ApContext,
+func (s *ActivitypubService) NewFollowActivity(id, host, followerId, targetUrl string) *model.ApActivity {
+	return &model.ApActivity{
+		Context: NewApContext(),
 		Type:    "Follow",
 		Id:      fmt.Sprintf("https://%s/follows/%s", host, id),
 		Actor:   s.NewActorUrl(host, followerId),
-		Object:  followeeUrl,
-	}
-}
-
-func (s *ActivitypubService) NewNodeInfo(userUsage int) *openapi.Nodeinfo {
-	return &openapi.Nodeinfo{
-		OpenRegistrations: false,
-		Protocols:         Protocols,
-		Software: openapi.NodeinfoSoftware{
-			Name:    SoftWareName,
-			Version: SoftWareVersion,
-		},
-		Usage: openapi.NodeinfoUsage{
-			Users: openapi.NodeinfoUsageUsers{
-				Total: 1,
-			},
-		},
-		Services: openapi.NodeinfoService{
-			Inbound:  map[string]interface{}{},
-			Outbound: map[string]interface{}{},
-		},
-		Metadata: openapi.NodeinfoMetadata{},
-		Version:  NodeInfoVersion,
+		Object:  targetUrl,
 	}
 }
 
@@ -186,52 +165,37 @@ func (s *ActivitypubService) ResolveRemoteActor(link string) (*openapi.Actor, er
 	return &actor, nil
 }
 
-func (s *ActivitypubService) SendActivity(url string, activity any, host string, keyId string, prvKey *rsa.PrivateKey) ([]byte, error) {
+func (s *ActivitypubService) SendActivity(keyId string, privKey *rsa.PrivateKey, targetHost string, activity any) ([]byte, error) {
 	reqBody, err := json.Marshal(activity)
 	if err != nil {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
+		return nil, cerror.Wrap(err, "failed to send activity")
 	}
 
+	// create request
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBody))
+	req, err := http.NewRequest("POST", targetHost, bytes.NewBuffer(reqBody))
 	if err != nil {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
+		return nil, cerror.Wrap(err, "failed to send activity")
 	}
-
-	signedDate := time.Now().Format(http.TimeFormat)
-
-	req.Header.Set("Host", host)
-	req.Header.Set("Date", signedDate)
 	req.Header.Set("Content-Type", "application/activity+json")
-
-	hash := sha256.Sum256(reqBody)
-	digest := base64.StdEncoding.EncodeToString(hash[:])
-	digestHeader := fmt.Sprintf("SHA-256=%s", digest)
-	req.Header.Set("Digest", digestHeader)
-
-	// TODO: このsigningStringを署名するのが正しいという認識だが理解が怪しいので後日実装する
-	// signingString := fmt.Sprintf("(request-target): post %s\nhost: %s\ndate: %s\ndigest: %s", url, sigParams.Host, signedDate, digestHeader)
-	rawSign, err := rsa.SignPKCS1v15(rand.Reader, prvKey, crypto.SHA256, hash[:])
-	if err != nil {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
+	if err := util.HttpSigSign(keyId, privKey, req, reqBody); err != nil {
+		return nil, cerror.Wrap(err, "failed to send activity")
 	}
-	encodedSign := base64.StdEncoding.EncodeToString(rawSign)
-	signatureHeader := fmt.Sprintf(`keyId="%s",algorithm="rsa-sha256",headers="(request-target) host date digest",signature="%s"`, keyId, encodedSign)
-	req.Header.Set("Signature", signatureHeader)
 
+	// send request
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
+		return nil, cerror.Wrap(err, "failed to send activity")
 	}
 	defer resp.Body.Close()
 
+	// read response
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
+		return nil, cerror.Wrap(err, "failed to send activity")
 	}
-
 	if resp.StatusCode != http.StatusOK {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, string(body))
+		return nil, cerror.Wrap(fmt.Errorf("%v", string(body)), "failed to send activity")
 	}
 	return body, nil
 }

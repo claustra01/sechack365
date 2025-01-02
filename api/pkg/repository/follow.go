@@ -36,6 +36,14 @@ func (r *FollowRepository) UpdateAcceptFollow(followerId, targetId string) error
 	return nil
 }
 
+func (r *FollowRepository) FindFollowByFollowerAndTarget(followerId, targetId string) (*model.Follow, error) {
+	var follow model.Follow
+	if err := r.SqlHandler.Get(&follow, "SELECT * FROM follows WHERE follower_id = $1 AND target_id = $2;", followerId, targetId); err != nil {
+		return nil, cerror.Wrap(err, "failed to get follow")
+	}
+	return &follow, nil
+}
+
 func (r *FollowRepository) FindFollowsByUserId(userId string) ([]*model.SimpleUser, error) {
 	var users []*model.SimpleUser
 	query := `
