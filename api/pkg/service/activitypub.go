@@ -194,6 +194,7 @@ func (s *ActivitypubService) SendActivity(keyId string, privKey *rsa.PrivateKey,
 	if err != nil {
 		return nil, cerror.Wrap(err, "failed to send activity")
 	}
+	fmt.Println("status code: ", resp.StatusCode)
 	if resp.StatusCode != http.StatusOK {
 		return nil, cerror.Wrap(fmt.Errorf("%v", string(body)), "failed to send activity")
 	}
