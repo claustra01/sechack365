@@ -1,29 +1,56 @@
 package handler
 
 import (
-	"io"
-	"log"
+	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/claustra01/sechack365/pkg/framework"
+	"github.com/claustra01/sechack365/pkg/util"
 )
 
 func ActorInbox(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		username := r.PathValue("username")
-		headers := r.Header
-		digest := headers.Get("Digest")
-		signature := headers.Get("Signature")
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			returnError(w, http.StatusInternalServerError)
+		// resolve public key
+		sigHeader := r.Header.Get("Signature")
+		re := regexp.MustCompile(`keyId="([^"]+)"`)
+		match := re.FindStringSubmatch(sigHeader)
+		if len(match) <= 1 {
+			c.Logger.Warn("Unauthorized", "Error", "failed to verify http signature")
+			returnError(w, http.StatusUnauthorized)
 			return
 		}
-		// FIXME: remove debug log
-		log.Println(username)
-		log.Println(digest)
-		log.Println(signature)
-		log.Println(string(body))
+		keyId := match[1]
+		actor, err := c.Controllers.ActivityPub.ResolveRemoteActor(keyId)
+		if err != nil {
+			c.Logger.Warn("Unauthorized", "Error", "failed to verify http signature")
+			returnError(w, http.StatusUnauthorized)
+			return
+		}
+		pubKeyPem := actor.PublicKey.PublicKeyPem
+		fmt.Println(pubKeyPem)
+
+		// verify signature
+		_, pubKey, err := util.DecodePem(pubKeyPem)
+		if err != nil {
+			c.Logger.Warn("Unauthorized", "Error", "failed to verify http signature")
+			returnError(w, http.StatusUnauthorized)
+			return
+		}
+		body := make([]byte, r.ContentLength)
+		if _, err := r.Body.Read(body); err != nil && err.Error() != "EOF" {
+			// NOTE: err should be nil
+			panic(err)
+		}
+		keyname, err := util.HttpSigVerify(r, body, pubKey)
+		if err != nil {
+			c.Logger.Warn("Unauthorized", "Error", "failed to verify http signature")
+			returnError(w, http.StatusUnauthorized)
+			return
+		}
+		fmt.Println(keyname)
+
+		// debug
 		returnError(w, http.StatusInternalServerError)
 	}
 }
