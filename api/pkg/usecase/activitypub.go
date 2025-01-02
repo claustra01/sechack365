@@ -24,7 +24,7 @@ type IActivityPubService interface {
 	NewNodeInfo(userUsage int) *openapi.Nodeinfo
 	ResolveWebfinger(username, host string) (string, error)
 	ResolveRemoteActor(link string) (*openapi.Actor, error)
-	SendActivity(url string, activity any, host string, keyId string, prvKey *rsa.PrivateKey) ([]byte, error)
+	SendActivity(keyId string, privKey *rsa.PrivateKey, targetHost string, activity any) ([]byte, error)
 }
 
 type ActivityPubUsecase struct {
@@ -59,6 +59,6 @@ func (u *ActivityPubUsecase) ResolveRemoteActor(link string) (*openapi.Actor, er
 	return u.ActivityPubService.ResolveRemoteActor(link)
 }
 
-func (u *ActivityPubUsecase) SendActivity(url string, activity any, host string, keyId string, prvKey *rsa.PrivateKey) ([]byte, error) {
-	return u.ActivityPubService.SendActivity(url, activity, host, keyId, prvKey)
+func (u *ActivityPubUsecase) SendActivity(keyId string, privKey *rsa.PrivateKey, targetHost string, activity any) ([]byte, error) {
+	return u.ActivityPubService.SendActivity(keyId, privKey, targetHost, activity)
 }

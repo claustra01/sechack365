@@ -49,6 +49,6 @@ func (c *ActivityPubController) ResolveRemoteActor(link string) (*openapi.Actor,
 	return c.ActivityPubUsecase.ResolveRemoteActor(link)
 }
 
-func (c *ActivityPubController) SendActivity(url string, activity any, host string, keyId string, prvKey *rsa.PrivateKey) ([]byte, error) {
-	return c.ActivityPubUsecase.SendActivity(url, activity, host, keyId, prvKey)
+func (c *ActivityPubController) SendActivity(keyId string, privKey *rsa.PrivateKey, targetHost string, activity any) ([]byte, error) {
+	return c.ActivityPubUsecase.SendActivity(keyId, privKey, targetHost, activity)
 }
