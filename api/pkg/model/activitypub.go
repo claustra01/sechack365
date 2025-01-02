@@ -8,6 +8,7 @@ const (
 
 const (
 	ActivityTypePerson = "Person"
+	ActivityTypeUndo   = "Undo"
 	ActivityTypeFollow = "Follow"
 	ActivityTypeAccept = "Accept"
 )

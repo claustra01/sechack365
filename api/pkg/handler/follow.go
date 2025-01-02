@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	"log"
+	"fmt"
 	"net/http"
 
 	"github.com/claustra01/sechack365/pkg/openapi"
@@ -99,16 +99,18 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 				returnError(w, http.StatusInternalServerError)
 				return
 			}
-			activity := c.Controllers.ActivityPub.NewFollowActivity(follow.Id, user.Identifiers.Activitypub.Host, user.Id, targetUrl)
-			respBody, err := c.Controllers.ActivityPub.SendActivity(keyId, privKey, targetActor.Inbox, activity)
-			if err != nil {
+			activity := &model.ApActivity{
+				Context: *c.Controllers.ActivityPub.NewApContext(),
+				Type:    model.ActivityTypeFollow,
+				Id:      fmt.Sprintf("https://%s/follows/%s", user.Identifiers.Activitypub.Host, follow.Id),
+				Actor:   c.Controllers.ActivityPub.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id),
+				Object:  targetUrl,
+			}
+			if _, err := c.Controllers.ActivityPub.SendActivity(keyId, privKey, targetActor.Inbox, activity); err != nil {
 				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
 				returnError(w, http.StatusInternalServerError)
 				return
 			}
-
-			// FIXME: This is debug
-			log.Println(string(respBody))
 		}
 
 		// nostr remote follow
@@ -215,6 +217,63 @@ func DeleteFollow(c *framework.Context) http.HandlerFunc {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to delete follow"))
 			returnError(w, http.StatusInternalServerError)
 			return
+		}
+
+		// activitypub remote unfollow
+		if target.Protocol == model.ProtocolActivityPub {
+			// get keyId and privKey
+			keyId := c.Controllers.ActivityPub.NewKeyIdUrl(user.Identifiers.Activitypub.Host, user.Id)
+			privKeyPem, err := c.Controllers.User.GetActivityPubPrivKey(user.Id)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			privKey, _, err := util.DecodePem(privKeyPem)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+
+			// resolve remote actor
+			targetUrl, err := c.Controllers.ActivityPub.ResolveWebfinger(target.Identifiers.Activitypub.LocalUsername, target.Identifiers.Activitypub.Host)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			targetActor, err := c.Controllers.ActivityPub.ResolveRemoteActor(targetUrl)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+
+			// send activity
+			follow, err := c.Controllers.Follow.FindFollowByFollowerAndTarget(user.Id, target.Id)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			activity := &model.ApActivity{
+				Context: *c.Controllers.ActivityPub.NewApContext(),
+				Type:    model.ActivityTypeUndo,
+				Id:      fmt.Sprintf("https://%s/follows/%s", user.Identifiers.Activitypub.Host, follow.Id),
+				Actor:   c.Controllers.ActivityPub.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id),
+				Object: &model.ApActivity{
+					Type:   model.ActivityTypeFollow,
+					Id:     fmt.Sprintf("https://%s/follows/%s", user.Identifiers.Activitypub.Host, follow.Id),
+					Actor:  c.Controllers.ActivityPub.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id),
+					Object: targetUrl,
+				},
+			}
+			if _, err := c.Controllers.ActivityPub.SendActivity(keyId, privKey, targetActor.Inbox, activity); err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
 		}
 
 		// nostr remote unfollow
