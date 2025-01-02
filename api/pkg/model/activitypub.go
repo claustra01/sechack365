@@ -8,9 +8,10 @@ const (
 
 const (
 	ActivityTypePerson = "Person"
-	ActivityTypeUndo   = "Undo"
 	ActivityTypeFollow = "Follow"
 	ActivityTypeAccept = "Accept"
+	ActivityTypeUndo   = "Undo"
+	ActivityTypeReject = "Reject"
 )
 
 var Protocols = []string{

@@ -64,6 +64,7 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 			// TODO: accept follow request
 			returnError(w, http.StatusInternalServerError)
 		case model.ActivityTypeAccept:
+		case model.ActivityTypeReject:
 		default:
 			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidActivityType, "failed to parse activity"))
 			returnError(w, http.StatusBadRequest)
