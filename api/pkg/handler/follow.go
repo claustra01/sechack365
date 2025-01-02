@@ -79,7 +79,7 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 			}
 
 			// resolve remote actor
-			targetUrl, err := c.Controllers.ActivityPub.ResolveWebfinger(target.Identifiers.Activitypub.Host, target.Identifiers.Activitypub.LocalUsername)
+			targetUrl, err := c.Controllers.ActivityPub.ResolveWebfinger(target.Identifiers.Activitypub.LocalUsername, target.Identifiers.Activitypub.Host)
 			if err != nil {
 				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
 				returnError(w, http.StatusInternalServerError)
