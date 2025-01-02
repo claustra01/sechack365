@@ -64,7 +64,7 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 		// activitypub remote follow
 		if target.Protocol == model.ProtocolActivityPub {
 			// get keyId and privKey
-			keyId := c.Controllers.ActivityPub.NewKeyIdUrl(user.Identifiers.Activitypub.Host, user.Identifiers.Activitypub.LocalUsername)
+			keyId := c.Controllers.ActivityPub.NewKeyIdUrl(user.Identifiers.Activitypub.Host, user.Id)
 			privKeyPem, err := c.Controllers.User.GetActivityPubPrivKey(user.Id)
 			if err != nil {
 				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
