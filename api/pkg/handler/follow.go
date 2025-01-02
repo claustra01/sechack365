@@ -288,9 +288,6 @@ func DeleteFollow(c *framework.Context) http.HandlerFunc {
 				returnError(w, http.StatusInternalServerError)
 				return
 			}
-			// success
-			returnResponse(w, http.StatusNoContent, ContentTypeJson, nil)
-			return
 		}
 
 		// delete follow
@@ -300,6 +297,7 @@ func DeleteFollow(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
+		// success
 		returnResponse(w, http.StatusNoContent, ContentTypeJson, nil)
 	}
 }
