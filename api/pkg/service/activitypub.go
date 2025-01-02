@@ -168,34 +168,34 @@ func (s *ActivitypubService) ResolveRemoteActor(link string) (*openapi.Actor, er
 func (s *ActivitypubService) SendActivity(keyId string, privKey *rsa.PrivateKey, targetHost string, activity any) ([]byte, error) {
 	reqBody, err := json.Marshal(activity)
 	if err != nil {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
+		return nil, cerror.Wrap(err, "failed to send activity")
 	}
 
 	// create request
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", targetHost, bytes.NewBuffer(reqBody))
 	if err != nil {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
+		return nil, cerror.Wrap(err, "failed to send activity")
 	}
 	req.Header.Set("Content-Type", "application/activity+json")
 	if err := util.HttpSigSign(keyId, privKey, req, reqBody); err != nil {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
+		return nil, cerror.Wrap(err, "failed to send activity")
 	}
 
 	// send request
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
+		return nil, cerror.Wrap(err, "failed to send activity")
 	}
 	defer resp.Body.Close()
 
 	// read response
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, err.Error())
+		return nil, cerror.Wrap(err, "failed to send activity")
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, cerror.Wrap(cerror.ErrPushActivity, string(body))
+		return nil, cerror.Wrap(fmt.Errorf("%v", string(body)), "failed to send activity")
 	}
 	return body, nil
 }
