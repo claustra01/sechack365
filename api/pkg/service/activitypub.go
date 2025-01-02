@@ -50,7 +50,7 @@ func (s *ActivitypubService) NewActor(user model.UserWithIdentifiers) *openapi.A
 	baseUrl := s.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id)
 	actor := &openapi.Actor{
 		Context:           NewApContext(),
-		Type:              "Person",
+		Type:              model.ActivityTypePerson,
 		Id:                baseUrl,
 		Inbox:             baseUrl + "/inbox",
 		Outbox:            baseUrl + "/outbox",
@@ -82,7 +82,7 @@ func (s *ActivitypubService) NewKeyIdUrl(host string, name string) string {
 func (s *ActivitypubService) NewFollowActivity(id, host, followerId, targetUrl string) *model.ApActivity {
 	return &model.ApActivity{
 		Context: NewApContext(),
-		Type:    "Follow",
+		Type:    model.ActivityTypeFollow,
 		Id:      fmt.Sprintf("https://%s/follows/%s", host, id),
 		Actor:   s.NewActorUrl(host, followerId),
 		Object:  targetUrl,

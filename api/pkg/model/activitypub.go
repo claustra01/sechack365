@@ -1,9 +1,16 @@
 package model
 
-const SoftWareName = "sechack365"
-const SoftWareVersion = "0.1.0"
+const (
+	SoftWareName    = "sechack365"
+	SoftWareVersion = "0.1.0"
+	NodeInfoVersion = "2.0"
+)
 
-const NodeInfoVersion = "2.0"
+const (
+	ActivityTypePerson = "Person"
+	ActivityTypeFollow = "Follow"
+	ActivityTypeAccept = "Accept"
+)
 
 var Protocols = []string{
 	"activitypub",
