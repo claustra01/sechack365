@@ -99,7 +99,7 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 				returnError(w, http.StatusInternalServerError)
 				return
 			}
-			activity := c.Controllers.ActivityPub.NewFollowActivity(follow.Id, user.Identifiers.Activitypub.Host, user.Identifiers.Activitypub.LocalUsername, targetUrl)
+			activity := c.Controllers.ActivityPub.NewFollowActivity(follow.Id, user.Identifiers.Activitypub.Host, user.Id, targetUrl)
 			respBody, err := c.Controllers.ActivityPub.SendActivity(keyId, privKey, targetActor.Inbox, activity)
 			if err != nil {
 				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
