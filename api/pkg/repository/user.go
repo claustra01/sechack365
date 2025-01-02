@@ -29,7 +29,7 @@ func (r *UserRepository) CreateLocalUser(username, password, displayName, profil
 	}
 
 	// create ap_user_identifier record
-	pubKey, prvKey, err := util.GenerateApKeyPair()
+	prvKey, pubKey, err := util.GenerateKeyPemPair()
 	if err != nil {
 		return cerror.Wrap(err, "failed to create local user")
 	}

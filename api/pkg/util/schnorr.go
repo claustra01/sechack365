@@ -16,7 +16,7 @@ import (
 	"github.com/claustra01/sechack365/pkg/model"
 )
 
-func GeneratePrivateKey() string {
+func GenerateSchnorrPrivKey() string {
 	params := btcec.S256().Params()
 	one := new(big.Int).SetInt64(1)
 
@@ -33,8 +33,8 @@ func GeneratePrivateKey() string {
 	return fmt.Sprintf("%064x", k.Bytes())
 }
 
-func GetPublicKey(sk string) (string, error) {
-	b, err := hex.DecodeString(sk)
+func GetSchnorrPubKey(PrivKey string) (string, error) {
+	b, err := hex.DecodeString(PrivKey)
 	if err != nil {
 		return "", err
 	}
@@ -43,8 +43,8 @@ func GetPublicKey(sk string) (string, error) {
 }
 
 func GenerateNostrKeyPair() (string, string, error) {
-	privKey := GeneratePrivateKey()
-	pubKey, err := GetPublicKey(privKey)
+	privKey := GenerateSchnorrPrivKey()
+	pubKey, err := GetSchnorrPubKey(privKey)
 	if err != nil {
 		return "", "", cerror.Wrap(err, "failed to generate nostr key pair")
 	}
