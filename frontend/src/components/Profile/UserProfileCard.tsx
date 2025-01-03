@@ -22,17 +22,16 @@ export const UserProfileCard = (props: User) => {
 		<Flex direction="column" gap={12}>
 			<Flex direction="row" align="center" justify="space-between">
 				<Avatar src={props.icon} size={80} />
-				{currentUser &&
-					(currentUser?.id === props.id ? (
-						// TODO: edit profile
-						<Button color={colors.secondaryColor} size="lg">
-							Edit
-						</Button>
-					) : isFollowed ? (
-						<UnfollowButton targetId={props.id} />
-					) : (
-						<FollowButton targetId={props.id} />
-					))}
+				{currentUser?.id === props.id ? (
+					// TODO: edit profile
+					<Button color={colors.secondaryColor} size="lg">
+						Edit
+					</Button>
+				) : currentUser && isFollowed ? (
+					<UnfollowButton targetId={props.id} />
+				) : (
+					currentUser && <FollowButton targetId={props.id} />
+				)}
 			</Flex>
 			<Flex direction="column" gap={4}>
 				<Title size="h3" fw={500}>
