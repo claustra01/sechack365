@@ -12,7 +12,7 @@ type TCurrentUserContext = {
 	setUser: React.Dispatch<React.SetStateAction<User | null>>;
 };
 
-const CurrentUserContext = createContext({} as TCurrentUserContext);
+export const CurrentUserContext = createContext({} as TCurrentUserContext);
 
 export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -43,14 +43,14 @@ export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 						>
 							{children}
 						</Box>
-						<DesktopMenu isAuthenticated={currentUser != null} />
+						<DesktopMenu />
 					</Flex>
 				</DesktopOnly>
 				<MobileOnly>
 					<Box bg={colors.white} w={"100%"} style={{ minHeight: "100vh" }}>
 						{children}
 					</Box>
-					<MobileMenu isAuthenticated={currentUser != null} />
+					<MobileMenu />
 				</MobileOnly>
 			</CurrentUserContext.Provider>
 		</main>
