@@ -2,20 +2,20 @@ import {
 	getApiV1UsersIdFollowers,
 	getApiV1UsersIdFollows,
 	getApiV1UsersIdPosts,
-	getApiV1UsersMe,
 } from "@/openapi/api";
 import type { Post, User } from "@/openapi/schemas";
 import { Box } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FollowList } from "../FollowList/FollowList";
 import { UserProfile } from "../Profile/UserProfile";
+import { CurrentUserContext } from "../Template/PageTemplate";
 import { TimelineBase } from "./TimelineBase";
 
 export const MyTimeline = () => {
 	const [hash, setHash] = useState<string>("");
-	const [user, setUser] = useState<User | null>(null);
 	const [posts, setPosts] = useState<Post[]>([]);
 	const [follows, setFollows] = useState<User[]>([]);
+	const { user } = useContext(CurrentUserContext);
 
 	useEffect(() => {
 		const handleHashChange = () => {
@@ -26,12 +26,6 @@ export const MyTimeline = () => {
 		return () => {
 			window.removeEventListener("hashchange", handleHashChange);
 		};
-	}, []);
-
-	useEffect(() => {
-		getApiV1UsersMe().then((response) => {
-			setUser(response.data as unknown as User);
-		});
 	}, []);
 
 	useEffect(() => {
