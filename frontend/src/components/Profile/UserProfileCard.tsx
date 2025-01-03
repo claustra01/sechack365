@@ -1,22 +1,18 @@
-import { getApiV1FollowsFollowingId, getApiV1UsersMe } from "@/openapi/api";
+import { getApiV1FollowsFollowingId } from "@/openapi/api";
 import type { User } from "@/openapi/schemas";
 import { colors } from "@/styles/colors";
 import { Avatar, Box, Button, Flex, Text, Title } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { bindUsername } from "../../../utils/strings";
+import { CurrentUserContext } from "../Template/PageTemplate";
 import { FollowButton } from "./FollowButton";
 import { UnfollowButton } from "./UnfollowButton";
 
 export const UserProfileCard = (props: User) => {
-	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 	const [isFollowed, setIsFollowed] = useState<boolean>(false);
-	const [currentUser, setCurrentUser] = useState<User | null>(null);
+	const { user: currentUser } = useContext(CurrentUserContext);
 
 	useEffect(() => {
-		getApiV1UsersMe().then((response) => {
-			setIsAuthenticated(true);
-			setCurrentUser(response.data as unknown as User);
-		});
 		getApiV1FollowsFollowingId(props.id).then((response) => {
 			setIsFollowed(response.data.found);
 		});
@@ -26,17 +22,16 @@ export const UserProfileCard = (props: User) => {
 		<Flex direction="column" gap={12}>
 			<Flex direction="row" align="center" justify="space-between">
 				<Avatar src={props.icon} size={80} />
-				{isAuthenticated &&
-					(currentUser?.id === props.id ? (
-						// TODO: edit profile
-						<Button color={colors.secondaryColor} size="lg">
-							Edit
-						</Button>
-					) : isFollowed ? (
-						<UnfollowButton targetId={props.id} />
-					) : (
-						<FollowButton targetId={props.id} />
-					))}
+				{currentUser?.id === props.id ? (
+					// TODO: edit profile
+					<Button color={colors.secondaryColor} size="lg">
+						Edit
+					</Button>
+				) : currentUser && isFollowed ? (
+					<UnfollowButton targetId={props.id} />
+				) : (
+					currentUser && <FollowButton targetId={props.id} />
+				)}
 			</Flex>
 			<Flex direction="column" gap={4}>
 				<Title size="h3" fw={500}>

@@ -1,46 +1,58 @@
 import { getApiV1UsersMe } from "@/openapi/api";
+import type { User } from "@/openapi/schemas";
 import { colors } from "@/styles/colors";
 import { DesktopOnly, MobileOnly } from "@/styles/devices";
 import { Box, Flex } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { DesktopMenu } from "../Menu/DesktopMenu";
 import { MobileMenu } from "../Menu/MobileMenu";
 
+type TCurrentUserContext = {
+	user: User | null;
+	setUser: React.Dispatch<React.SetStateAction<User | null>>;
+};
+
+export const CurrentUserContext = createContext({} as TCurrentUserContext);
+
 export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
-	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+	const [currentUser, setCurrentUser] = useState<User | null>(null);
 
 	useEffect(() => {
-		getApiV1UsersMe().then(() => {
-			setIsAuthenticated(true);
+		getApiV1UsersMe().then((r) => {
+			setCurrentUser(r.data as unknown as User);
 		});
 	}, []);
 
 	return (
 		<main>
-			<DesktopOnly>
-				<Flex
-					bg={colors.primaryColor}
-					direction="row"
-					gap={24}
-					justify="center"
-					pt={24}
-				>
-					<Box
-						bg={colors.white}
-						w={720}
-						style={{ minHeight: "calc( 100vh - 24px )" }}
+			<CurrentUserContext.Provider
+				value={{ user: currentUser, setUser: setCurrentUser }}
+			>
+				<DesktopOnly>
+					<Flex
+						bg={colors.primaryColor}
+						direction="row"
+						gap={24}
+						justify="center"
+						pt={24}
 					>
+						<Box
+							bg={colors.white}
+							w={720}
+							style={{ minHeight: "calc( 100vh - 24px )" }}
+						>
+							{children}
+						</Box>
+						<DesktopMenu />
+					</Flex>
+				</DesktopOnly>
+				<MobileOnly>
+					<Box bg={colors.white} w={"100%"} style={{ minHeight: "100vh" }}>
 						{children}
 					</Box>
-					<DesktopMenu isAuthenticated={isAuthenticated} />
-				</Flex>
-			</DesktopOnly>
-			<MobileOnly>
-				<Box bg={colors.white} w={"100%"} style={{ minHeight: "100vh" }}>
-					{children}
-				</Box>
-				<MobileMenu isAuthenticated={isAuthenticated} />
-			</MobileOnly>
+					<MobileMenu />
+				</MobileOnly>
+			</CurrentUserContext.Provider>
 		</main>
 	);
 };
