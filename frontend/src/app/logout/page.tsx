@@ -1,13 +1,16 @@
 "use client";
 
 import { postApiV1AuthLogout } from "@/openapi/api";
+import { useRouter } from "next/navigation";
 
 export default function LogoutPage() {
+	const router = useRouter();
+
 	postApiV1AuthLogout()
 		.then((response) => {
 			if (response.status === 204) {
 				// FIXME: routerを使うようにする
-				window.location.href = "/";
+				router.push("/");
 			}
 		})
 		.catch((error) => {

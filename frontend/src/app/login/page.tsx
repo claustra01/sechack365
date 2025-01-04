@@ -6,9 +6,11 @@ import { postApiV1AuthLogin } from "@/openapi/api";
 import { colors } from "@/styles/colors";
 import { Box, Button, TextInput } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
+	const router = useRouter();
 	const [username, setUsername] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 
@@ -31,8 +33,7 @@ export default function LoginPage() {
 		postApiV1AuthLogin(reqBody)
 			.then((response) => {
 				if (response.status === 204) {
-					// FIXME: routerを使うようにする
-					window.location.href = "/";
+					router.push("/");
 				}
 			})
 			.catch((error) => {
