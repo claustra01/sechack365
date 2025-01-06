@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -61,22 +60,21 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 			returnError(w, http.StatusBadRequest)
 			return
 		}
-		log.Println(activity)
+
+		// resolve target
+		targetUrl := activity["object"].(string)
+		re = regexp.MustCompile(`https://` + c.Config.Host + `/api/v1/users/([a-z0-9-]+)`)
+		match = re.FindStringSubmatch(targetUrl)
+		if len(match) <= 1 {
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidActivityObject, "failed to parse activity at inbox"))
+			returnError(w, http.StatusBadRequest)
+			return
+		}
+		targetId := match[1]
 
 		switch activity["type"] {
 		// follow
 		case model.ActivityTypeFollow:
-			// resolve target
-			targetUrl := activity["object"].(string)
-			re := regexp.MustCompile(`https://` + c.Config.Host + `/api/v1/users/([a-z0-9-]+)`)
-			match := re.FindStringSubmatch(targetUrl)
-			if len(match) <= 1 {
-				c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidActivityObject, "failed to parse activity at inbox"))
-				returnError(w, http.StatusBadRequest)
-				return
-			}
-			targetId := match[1]
-
 			// resolve follower
 			followerUrl := activity["actor"].(string)
 			parsedFollowerURL, err := url.Parse(followerUrl)
