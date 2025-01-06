@@ -140,3 +140,16 @@ func (r *FollowRepository) Delete(followerId, targetId string) error {
 	}
 	return nil
 }
+
+func (r *FollowRepository) GetAllFollowingNostrPubKeys() ([]string, error) {
+	var pubKeys []string
+	query := `
+		SELECT nostr_user_identifiers.public_key
+		FROM nostr_user_identifiers
+		JOIN follows ON nostr_user_identifiers.user_id = follows.target_id;
+	`
+	if err := r.SqlHandler.Select(&pubKeys, query); err != nil {
+		return nil, cerror.Wrap(err, "failed to get following nostr public keys")
+	}
+	return pubKeys, nil
+}

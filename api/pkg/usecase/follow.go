@@ -11,6 +11,8 @@ type IFollowRepository interface {
 	FindNostrFollowPublicKeys(userId string) ([]string, error)
 	CheckIsFollowing(followerId, targetId string) (bool, error)
 	Delete(followerId, targetId string) error
+	// Nostr用
+	GetAllFollowingNostrPubKeys() ([]string, error)
 }
 
 type FollowUsecase struct {
@@ -47,4 +49,8 @@ func (u *FollowUsecase) CheckIsFollowing(followerId, targetId string) (bool, err
 
 func (u *FollowUsecase) Delete(followerId, targetId string) error {
 	return u.FollowRepository.Delete(followerId, targetId)
+}
+
+func (u *FollowUsecase) GetAllFollowingNostrPubKeys() ([]string, error) {
+	return u.FollowRepository.GetAllFollowingNostrPubKeys()
 }

@@ -338,19 +338,6 @@ func (r *UserRepository) GetActivityPubPrivKey(id string) (string, error) {
 	return privKey, nil
 }
 
-func (r *UserRepository) GetAllFollowingNostrPubKeys() ([]string, error) {
-	var pubKeys []string
-	query := `
-		SELECT nostr_user_identifiers.public_key
-		FROM nostr_user_identifiers
-		JOIN follows ON nostr_user_identifiers.user_id = follows.target_id;
-	`
-	if err := r.SqlHandler.Select(&pubKeys, query); err != nil {
-		return nil, cerror.Wrap(err, "failed to get following nostr public keys")
-	}
-	return pubKeys, nil
-}
-
 func (r *UserRepository) GetNostrPrivKey(id string) (string, error) {
 	var privKey string
 	if err := r.SqlHandler.Get(&privKey, "SELECT private_key FROM nostr_user_identifiers WHERE user_id = $1;", id); err != nil {

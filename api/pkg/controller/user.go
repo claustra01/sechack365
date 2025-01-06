@@ -72,10 +72,6 @@ func (c *UserController) GetActivityPubPrivKey(id string) (string, error) {
 	return c.UserUsecase.GetActivityPubPrivKey(id)
 }
 
-func (c *UserController) GetAllFollowingNostrPubKeys() ([]string, error) {
-	return c.UserUsecase.GetAllFollowingNostrPubKeys()
-}
-
 func (c *UserController) GetNostrPrivKey(id string) (string, error) {
 	return c.UserUsecase.GetNostrPrivKey(id)
 }

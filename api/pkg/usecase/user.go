@@ -19,7 +19,6 @@ type IUserRepository interface {
 	// ActivityPub用
 	GetActivityPubPrivKey(id string) (string, error)
 	// Nostr用
-	GetAllFollowingNostrPubKeys() ([]string, error)
 	GetNostrPrivKey(id string) (string, error)
 }
 
@@ -77,10 +76,6 @@ func (u *UserUsecase) GetActivityPubPrivKey(id string) (string, error) {
 
 func (u *UserUsecase) FindWithHashedPassword(username string) (*model.User, error) {
 	return u.UserRepository.FindWithHashedPassword(username)
-}
-
-func (u *UserUsecase) GetAllFollowingNostrPubKeys() ([]string, error) {
-	return u.UserRepository.GetAllFollowingNostrPubKeys()
 }
 
 func (u *UserUsecase) GetNostrPrivKey(id string) (string, error) {

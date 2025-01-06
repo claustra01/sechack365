@@ -12,7 +12,7 @@ func UpdateNostrRemotePosts(c *framework.Context) {
 	go func() {
 		for range ticker.C {
 			// get all following nostr public keys
-			pubKeys, err := c.Controllers.User.GetAllFollowingNostrPubKeys()
+			pubKeys, err := c.Controllers.Follow.GetAllFollowingNostrPubKeys()
 			if err != nil {
 				c.Logger.Error("failed to update remote nostr posts", err)
 				continue
