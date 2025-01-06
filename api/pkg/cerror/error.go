@@ -30,6 +30,7 @@ var ErrPostNotFound = fmt.Errorf("post not found")
 
 // inbox handler
 var ErrInvalidActivityType = fmt.Errorf("invalid activity type")
+var ErrInvalidActivityObject = fmt.Errorf("invalid activity object")
 
 // nostr service
 var ErrNostrRelayResNotOk = fmt.Errorf("nostr relay response is not ok")
