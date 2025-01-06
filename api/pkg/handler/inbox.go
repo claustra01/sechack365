@@ -147,16 +147,11 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 			}
 
 			// send activity
-			follow, err := c.Controllers.Follow.FindFollowByFollowerAndTarget(follower.Id, targetId)
-			if err != nil {
-				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub remote follow"))
-				returnError(w, http.StatusInternalServerError)
-				return
-			}
+			uuid := util.NewUuid()
 			acceptActivity := &model.ApActivity{
 				Context: *c.Controllers.ActivityPub.NewApContext(),
 				Type:    model.ActivityTypeAccept,
-				Id:      fmt.Sprintf("https://%s/follows/%s", c.Config.Host, follow.Id),
+				Id:      fmt.Sprintf("https://%s/%s", c.Config.Host, uuid),
 				Actor:   targetUrl,
 				Object:  string(body),
 			}
@@ -238,7 +233,7 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 				uuid := util.NewUuid()
 				rejectActivity := &model.ApActivity{
 					Context: *c.Controllers.ActivityPub.NewApContext(),
-					Type:    model.ActivityTypeAccept,
+					Type:    model.ActivityTypeReject,
 					Id:      fmt.Sprintf("https://%s/%s", c.Config.Host, uuid),
 					Actor:   targetUrl,
 					Object:  string(body),
