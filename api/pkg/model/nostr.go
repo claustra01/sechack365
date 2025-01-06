@@ -16,11 +16,10 @@ type NostrFilter struct {
 	// Ids     []string `json:"ids"`
 	Authors []string `json:"authors"`
 	Kinds   []int    `json:"kinds"`
-	// ETags   []string `json:"#e"`
-	// PTags   []string `json:"#p"`
-	Since int64 `json:"since"` // unix timestamp
-	Until int64 `json:"until"` // unix timestamp
-	Limit int   `json:"limit"`
+	PTags   []string `json:"#p,omitempty"`
+	Since   int64    `json:"since"` // unix timestamp
+	Until   int64    `json:"until"` // unix timestamp
+	Limit   int      `json:"limit"`
 }
 
 type NostrProfile struct {
