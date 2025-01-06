@@ -9,6 +9,7 @@ import (
 type INostrService interface {
 	GetRemoteProfile(id string) (*model.NostrProfile, error)
 	GetRemotePosts(pubKeys []string, since time.Time) ([]*model.NostrEvent, error)
+	GetRemoteFollowerPubKeys(pubKeys []string, since time.Time) ([]string, error)
 	PublishProfile(privKey string, profile *model.NostrProfile) error
 	PublishPost(privKey string, note string) error
 	PublishFollow(privKey string, pubKeys []string) error
@@ -24,6 +25,10 @@ func (u *NostrUsecase) GetRemoteProfile(id string) (*model.NostrProfile, error) 
 
 func (u *NostrUsecase) GetRemotePosts(pubKeys []string, since time.Time) ([]*model.NostrEvent, error) {
 	return u.NostrService.GetRemotePosts(pubKeys, since)
+}
+
+func (u *NostrUsecase) GetRemoteFollowerPubKeys(pubKeys []string, since time.Time) ([]string, error) {
+	return u.NostrService.GetRemoteFollowerPubKeys(pubKeys, since)
 }
 
 func (u *NostrUsecase) PublishProfile(privKey string, profile *model.NostrProfile) error {

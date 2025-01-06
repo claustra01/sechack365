@@ -148,6 +148,37 @@ func (s *NostrService) GetRemotePosts(pubKeys []string, since time.Time) ([]*mod
 	return events, nil
 }
 
+func (s *NostrService) GetRemoteFollowerPubKeys(pubKeys []string, since time.Time) ([]string, error) {
+	id := util.NewUuid()
+	filter := model.NostrFilter{
+		Kinds: []int{3},
+		PTags: pubKeys,
+		Limit: 100,
+		Since: since.Unix() + 1,
+		Until: time.Now().Unix(),
+	}
+	msgs, err := s.sendReq(id.String(), filter)
+	if err != nil {
+		return []string{}, err
+	}
+	if len(msgs) == 0 {
+		return []string{}, nil
+	}
+	var followers []string
+	for _, msg := range msgs {
+		var arr []any
+		if err := json.Unmarshal([]byte(msg), &arr); err != nil {
+			return nil, err
+		}
+		if len(arr) != 3 {
+			continue
+		}
+		e := arr[2].(map[string]any)
+		followers = append(followers, e["pubkey"].(string))
+	}
+	return followers, nil
+}
+
 func (s *NostrService) PublishProfile(privKey string, profile *model.NostrProfile) error {
 	event, err := util.NostrSign(privKey, time.Now(), 0, []model.NostrEventTag{}, profile)
 	if err != nil {

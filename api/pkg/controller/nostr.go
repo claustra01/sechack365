@@ -30,6 +30,10 @@ func (c *NostrController) GetRemotePosts(pubKeys []string, since time.Time) ([]*
 	return c.NostrUsecase.GetRemotePosts(pubKeys, since)
 }
 
+func (c *NostrController) GetRemoteFollowerPubKeys(pubKeys []string, since time.Time) ([]string, error) {
+	return c.NostrUsecase.GetRemoteFollowerPubKeys(pubKeys, since)
+}
+
 func (c *NostrController) PublishProfile(privKey string, profile *model.NostrProfile) error {
 	return c.NostrUsecase.PublishProfile(privKey, profile)
 }
