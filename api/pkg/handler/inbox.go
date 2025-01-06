@@ -61,20 +61,20 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		// resolve target
-		targetUrl := activity["object"].(string)
-		re = regexp.MustCompile(`https://` + c.Config.Host + `/api/v1/users/([a-z0-9-]+)`)
-		match = re.FindStringSubmatch(targetUrl)
-		if len(match) <= 1 {
-			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidActivityObject, "failed to parse activity at inbox"))
-			returnError(w, http.StatusBadRequest)
-			return
-		}
-		targetId := match[1]
-
 		switch activity["type"] {
 		// follow
 		case model.ActivityTypeFollow:
+			// resolve target
+			targetUrl := activity["object"].(string)
+			re := regexp.MustCompile(`https://` + c.Config.Host + `/api/v1/users/([a-z0-9-]+)`)
+			match := re.FindStringSubmatch(targetUrl)
+			if len(match) <= 1 {
+				c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidActivityObject, "failed to receive activity remote follow"))
+				returnError(w, http.StatusBadRequest)
+				return
+			}
+			targetId := match[1]
+
 			// resolve follower
 			followerUrl := activity["actor"].(string)
 			parsedFollowerURL, err := url.Parse(followerUrl)
@@ -171,6 +171,84 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 
 		// undo
 		case model.ActivityTypeUndo:
+			object := activity["object"].(map[string]interface{})
+
+			if object["type"] == model.ActivityTypeFollow {
+				// resolve target
+				targetUrl := object["object"].(string)
+				re := regexp.MustCompile(`https://` + c.Config.Host + `/api/v1/users/([a-z0-9-]+)`)
+				match := re.FindStringSubmatch(targetUrl)
+				if len(match) <= 1 {
+					c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidActivityObject, "failed to parse undo remote follow"))
+					returnError(w, http.StatusBadRequest)
+					return
+				}
+				targetId := match[1]
+
+				// resolve follower
+				followerUrl := object["actor"].(string)
+				parsedFollowerURL, err := url.Parse(followerUrl)
+				if err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive undo remote follow"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+				actor, err := c.Controllers.ActivityPub.ResolveRemoteActor(followerUrl)
+				if err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to undo activitypub remote follow"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+				follower, err := c.Controllers.User.FindByApUsername(actor.PreferredUsername, parsedFollowerURL.Host)
+				if err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to undo activitypub remote follow"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+
+				// get keyId and privKey
+				user, err := c.Controllers.User.FindById(targetId)
+				if err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub remote follow"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+				keyId := c.Controllers.ActivityPub.NewKeyIdUrl(user.Identifiers.Activitypub.Host, user.Id)
+				privKeyPem, err := c.Controllers.User.GetActivityPubPrivKey(user.Id)
+				if err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub remote follow"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+				privKey, _, err := util.DecodePem(privKeyPem)
+				if err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub remote follow"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+
+				// delete follow
+				if err := c.Controllers.Follow.Delete(follower.Id, targetId); err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to undo activitypub remote follow"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+
+				// send activity
+				uuid := util.NewUuid()
+				rejectActivity := &model.ApActivity{
+					Context: *c.Controllers.ActivityPub.NewApContext(),
+					Type:    model.ActivityTypeAccept,
+					Id:      fmt.Sprintf("https://%s/%s", c.Config.Host, uuid),
+					Actor:   targetUrl,
+					Object:  string(body),
+				}
+				if _, err := c.Controllers.ActivityPub.SendActivity(keyId, privKey, actor.Inbox, rejectActivity); err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub remote follow"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+			}
 
 		default:
 			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidActivityType, "failed to parse activity"))
