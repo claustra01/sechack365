@@ -14,12 +14,12 @@ type NostrEventTag []string
 
 type NostrFilter struct {
 	// Ids     []string `json:"ids"`
-	Authors []string `json:"authors"`
-	Kinds   []int    `json:"kinds"`
+	Authors []string `json:"authors,omitempty"`
+	Kinds   []int    `json:"kinds,omitempty"`
 	PTags   []string `json:"#p,omitempty"`
-	Since   int64    `json:"since"` // unix timestamp
-	Until   int64    `json:"until"` // unix timestamp
-	Limit   int      `json:"limit"`
+	Since   int64    `json:"since,omitempty"` // unix timestamp
+	Until   int64    `json:"until,omitempty"` // unix timestamp
+	Limit   int      `json:"limit,omitempty"`
 }
 
 type NostrProfile struct {
