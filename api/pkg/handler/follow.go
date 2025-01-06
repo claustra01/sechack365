@@ -93,16 +93,11 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 			}
 
 			// send activity
-			follow, err := c.Controllers.Follow.FindFollowByFollowerAndTarget(user.Id, target.Id)
-			if err != nil {
-				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
-				returnError(w, http.StatusInternalServerError)
-				return
-			}
+			uuid := util.NewUuid()
 			activity := &model.ApActivity{
 				Context: *c.Controllers.ActivityPub.NewApContext(),
 				Type:    model.ActivityTypeFollow,
-				Id:      fmt.Sprintf("https://%s/follows/%s", user.Identifiers.Activitypub.Host, follow.Id),
+				Id:      fmt.Sprintf("https://%s/%s", user.Identifiers.Activitypub.Host, uuid),
 				Actor:   c.Controllers.ActivityPub.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id),
 				Object:  targetUrl,
 			}
@@ -244,20 +239,15 @@ func DeleteFollow(c *framework.Context) http.HandlerFunc {
 			}
 
 			// send activity
-			follow, err := c.Controllers.Follow.FindFollowByFollowerAndTarget(user.Id, target.Id)
-			if err != nil {
-				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
-				returnError(w, http.StatusInternalServerError)
-				return
-			}
+			uuid := util.NewUuid()
 			activity := &model.ApActivity{
 				Context: *c.Controllers.ActivityPub.NewApContext(),
 				Type:    model.ActivityTypeUndo,
-				Id:      fmt.Sprintf("https://%s/follows/%s", user.Identifiers.Activitypub.Host, follow.Id),
+				Id:      fmt.Sprintf("https://%s/%s", user.Identifiers.Activitypub.Host, uuid),
 				Actor:   c.Controllers.ActivityPub.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id),
 				Object: &model.ApActivity{
 					Type:   model.ActivityTypeFollow,
-					Id:     fmt.Sprintf("https://%s/follows/%s", user.Identifiers.Activitypub.Host, follow.Id),
+					Id:     fmt.Sprintf("https://%s/%s", user.Identifiers.Activitypub.Host, uuid),
 					Actor:  c.Controllers.ActivityPub.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id),
 					Object: targetUrl,
 				},
