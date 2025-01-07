@@ -62,6 +62,56 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 		}
 
 		switch activity["type"] {
+		// create
+		case model.ActivityTypeCreate:
+			object := activity["object"].(map[string]interface{})
+
+			if object["type"] == model.ActivityTypeNote {
+				// parse note activity
+				published, err := util.StrToTime(object["published"].(string))
+				if err != nil {
+					c.Logger.Warn("Bad Request", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
+					returnError(w, http.StatusBadRequest)
+					return
+				}
+				note := &model.ApNoteActivity{
+					Type:      object["type"].(string),
+					Id:        object["id"].(string),
+					Content:   object["content"].(string),
+					Published: published,
+					To:        object["to"].([]string),
+					Cc:        object["cc"].([]string),
+				}
+
+				// resolve actor
+				actorUrl := activity["actor"].(string)
+				parsedActorURL, err := url.Parse(actorUrl)
+				if err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+				actor, err := c.Controllers.ActivityPub.ResolveRemoteActor(actorUrl)
+				if err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+				user, err := c.Controllers.User.FindByApUsername(actor.PreferredUsername, parsedActorURL.Host)
+				if err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+
+				// create post
+				if err := c.Controllers.Post.InsertApRemotePost(user.Id, note); err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+			}
+
 		// follow
 		case model.ActivityTypeFollow:
 			// resolve target
@@ -161,9 +211,6 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 				return
 			}
 
-		case model.ActivityTypeAccept:
-		case model.ActivityTypeReject:
-
 		// undo
 		case model.ActivityTypeUndo:
 			object := activity["object"].(map[string]interface{})
@@ -244,6 +291,9 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 					return
 				}
 			}
+
+		case model.ActivityTypeAccept:
+		case model.ActivityTypeReject:
 
 		default:
 			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidActivityType, "failed to parse activity"))
