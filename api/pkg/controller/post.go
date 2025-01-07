@@ -40,6 +40,10 @@ func (c *PostController) DeleteById(id string) error {
 	return c.PostUsecase.DeleteById(id)
 }
 
+func (c *PostController) InsertApRemotePost(userId string, note *model.ApNoteActivity) error {
+	return c.PostUsecase.InsertApRemotePost(userId, note)
+}
+
 func (c *PostController) GetLatestNostrRemotePost() (*model.Post, error) {
 	return c.PostUsecase.GetLatestNostrRemotePost()
 }
