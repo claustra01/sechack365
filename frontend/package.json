@@ -17,6 +17,8 @@
     "@mantine/hooks": "^7.14.0",
     "@tabler/icons-react": "^3.22.0",
     "axios": "^1.7.7",
+    "dompurify": "^3.2.3",
+    "html-react-parser": "^5.2.2",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",
