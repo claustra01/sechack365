@@ -1,6 +1,8 @@
 import type { User } from "@/openapi/schemas";
 import { Anchor, Flex, Text } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
+import DOMPurify from "dompurify";
+import parse from "html-react-parser";
 import { Header } from "../Header/Header";
 import { UserProfileCard } from "./UserProfileCard";
 import { UserProfileCounter } from "./UserProfileCounter";
@@ -12,7 +14,7 @@ export const UserProfile = (props: User) => {
 			<Flex direction="column" gap={24} p={24}>
 				<UserProfileCard {...props} />
 				<Text size="lg" style={{ wordBreak: "break-word" }}>
-					{props.profile}
+					{parse(DOMPurify.sanitize(props.profile))}
 				</Text>
 				<Flex direction="row" align="center" gap={24}>
 					<Anchor href="#posts" style={{ textDecoration: "none" }}>
