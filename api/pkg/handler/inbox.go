@@ -79,8 +79,8 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 					Id:        object["id"].(string),
 					Content:   object["content"].(string),
 					Published: published,
-					To:        object["to"].([]string),
-					Cc:        object["cc"].([]string),
+					// To:        object["to"].([]string),
+					// Cc:        object["cc"].([]string),
 				}
 
 				// resolve actor
@@ -100,6 +100,11 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 				user, err := c.Controllers.User.FindByApUsername(actor.PreferredUsername, parsedActorURL.Host)
 				if err != nil {
 					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+				if user == nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(cerror.ErrUserNotFound, "failed to receive activitypub note"))
 					returnError(w, http.StatusInternalServerError)
 					return
 				}
