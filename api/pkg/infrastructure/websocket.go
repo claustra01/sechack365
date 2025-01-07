@@ -69,7 +69,7 @@ func (ws *WsHandler) Close() error {
 }
 
 func (ws *WsHandler) monitor(logger model.ILogger) {
-	ticker := time.NewTicker(1 * time.Minute)
+	ticker := time.NewTicker(10 * time.Second)
 	go func() {
 		for range ticker.C {
 			ws.lock.Lock()
