@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 const (
 	SoftWareName    = "sechack365"
 	SoftWareVersion = "0.1.0"
@@ -8,9 +10,11 @@ const (
 
 const (
 	ActivityTypePerson = "Person"
-	ActivityTypeFollow = "Follow"
-	ActivityTypeAccept = "Accept"
+	ActivityTypeCreate = "Create"
 	ActivityTypeUndo   = "Undo"
+	ActivityTypeFollow = "Follow"
+	ActivityTypeNote   = "Note"
+	ActivityTypeAccept = "Accept"
 	ActivityTypeReject = "Reject"
 )
 
@@ -29,4 +33,13 @@ type ApActivity struct {
 	Id      string `json:"id"`
 	Actor   string `json:"actor"`
 	Object  any    `json:"object"`
+}
+
+type ApNoteActivity struct {
+	Type      string    `json:"type"`
+	Id        string    `json:"id"`
+	Content   string    `json:"content"`
+	Published time.Time `json:"published"`
+	To        []string  `json:"to"` // NOTE: まだ使わなくていい
+	Cc        []string  `json:"cc"` // NOTE: まだ使わなくていい
 }
