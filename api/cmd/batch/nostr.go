@@ -52,3 +52,35 @@ func UpdateNostrRemotePosts(c *framework.Context) {
 		}
 	}()
 }
+
+func UpdateNostrRemoteFollowers(c *framework.Context) {
+	ticker := time.NewTicker(10 * time.Second)
+	go func() {
+		for range ticker.C {
+			// local user pubkeys
+			pubKeys, err := c.Controllers.Follow.GetAllLocalUserNostrPubKeys()
+			if err != nil {
+				c.Logger.Error("failed to update remote nostr followers", err)
+				continue
+			}
+			if len(pubKeys) == 0 {
+				continue
+			}
+
+			// get latest follow
+			latest, err := c.Controllers.Follow.GetLatestNostrRemoteFollow()
+			if err != nil {
+				c.Logger.Error("failed to update remote nostr followers", err)
+				continue
+			}
+			if latest == nil {
+				latest = &model.Follow{
+					CreatedAt: time.Now().Add(-5 * time.Minute),
+				}
+			}
+
+			// get new remote follows
+			followers, err := c.Controllers.Nostr.GetRemoteFollowerPubKeys(pubKeys, latest.CreatedAt)
+		}
+	}()
+}

@@ -36,6 +36,7 @@ func main() {
 
 	// Batch
 	batch.UpdateNostrRemotePosts(ctx)
+	batch.UpdateNostrRemoteFollowers(ctx)
 
 	// Server
 	server := framework.NewServer(ctx)
