@@ -1,6 +1,8 @@
 import type { Post } from "@/openapi/schemas";
 import { colors } from "@/styles/colors";
 import { Flex, Text } from "@mantine/core";
+import DOMPurify from "dompurify";
+import parse from "html-react-parser";
 import { PostUserCard } from "./PostUserCard";
 
 export const PostCard = (props: Post) => {
@@ -16,7 +18,7 @@ export const PostCard = (props: Post) => {
 		>
 			<PostUserCard {...props.user} />
 			<Text size="lg" style={{ wordBreak: "break-word" }}>
-				{props.content}
+				{parse(DOMPurify.sanitize(props.content))}
 			</Text>
 		</Flex>
 	);
