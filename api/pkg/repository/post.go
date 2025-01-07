@@ -111,6 +111,18 @@ func (r *PostRepository) DeleteById(id string) error {
 	return cerror.Wrap(err, "failed to delete post")
 }
 
+func (r *PostRepository) InsertApRemotePost(userId string, note *model.ApNoteActivity) error {
+	uuid := util.NewUuid()
+	query := `
+		INSERT INTO posts (id, protocol, user_id, content, created_at)
+		VALUES ($1, $2, $3, $4, $5);
+	`
+	if _, err := r.SqlHandler.Exec(query, uuid, model.ProtocolActivityPub, userId, note.Content, note.Published); err != nil {
+		return cerror.Wrap(err, "failed to insert ap remote post")
+	}
+	return nil
+}
+
 func (r *PostRepository) GetLatestNostrRemotePost() (*model.Post, error) {
 	post := new(model.Post)
 	query := `
