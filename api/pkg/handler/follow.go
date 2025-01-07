@@ -54,13 +54,6 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		// create follow
-		if err := c.Controllers.Follow.Create(user.Id, target.Id); err != nil {
-			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
-			returnError(w, http.StatusInternalServerError)
-			return
-		}
-
 		// activitypub remote follow
 		if target.Protocol == model.ProtocolActivityPub {
 			// get keyId and privKey
@@ -127,6 +120,13 @@ func CreateFollow(c *framework.Context) http.HandlerFunc {
 				returnError(w, http.StatusInternalServerError)
 				return
 			}
+		}
+
+		// create follow
+		if err := c.Controllers.Follow.Create(user.Id, target.Id); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+			returnError(w, http.StatusInternalServerError)
+			return
 		}
 
 		// success
