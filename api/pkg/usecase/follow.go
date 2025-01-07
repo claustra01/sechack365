@@ -14,6 +14,7 @@ type IFollowRepository interface {
 	// Nostr用
 	GetAllFollowingNostrPubKeys() ([]string, error)
 	GetAllLocalUserNostrPubKeys() ([]string, error)
+	GetLatestNostrRemoteFollow() (*model.Follow, error)
 }
 
 type FollowUsecase struct {
@@ -58,4 +59,8 @@ func (u *FollowUsecase) GetAllFollowingNostrPubKeys() ([]string, error) {
 
 func (u *FollowUsecase) GetAllLocalUserNostrPubKeys() ([]string, error) {
 	return u.FollowRepository.GetAllLocalUserNostrPubKeys()
+}
+
+func (u *FollowUsecase) GetLatestNostrRemoteFollow() (*model.Follow, error) {
+	return u.FollowRepository.GetLatestNostrRemoteFollow()
 }

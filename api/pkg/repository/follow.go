@@ -160,10 +160,28 @@ func (r *FollowRepository) GetAllLocalUserNostrPubKeys() ([]string, error) {
 		SELECT nostr_user_identifiers.public_key
 		FROM nostr_user_identifiers
 		JOIN users ON nostr_user_identifiers.user_id = users.id
-		WHERE users.protocol = ?;
+		WHERE users.protocol = $1;
 	`
 	if err := r.SqlHandler.Select(&pubKeys, query, model.ProtocolLocal); err != nil {
 		return nil, cerror.Wrap(err, "failed to get local user nostr public keys")
 	}
 	return pubKeys, nil
+}
+
+func (r *FollowRepository) GetLatestNostrRemoteFollow() (*model.Follow, error) {
+	var follow model.Follow
+	query := `
+		SELECT follows.* FROM follows
+		JOIN users ON follows.follower_id = users.id
+		WHERE users.protocol = $1
+		ORDER BY follows.created_at DESC LIMIT 1;
+	`
+	err := r.SqlHandler.Get(&follow, query, model.ProtocolNostr)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, cerror.Wrap(err, "failed to get latest nostr remote follow")
+	}
+	return &follow, nil
 }

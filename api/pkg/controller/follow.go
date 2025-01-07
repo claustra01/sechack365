@@ -59,3 +59,7 @@ func (c *FollowController) GetAllFollowingNostrPubKeys() ([]string, error) {
 func (c *FollowController) GetAllLocalUserNostrPubKeys() ([]string, error) {
 	return c.FollowUsecase.GetAllLocalUserNostrPubKeys()
 }
+
+func (c *FollowController) GetLatestNostrRemoteFollow() (*model.Follow, error) {
+	return c.FollowUsecase.GetLatestNostrRemoteFollow()
+}
