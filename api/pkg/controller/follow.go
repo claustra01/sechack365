@@ -55,3 +55,7 @@ func (c *FollowController) Delete(followerId, targetId string) error {
 func (c *FollowController) GetAllFollowingNostrPubKeys() ([]string, error) {
 	return c.FollowUsecase.GetAllFollowingNostrPubKeys()
 }
+
+func (c *FollowController) GetAllLocalUserNostrPubKeys() ([]string, error) {
+	return c.FollowUsecase.GetAllLocalUserNostrPubKeys()
+}

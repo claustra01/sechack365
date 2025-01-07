@@ -13,6 +13,7 @@ type IFollowRepository interface {
 	Delete(followerId, targetId string) error
 	// Nostr用
 	GetAllFollowingNostrPubKeys() ([]string, error)
+	GetAllLocalUserNostrPubKeys() ([]string, error)
 }
 
 type FollowUsecase struct {
@@ -53,4 +54,8 @@ func (u *FollowUsecase) Delete(followerId, targetId string) error {
 
 func (u *FollowUsecase) GetAllFollowingNostrPubKeys() ([]string, error) {
 	return u.FollowRepository.GetAllFollowingNostrPubKeys()
+}
+
+func (u *FollowUsecase) GetAllLocalUserNostrPubKeys() ([]string, error) {
+	return u.FollowRepository.GetAllLocalUserNostrPubKeys()
 }

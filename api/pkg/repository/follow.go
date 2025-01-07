@@ -153,3 +153,17 @@ func (r *FollowRepository) GetAllFollowingNostrPubKeys() ([]string, error) {
 	}
 	return pubKeys, nil
 }
+
+func (r *FollowRepository) GetAllLocalUserNostrPubKeys() ([]string, error) {
+	var pubKeys []string
+	query := `
+		SELECT nostr_user_identifiers.public_key
+		FROM nostr_user_identifiers
+		JOIN users ON nostr_user_identifiers.user_id = users.id
+		WHERE users.protocol = ?;
+	`
+	if err := r.SqlHandler.Select(&pubKeys, query, model.ProtocolLocal); err != nil {
+		return nil, cerror.Wrap(err, "failed to get local user nostr public keys")
+	}
+	return pubKeys, nil
+}
