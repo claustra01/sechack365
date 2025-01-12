@@ -10,6 +10,10 @@ services:
       - PORT=${API_PORT}
       - LOG_LEVEL=${API_LOG_LEVEL}
       - POSTGRES_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable
+      - MINIO_HOST=${MINIO_HOST}
+      - MINIO_PORT=${MINIO_PORT}
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - TZ=${TIMEZONE}
     depends_on:
       - db
