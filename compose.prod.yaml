@@ -13,6 +13,7 @@ services:
       - TZ=${TIMEZONE}
     depends_on:
       - db
+      - minio
 
   frontend:
     build: ./frontend
@@ -36,7 +37,7 @@ services:
       - TZ=${TIMEZONE}
       - PGTZ=${TIMEZONE}
     volumes:
-      - dbdata:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
 
   reverse-proxy:
     build:
@@ -50,5 +51,19 @@ services:
       - api
       - frontend
 
+  minio:
+    image: minio/minio
+    ports:
+      - "127.0.0.1:${MINIO_PORT}:9000"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - TZ=${TIMEZONE}
+    command: server /var/lib/minio/data
+    volumes:
+      - minio-data:/var/lib/minio/data
+
+
 volumes:
-  dbdata:
+  db-data:
+  minio-data:
