@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/claustra01/sechack365/cmd/batch"
@@ -18,6 +19,18 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// Storage Connection
+	minioHost := os.Getenv("MINIO_HOST")
+	minioPort := os.Getenv("MINIO_PORT")
+	minioUser := os.Getenv("MINIO_ROOT_USER")
+	minioPassword := os.Getenv("MINIO_ROOT_PASSWORD")
+	storage, err := infrastructure.NewStorageHandler(minioHost, minioPort, minioUser, minioPassword)
+	if err != nil {
+		panic(err)
+	}
+	// TODO: use storage
+	log.Println(storage)
 
 	// Context
 	ctx := framework.NewContext(logger, conn)
