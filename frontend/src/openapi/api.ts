@@ -30,6 +30,7 @@ import type {
 	GetApiV1DevReset404,
 	GetApiV1DevReset500,
 	GetApiV1TimelineParams,
+	GetApiV1UsersIdInbox202,
 	GetApiV1UsersIdPostsParams,
 	GetWellKnownWebfingerParams,
 	NewReaction,
@@ -497,6 +498,58 @@ export const useGetApiV1UsersIdFollowers = <
 		swrOptions?.swrKey ??
 		(() => (isEnabled ? getGetApiV1UsersIdFollowersKey(id) : null));
 	const swrFn = () => getApiV1UsersIdFollowers(id, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * ActivityPub Inbox
+ */
+export const getApiV1UsersIdInbox = (
+	id: string,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<GetApiV1UsersIdInbox202>> => {
+	return axios.get(`/api/v1/users/${id}/inbox`, options);
+};
+
+export const getGetApiV1UsersIdInboxKey = (id: string) =>
+	[`/api/v1/users/${id}/inbox`] as const;
+
+export type GetApiV1UsersIdInboxQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getApiV1UsersIdInbox>>
+>;
+export type GetApiV1UsersIdInboxQueryError = AxiosError<
+	Error400 | Error401 | Error500
+>;
+
+export const useGetApiV1UsersIdInbox = <
+	TError = AxiosError<Error400 | Error401 | Error500>,
+>(
+	id: string,
+	options?: {
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1UsersIdInbox>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
+		axios?: AxiosRequestConfig;
+	},
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1UsersIdInboxKey(id) : null));
+	const swrFn = () => getApiV1UsersIdInbox(id, axiosOptions);
 
 	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
 		swrKey,

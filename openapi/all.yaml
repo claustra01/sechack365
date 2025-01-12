@@ -23,6 +23,8 @@ paths:
     $ref: ./paths/api/v1/users/follows.yaml
   /api/v1/users/{id}/followers:
     $ref: ./paths/api/v1/users/followers.yaml
+  /api/v1/users/{id}/inbox:
+    $ref: ./paths/api/v1/users/inbox.yaml
 
   /api/v1/lookup/{username}:
     $ref: ./paths/api/v1/lookup/{username}.yaml
