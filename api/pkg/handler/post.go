@@ -3,7 +3,10 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
@@ -68,14 +71,67 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 		// generate id
 		uuid := util.NewUuid().String()
 
-		// post to nostr
-		privKey, err := c.Controllers.User.GetNostrPrivKey(user.Id)
+		// post to activitypub
+		keyId := c.Controllers.ActivityPub.NewKeyIdUrl(user.Identifiers.Activitypub.Host, user.Id)
+		privKeyPem, err := c.Controllers.User.GetActivityPubPrivKey(user.Id)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		apPrivKey, _, err := util.DecodePem(privKeyPem)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		followers, err := c.Controllers.Follow.FindActivityPubRemoteFollowers(user.Id)
 		if err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
 			returnError(w, http.StatusInternalServerError)
 			return
 		}
-		if err := c.Controllers.Nostr.PublishPost(privKey, postRequsetBody.Content); err != nil {
+		for _, follower := range followers {
+			f := strings.Split(follower, "@")
+			targetUrl, err := c.Controllers.ActivityPub.ResolveWebfinger(f[0], f[1])
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			targetActor, err := c.Controllers.ActivityPub.ResolveRemoteActor(targetUrl)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			activity := &model.ApActivity{
+				Context: *c.Controllers.ActivityPub.NewApContext(),
+				Type:    model.ActivityTypeCreate,
+				Id:      fmt.Sprintf("https://%s/posts/%s", user.Identifiers.Activitypub.Host, uuid),
+				Actor:   c.Controllers.ActivityPub.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id),
+				Object: &model.ApNoteActivity{
+					Id:        fmt.Sprintf("https://%s/posts/%s", user.Identifiers.Activitypub.Host, uuid),
+					Type:      model.ActivityTypeNote,
+					Content:   postRequsetBody.Content,
+					Published: time.Now(),
+				},
+			}
+			if _, err := c.Controllers.ActivityPub.SendActivity(keyId, apPrivKey, targetActor.Inbox, activity); err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+		}
+
+		// post to nostr
+		nostrPrivKey, err := c.Controllers.User.GetNostrPrivKey(user.Id)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		if err := c.Controllers.Nostr.PublishPost(nostrPrivKey, postRequsetBody.Content); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
 			returnError(w, http.StatusInternalServerError)
 			return
