@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
-	"time"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
@@ -61,9 +60,6 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 			returnError(w, http.StatusBadRequest)
 			return
 		}
-
-		// INFO: Acceptが返るのが早すぎるため遅延させる
-		time.Sleep(1 * time.Second)
 
 		switch activity["type"] {
 		// create
