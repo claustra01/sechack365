@@ -9,6 +9,7 @@ import (
 	"github.com/claustra01/sechack365/pkg/framework"
 	"github.com/claustra01/sechack365/pkg/model"
 	"github.com/claustra01/sechack365/pkg/openapi"
+	"github.com/claustra01/sechack365/pkg/util"
 )
 
 // NOTE: timeline limit per request
@@ -45,12 +46,14 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		if postRequsetBody.Content == "" {
+		// validate content
+		if postRequsetBody.Content == "" || len(postRequsetBody.Content) > 200 {
 			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrEmptyContent, "failed to create post"))
 			returnError(w, http.StatusBadRequest)
 			return
 		}
 
+		// get current user
 		user, err := c.CurrentUser(r)
 		if errors.Is(err, cerror.ErrUserNotFound) {
 			c.Logger.Warn("Unauthorized", "Error", cerror.Wrap(err, "failed to create post"))
@@ -62,12 +65,10 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		if err := c.Controllers.Post.Create(user.Id, postRequsetBody.Content); err != nil {
-			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
-			returnError(w, http.StatusInternalServerError)
-			return
-		}
+		// generate id
+		uuid := util.NewUuid().String()
 
+		// post to nostr
 		privKey, err := c.Controllers.User.GetNostrPrivKey(user.Id)
 		if err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
@@ -75,6 +76,13 @@ func CreatePost(c *framework.Context) http.HandlerFunc {
 			return
 		}
 		if err := c.Controllers.Nostr.PublishPost(privKey, postRequsetBody.Content); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+
+		// create
+		if err := c.Controllers.Post.Create(uuid, user.Id, postRequsetBody.Content); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
 			returnError(w, http.StatusInternalServerError)
 			return
