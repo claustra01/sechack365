@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/claustra01/sechack365/pkg/framework"
@@ -20,7 +21,8 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 			}
 			return
 		}
-		if err := c.Controllers.User.CreateLocalUser("mock", "password", "Mock User", "This is mock user", "https://placehold.jp/150x150.png", c.Config.Host); err != nil {
+		defaultIcon := fmt.Sprintf("https://%s/static/default_icon.png", c.Config.Host)
+		if err := c.Controllers.User.CreateLocalUser("mock", "password", "Mock User", "This is mock user", defaultIcon, c.Config.Host); err != nil {
 			panic(err)
 		}
 		if err := c.Controllers.NostrRelay.Create("wss://yabu.me"); err != nil {
@@ -33,7 +35,7 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 			Name:        "mock",
 			DisplayName: "Mock User",
 			About:       "This is mock user",
-			Picture:     "https://placehold.jp/150x150.png",
+			Picture:     defaultIcon,
 		}
 		if err := c.Controllers.Nostr.PublishProfile(privKey, profile); err != nil {
 			panic(err)

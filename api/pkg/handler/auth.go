@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"regexp"
 	"time"
@@ -47,8 +48,8 @@ func Register(c *framework.Context) http.HandlerFunc {
 			return
 		}
 
-		// TODO: set default icon url
-		if err := c.Controllers.User.CreateLocalUser(authRequestBody.Username, authRequestBody.Password, authRequestBody.Username, "", "https://placehold.jp/150x150.png", c.Config.Host); err != nil {
+		defaultIcon := fmt.Sprintf("https://%s/static/default_icon.png", c.Config.Host)
+		if err := c.Controllers.User.CreateLocalUser(authRequestBody.Username, authRequestBody.Password, authRequestBody.Username, "", defaultIcon, c.Config.Host); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
 			returnError(w, http.StatusInternalServerError)
 			return
