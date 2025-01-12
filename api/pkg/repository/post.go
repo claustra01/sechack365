@@ -14,13 +14,12 @@ type PostRepository struct {
 	SqlHandler model.ISqlHandler
 }
 
-func (r *PostRepository) Create(userId, content string) error {
-	uuid := util.NewUuid()
+func (r *PostRepository) Create(id, userId, content string) error {
 	query := `
 		INSERT INTO posts (id, protocol, user_id, content)
 		VALUES ($1, $2, $3, $4);
 	`
-	if _, err := r.SqlHandler.Exec(query, uuid, model.ProtocolLocal, userId, content); err != nil {
+	if _, err := r.SqlHandler.Exec(query, id, model.ProtocolLocal, userId, content); err != nil {
 		return cerror.Wrap(err, "failed to create post")
 	}
 	return nil

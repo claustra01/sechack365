@@ -20,8 +20,8 @@ func NewPostController(conn model.ISqlHandler) *PostController {
 	}
 }
 
-func (c *PostController) Create(userId, content string) error {
-	return c.PostUsecase.Create(userId, content)
+func (c *PostController) Create(id, userId, content string) error {
+	return c.PostUsecase.Create(id, userId, content)
 }
 
 func (c *PostController) FindById(id string) (*model.PostWithUser, error) {

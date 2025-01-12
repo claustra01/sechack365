@@ -1,0 +1,31 @@
+get:
+  tags:
+    - users
+  description: ActivityPub Inbox
+  parameters:
+    - $ref: '../../../../components/params/users.yaml#/id'
+  responses:
+    '202':
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            type: object
+    '400':
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-400'
+    '401':
+      description: Invalid Signature
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-401'
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-500'

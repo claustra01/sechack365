@@ -8,6 +8,7 @@ type IFollowRepository interface {
 	FindFollowByFollowerAndTarget(followerId, targetId string) (*model.Follow, error)
 	FindFollowsByUserId(userId string) ([]*model.SimpleUser, error)
 	FindFollowersByUserId(userId string) ([]*model.SimpleUser, error)
+	FindActivityPubRemoteFollowers(userId string) ([]string, error)
 	FindNostrFollowPublicKeys(userId string) ([]string, error)
 	CheckIsFollowing(followerId, targetId string) (bool, error)
 	Delete(followerId, targetId string) error
@@ -35,6 +36,10 @@ func (u *FollowUsecase) FindFollowsByUserId(userId string) ([]*model.SimpleUser,
 
 func (u *FollowUsecase) FindFollowersByUserId(userId string) ([]*model.SimpleUser, error) {
 	return u.FollowRepository.FindFollowersByUserId(userId)
+}
+
+func (u *FollowUsecase) FindActivityPubRemoteFollowers(userId string) ([]string, error) {
+	return u.FollowRepository.FindActivityPubRemoteFollowers(userId)
 }
 
 func (u *FollowUsecase) FindNostrFollowPublicKeys(userId string) ([]string, error) {
