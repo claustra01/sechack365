@@ -94,6 +94,21 @@ func (r *FollowRepository) FindFollowersByUserId(userId string) ([]*model.Simple
 	return users, nil
 }
 
+func (r *FollowRepository) FindActivityPubRemoteFollowers(userId string) ([]string, error) {
+	var remoteFollowers []string
+	query := `
+		SELECT ap_user_identifiers.local_username || '@' || ap_user_identifiers.host
+		FROM users
+		JOIN follows ON users.id = follows.follower_id
+		JOIN ap_user_identifiers ON users.id = ap_user_identifiers.user_id
+		WHERE follows.target_id = $1 AND users.protocol = $2;
+	`
+	if err := r.SqlHandler.Select(&remoteFollowers, query, userId, model.ProtocolActivityPub); err != nil {
+		return nil, cerror.Wrap(err, "failed to get activitypub remote followers")
+	}
+	return remoteFollowers, nil
+}
+
 func (r *FollowRepository) FindNostrFollowPublicKeys(userId string) ([]string, error) {
 	var publicKeys []string
 	query := `
