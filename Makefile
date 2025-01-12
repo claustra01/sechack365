@@ -11,7 +11,7 @@ lint-api:
 	@if ! command -v $$(go env GOPATH)/bin/golangci-lint > /dev/null 2>&1; then \
 		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
 	fi
-	cd api && $$(go env GOPATH)/bin/golangci-lint run ./...
+	cd api && $$(go env GOPATH)/bin/golangci-lint run ./... --timeout 5m
 
 # backend test
 test-api:
