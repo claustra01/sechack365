@@ -10,9 +10,14 @@ services:
       - PORT=${API_PORT}
       - LOG_LEVEL=${API_LOG_LEVEL}
       - POSTGRES_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable
+      - MINIO_HOST=${MINIO_HOST}
+      - MINIO_PORT=${MINIO_PORT}
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - TZ=${TIMEZONE}
     depends_on:
       - db
+      - minio
 
   frontend:
     build: ./frontend
@@ -36,7 +41,7 @@ services:
       - TZ=${TIMEZONE}
       - PGTZ=${TIMEZONE}
     volumes:
-      - dbdata:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
 
   reverse-proxy:
     build:
@@ -50,5 +55,26 @@ services:
       - api
       - frontend
 
+  minio:
+    image: minio/minio:RELEASE.2024-12-18T13-15-44Z
+    ports:
+      - "127.0.0.1:${MINIO_PORT}:9000"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - TZ=${TIMEZONE}
+    entrypoint: sh
+    command: -c "
+      mkdir -p /data/.minio.sys/buckets;
+        cp -r /policies/* /data/.minio.sys/;
+        cp -r /export/* /data/;
+        /usr/bin/minio server /data;
+        "
+    volumes:
+      - minio-data:/data      
+      - ./minio/export:/export
+      - ./minio/policies:/policies
+
 volumes:
-  dbdata:
+  db-data:
+  minio-data:
