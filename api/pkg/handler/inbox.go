@@ -202,19 +202,21 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 			}
 
 			// send activity
-			uuid := util.NewUuid()
-			acceptActivity := &model.ApActivity{
-				Context: *c.Controllers.ActivityPub.NewApContext(),
-				Type:    model.ActivityTypeAccept,
-				Id:      fmt.Sprintf("https://%s/%s", c.Config.Host, uuid),
-				Actor:   targetUrl,
-				Object:  string(body),
-			}
-			if _, err := c.Controllers.ActivityPub.SendActivity(keyId, privKey, actor.Inbox, acceptActivity); err != nil {
-				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub remote follow"))
-				returnError(w, http.StatusInternalServerError)
-				return
-			}
+			go func() {
+				uuid := util.NewUuid()
+				acceptActivity := &model.ApActivity{
+					Context: *c.Controllers.ActivityPub.NewApContext(),
+					Type:    model.ActivityTypeAccept,
+					Id:      fmt.Sprintf("https://%s/%s", c.Config.Host, uuid),
+					Actor:   targetUrl,
+					Object:  string(body),
+				}
+				if _, err := c.Controllers.ActivityPub.SendActivity(keyId, privKey, actor.Inbox, acceptActivity); err != nil {
+					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub remote follow"))
+					returnError(w, http.StatusInternalServerError)
+					return
+				}
+			}()
 
 		// undo
 		case model.ActivityTypeUndo:
@@ -282,19 +284,21 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 				}
 
 				// send activity
-				uuid := util.NewUuid()
-				rejectActivity := &model.ApActivity{
-					Context: *c.Controllers.ActivityPub.NewApContext(),
-					Type:    model.ActivityTypeReject,
-					Id:      fmt.Sprintf("https://%s/%s", c.Config.Host, uuid),
-					Actor:   targetUrl,
-					Object:  string(body),
-				}
-				if _, err := c.Controllers.ActivityPub.SendActivity(keyId, privKey, actor.Inbox, rejectActivity); err != nil {
-					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub remote follow"))
-					returnError(w, http.StatusInternalServerError)
-					return
-				}
+				go func() {
+					uuid := util.NewUuid()
+					rejectActivity := &model.ApActivity{
+						Context: *c.Controllers.ActivityPub.NewApContext(),
+						Type:    model.ActivityTypeReject,
+						Id:      fmt.Sprintf("https://%s/%s", c.Config.Host, uuid),
+						Actor:   targetUrl,
+						Object:  string(body),
+					}
+					if _, err := c.Controllers.ActivityPub.SendActivity(keyId, privKey, actor.Inbox, rejectActivity); err != nil {
+						c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub remote follow"))
+						returnError(w, http.StatusInternalServerError)
+						return
+					}
+				}()
 			}
 
 		case model.ActivityTypeAccept:
