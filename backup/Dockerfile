@@ -32,7 +32,7 @@ RUN touch /var/log/cron.log && \
     echo "MINIO_ROOT_USER=${MINIO_ROOT_USER}" >> /etc/cron.d/backup && \
     echo "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}" >> /etc/cron.d/backup && \
     echo "TZ=${TZ}" >> /etc/cron.d/backup && \
-    echo "* * * * * bash /backup.sh >> /var/log/cron.log 2>&1" >> /etc/cron.d/backup && \
+    echo "0 4 * * * bash /backup.sh >> /var/log/cron.log 2>&1" >> /etc/cron.d/backup && \
     crontab /etc/cron.d/backup
 
 CMD ["cron", "-f"]
