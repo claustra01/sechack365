@@ -6,12 +6,13 @@ RUN apt update && \
 
 RUN curl -O https://dl.min.io/client/mc/release/linux-amd64/mc && \
     chmod +x mc && \
-    mv mc /usr/local/bin/
+    mv mc /usr/local/bin/ && \
 
 COPY backup.sh /backup.sh
 RUN chmod +x /backup.sh
 
-RUN mkdir -p /etc/crontabs && \
-    echo "* * * * * /backup.sh" > /etc/crontabs/root
+RUN touch /var/log/cron.log && \
+    echo "* * * * * root /backup.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/backup && \
+    crontab /etc/cron.d/backup
 
 CMD ["cron", "-f"]
