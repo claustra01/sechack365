@@ -6,7 +6,7 @@ RUN apt update && \
 
 RUN curl -O https://dl.min.io/client/mc/release/linux-amd64/mc && \
     chmod +x mc && \
-    mv mc /usr/local/bin/ && \
+    mv mc /usr/local/bin/
 
 COPY backup.sh /backup.sh
 RUN chmod +x /backup.sh
