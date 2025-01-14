@@ -12,7 +12,7 @@ COPY backup.sh /backup.sh
 RUN chmod +x /backup.sh
 
 RUN touch /var/log/cron.log && \
-    echo "* * * * * root /backup.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/backup && \
+    echo "* * * * * bash /backup.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/backup && \
     crontab /etc/cron.d/backup
 
 CMD ["cron", "-f"]
