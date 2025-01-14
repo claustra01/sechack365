@@ -21,7 +21,7 @@ BACKUP_DIR=/tmp/backups
 mkdir -p $BACKUP_DIR
 
 DATE=$(date +\%Y-\%m-\%d_\%H-\%M-\%S)
-BACKUP_NAME=backup_$DATE.sql
+BACKUP_NAME=backup_$DATE.dump
 
 echo "Backup started at $DATE"
 pg_dump -h $DB_HOST -p $DB_PORT -U $DB_USER -F c $DB_NAME > $BACKUP_DIR/$BACKUP_NAME
