@@ -26,6 +26,12 @@ get:
         application/json:
           schema:
             $ref: '../../components/schemas/errors.yaml#/error-400'
+    '404':
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/errors.yaml#/error-404'
     '500':
       description: Internal Server Error
       content:

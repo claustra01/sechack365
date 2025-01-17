@@ -1428,10 +1428,12 @@ export const getGetWellKnownNostrJsonKey = (
 export type GetWellKnownNostrJsonQueryResult = NonNullable<
 	Awaited<ReturnType<typeof getWellKnownNostrJson>>
 >;
-export type GetWellKnownNostrJsonQueryError = AxiosError<Error400 | Error500>;
+export type GetWellKnownNostrJsonQueryError = AxiosError<
+	Error400 | Error404 | Error500
+>;
 
 export const useGetWellKnownNostrJson = <
-	TError = AxiosError<Error400 | Error500>,
+	TError = AxiosError<Error400 | Error404 | Error500>,
 >(
 	params: GetWellKnownNostrJsonParams,
 	options?: {
