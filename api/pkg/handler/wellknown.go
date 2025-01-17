@@ -66,7 +66,7 @@ func Nip05(c *framework.Context) http.HandlerFunc {
 		}
 
 		resBody := map[string]map[string]string{
-			"name": {
+			"names": {
 				user.Username: user.Identifiers.Nostr.PublicKey,
 			},
 		}
