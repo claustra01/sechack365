@@ -31,11 +31,13 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 
 		user, _ := c.Controllers.User.FindByLocalUsername("mock")
 		privKey, _ := c.Controllers.User.GetNostrPrivKey(user.Id)
+		nip05 := fmt.Sprintf("%s@%s", user.Username, c.Config.Host)
 		profile := &model.NostrProfile{
 			Name:        "mock",
 			DisplayName: "Mock User",
 			About:       "This is mock user",
 			Picture:     defaultIcon,
+			Nip05:       &nip05,
 		}
 		if err := c.Controllers.Nostr.PublishProfile(privKey, profile); err != nil {
 			panic(err)

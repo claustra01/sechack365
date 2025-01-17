@@ -24,8 +24,9 @@ type NostrFilter struct {
 }
 
 type NostrProfile struct {
-	Name        string `json:"name"`
-	DisplayName string `json:"display_name"`
-	About       string `json:"about"`
-	Picture     string `json:"picture"`
+	Name        string  `json:"name"`
+	DisplayName string  `json:"display_name"`
+	About       string  `json:"about"`
+	Picture     string  `json:"picture"`
+	Nip05       *string `json:"nip05"`
 }
