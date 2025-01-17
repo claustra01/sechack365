@@ -32,6 +32,8 @@ import type {
 	GetApiV1TimelineParams,
 	GetApiV1UsersIdInbox202,
 	GetApiV1UsersIdPostsParams,
+	GetWellKnownNostrJson200,
+	GetWellKnownNostrJsonParams,
 	GetWellKnownWebfingerParams,
 	NewReaction,
 	Newfollow,
@@ -1393,6 +1395,60 @@ export const useGetWellKnownWebfinger = <
 		swrOptions?.swrKey ??
 		(() => (isEnabled ? getGetWellKnownWebfingerKey(params) : null));
 	const swrFn = () => getWellKnownWebfinger(params, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * NIP-05
+ */
+export const getWellKnownNostrJson = (
+	params: GetWellKnownNostrJsonParams,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<GetWellKnownNostrJson200>> => {
+	return axios.get("/.well-known/nostr.json", {
+		...options,
+		params: { ...params, ...options?.params },
+	});
+};
+
+export const getGetWellKnownNostrJsonKey = (
+	params: GetWellKnownNostrJsonParams,
+) => ["/.well-known/nostr.json", ...(params ? [params] : [])] as const;
+
+export type GetWellKnownNostrJsonQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getWellKnownNostrJson>>
+>;
+export type GetWellKnownNostrJsonQueryError = AxiosError<Error400 | Error500>;
+
+export const useGetWellKnownNostrJson = <
+	TError = AxiosError<Error400 | Error500>,
+>(
+	params: GetWellKnownNostrJsonParams,
+	options?: {
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getWellKnownNostrJson>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
+		axios?: AxiosRequestConfig;
+	},
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const isEnabled = swrOptions?.enabled !== false;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetWellKnownNostrJsonKey(params) : null));
+	const swrFn = () => getWellKnownNostrJson(params, axiosOptions);
 
 	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
 		swrKey,
