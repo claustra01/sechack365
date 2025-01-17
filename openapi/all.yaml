@@ -54,6 +54,8 @@ paths:
     $ref: ./paths/.well-known/nodeinfo.yaml
   /.well-known/webfinger:
     $ref: ./paths/.well-known/webfinger.yaml
+  /.well-known/nostr.json:
+    $ref: ./paths/.well-known/nip05.yaml
 
   /api/v1/dev/mock:
     $ref: ./paths/api/v1/dev/mock.yaml

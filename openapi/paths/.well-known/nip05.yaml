@@ -1,0 +1,34 @@
+get:
+  tags:
+    - .well-known
+  description: NIP-05
+  parameters:
+    - in: query
+      name: name
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Nostr Key Mappings
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              names:
+                type: object
+                additionalProperties:
+                  type: string
+    '400':
+      description: Invalid Query Parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/errors.yaml#/error-400'
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/errors.yaml#/error-500'
