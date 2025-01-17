@@ -85,6 +85,9 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 	if err := wk.Get("/webfinger", handler.WebfingerLinks); err != nil {
 		return err
 	}
+	if err := wk.Get("/nostr.json", handler.Nip05); err != nil {
+		return err
+	}
 
 	dev := api.Group("/dev", framework.DevApiMiddleware(lg))
 	if err := dev.Get("/mock", handler.GenerateMock); err != nil {

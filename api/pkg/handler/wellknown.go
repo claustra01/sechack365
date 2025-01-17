@@ -43,3 +43,33 @@ func WebfingerLinks(c *framework.Context) http.HandlerFunc {
 		returnResponse(w, http.StatusOK, ContentTypeJrdJson, webfinger)
 	}
 }
+
+func Nip05(c *framework.Context) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		name := r.URL.Query().Get("name")
+		if name == "" {
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrInvalidQueryParam, "failed to resolve nip05"))
+			returnError(w, http.StatusBadRequest)
+			return
+		}
+
+		user, err := c.Controllers.User.FindByLocalUsername(name)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to resolve nip05"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		if user == nil {
+			c.Logger.Warn("Not Found", "Error", cerror.Wrap(cerror.ErrUserNotFound, "failed to resolve nip05"))
+			returnError(w, http.StatusNotFound)
+			return
+		}
+
+		resBody := map[string]map[string]string{
+			"name": {
+				user.Username: user.Identifiers.Nostr.PublicKey,
+			},
+		}
+		returnResponse(w, http.StatusOK, ContentTypeJson, resBody)
+	}
+}
