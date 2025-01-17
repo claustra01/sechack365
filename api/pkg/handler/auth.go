@@ -68,11 +68,13 @@ func Register(c *framework.Context) http.HandlerFunc {
 			returnError(w, http.StatusInternalServerError)
 			return
 		}
+		nip05 := fmt.Sprintf("%s@%s", user.Username, c.Config.Host)
 		profile := &model.NostrProfile{
 			Name:        user.Username,
 			DisplayName: user.DisplayName,
 			About:       user.Profile,
 			Picture:     user.Icon,
+			Nip05:       &nip05,
 		}
 		if err := c.Controllers.Nostr.PublishProfile(privKey, profile); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to register user"))
