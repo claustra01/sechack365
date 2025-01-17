@@ -55,6 +55,15 @@ func RecoverMiddleware(logger model.ILogger) MiddlewareFunc {
 func CorsMiddleware(host string) MiddlewareFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
+			// well-known
+			if strings.HasPrefix(r.URL.Path, "/.well-known") {
+				w.Header().Set("Access-Control-Allow-Origin", "*")
+				w.Header().Set("Access-Control-Allow-Methods", "GET")
+				next(w, r)
+				return
+			}
+
+			// api
 			origin := r.Header.Get("Origin")
 			if origin == host {
 				w.Header().Set("Access-Control-Allow-Origin", host)
