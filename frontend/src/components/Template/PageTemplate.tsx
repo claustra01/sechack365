@@ -34,12 +34,12 @@ export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 						direction="row"
 						gap={24}
 						justify="center"
-						pt={24}
+						py={24}
 					>
 						<Box
 							bg={colors.white}
 							w={720}
-							style={{ minHeight: "calc( 100vh - 24px )" }}
+							style={{ minHeight: "calc( 100vh - 48px )" }}
 						>
 							{children}
 						</Box>

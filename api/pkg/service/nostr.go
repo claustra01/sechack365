@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -16,12 +17,15 @@ type NostrService struct {
 }
 
 func (s *NostrService) sendReq(id string, filter model.NostrFilter) ([]string, error) {
+	var buf bytes.Buffer
+	encoder := json.NewEncoder(&buf)
+	encoder.SetEscapeHTML(false)
+
 	reqObj := []any{"REQ", id, filter}
-	reqMsg, err := json.Marshal(reqObj)
-	if err != nil {
+	if err := encoder.Encode(reqObj); err != nil {
 		return nil, cerror.Wrap(err, "failed to request nostr event")
 	}
-	if err := s.Ws.Send(string(reqMsg)); err != nil {
+	if err := s.Ws.Send(buf.String()); err != nil {
 		return nil, cerror.Wrap(err, "failed to request nostr event")
 	}
 
@@ -44,12 +48,15 @@ func (s *NostrService) sendReq(id string, filter model.NostrFilter) ([]string, e
 }
 
 func (s *NostrService) sendEvent(event model.NostrEvent) error {
+	var buf bytes.Buffer
+	encoder := json.NewEncoder(&buf)
+	encoder.SetEscapeHTML(false)
+
 	eventObj := []any{"EVENT", event}
-	eventMsg, err := json.Marshal(eventObj)
-	if err != nil {
+	if err := encoder.Encode(eventObj); err != nil {
 		return cerror.Wrap(err, "failed to post nostr event")
 	}
-	if err := s.Ws.Send(string(eventMsg)); err != nil {
+	if err := s.Ws.Send(buf.String()); err != nil {
 		return cerror.Wrap(err, "failed to post nostr event")
 	}
 
@@ -57,12 +64,13 @@ func (s *NostrService) sendEvent(event model.NostrEvent) error {
 	if err != nil {
 		return cerror.Wrap(err, "failed to post nostr event")
 	}
+
 	var resObj []any
 	if err := json.Unmarshal([]byte(resMsg), &resObj); err != nil {
 		return cerror.Wrap(err, "failed to post nostr event")
 	}
 	if resObj[0] != "OK" {
-		return cerror.Wrap(cerror.Wrap(fmt.Errorf(resObj[1].(string)), cerror.ErrNostrRelayResNotOk.Error()), "failed to post nostr event")
+		return cerror.Wrap(cerror.ErrNostrRelayResNotOk, "failed to post nostr event")
 	}
 	if resObj[2] != true {
 		return cerror.Wrap(fmt.Errorf("%v", resObj[3]), "failed to post nostr event")

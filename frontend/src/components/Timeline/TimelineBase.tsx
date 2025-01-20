@@ -8,7 +8,7 @@ export const TimelineBase = ({ posts }: { posts: Post[] }) => {
 	}
 
 	return (
-		<Box style={{ overflowY: "auto", height: "calc( 100vh - 301px )" }}>
+		<Box style={{ overflowY: "auto", height: "calc( 100vh - 325px )" }}>
 			{posts.map((post) => {
 				return <PostCard key={post.id} {...post} />;
 			})}

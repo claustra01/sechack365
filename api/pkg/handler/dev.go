@@ -25,9 +25,6 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 		if err := c.Controllers.User.CreateLocalUser("mock", "password", "Mock User", "This is mock user", defaultIcon, c.Config.Host); err != nil {
 			panic(err)
 		}
-		if err := c.Controllers.NostrRelay.Create("wss://yabu.me"); err != nil {
-			panic(err)
-		}
 
 		user, _ := c.Controllers.User.FindByLocalUsername("mock")
 		privKey, _ := c.Controllers.User.GetNostrPrivKey(user.Id)
@@ -77,16 +74,6 @@ func ResetMock(c *framework.Context) http.HandlerFunc {
 		}
 		for _, user := range users {
 			if err := c.Controllers.User.DeleteById(user.Id); err != nil {
-				panic(err)
-			}
-		}
-
-		nostrRelays, err := c.Controllers.NostrRelay.FindAll()
-		if err != nil {
-			panic(err)
-		}
-		for _, nostrRelay := range nostrRelays {
-			if err := c.Controllers.NostrRelay.Delete(nostrRelay.Id); err != nil {
 				panic(err)
 			}
 		}

@@ -47,6 +47,14 @@ func migrate(conn *sql.DB) {
 	if _, err = conn.Exec(string(migrateSql)); err != nil {
 		panic(err)
 	}
+	// initial data
+	initSql, err := os.ReadFile("cmd/database/init.sql")
+	if err != nil {
+		log.Fatalf("failed to read SQL file: %v", err)
+	}
+	if _, err = conn.Exec(string(initSql)); err != nil {
+		panic(err)
+	}
 	// triggers
 	triggerSql, err := os.ReadFile("cmd/database/trigger.sql")
 	if err != nil {

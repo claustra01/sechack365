@@ -1,0 +1,1 @@
+INSERT INTO nostr_relays (id, url, is_enable) VALUES ('1', 'wss://relay.damus.io/', true);
