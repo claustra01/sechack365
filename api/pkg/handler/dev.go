@@ -25,9 +25,6 @@ func GenerateMock(c *framework.Context) http.HandlerFunc {
 		if err := c.Controllers.User.CreateLocalUser("mock", "password", "Mock User", "This is mock user", defaultIcon, c.Config.Host); err != nil {
 			panic(err)
 		}
-		if err := c.Controllers.NostrRelay.Create("wss://yabu.me"); err != nil {
-			panic(err)
-		}
 
 		user, _ := c.Controllers.User.FindByLocalUsername("mock")
 		privKey, _ := c.Controllers.User.GetNostrPrivKey(user.Id)
