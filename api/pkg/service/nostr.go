@@ -62,7 +62,7 @@ func (s *NostrService) sendEvent(event model.NostrEvent) error {
 		return cerror.Wrap(err, "failed to post nostr event")
 	}
 	if resObj[0] != "OK" {
-		return cerror.Wrap(cerror.Wrap(cerror.ErrNostrRelayResNotOk, resObj[0].(string)), "failed to post nostr event")
+		return cerror.Wrap(cerror.Wrap(fmt.Errorf(resObj[1].(string)), cerror.ErrNostrRelayResNotOk.Error()), "failed to post nostr event")
 	}
 	if resObj[2] != true {
 		return cerror.Wrap(fmt.Errorf("%v", resObj[3]), "failed to post nostr event")
