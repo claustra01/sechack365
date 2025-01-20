@@ -78,16 +78,6 @@ func ResetMock(c *framework.Context) http.HandlerFunc {
 			}
 		}
 
-		nostrRelays, err := c.Controllers.NostrRelay.FindAll()
-		if err != nil {
-			panic(err)
-		}
-		for _, nostrRelay := range nostrRelays {
-			if err := c.Controllers.NostrRelay.Delete(nostrRelay.Id); err != nil {
-				panic(err)
-			}
-		}
-
 		if _, err := w.Write([]byte("Mock Data Deleted")); err != nil {
 			// NOTE: err should be nil
 			panic(err)
