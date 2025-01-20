@@ -114,10 +114,11 @@ func (r *FollowRepository) FindNostrFollowPublicKeys(userId string) ([]string, e
 	query := `
 		SELECT nostr_user_identifiers.public_key
 		FROM nostr_user_identifiers
+		JOIN users ON nostr_user_identifiers.user_id = users.id
 		JOIN follows ON nostr_user_identifiers.user_id = follows.target_id
-		WHERE follows.follower_id = $1;
+		WHERE follows.follower_id = $1 AND users.protocol = $2;
 	`
-	if err := r.SqlHandler.Select(&publicKeys, query, userId); err != nil {
+	if err := r.SqlHandler.Select(&publicKeys, query, userId, model.ProtocolNostr); err != nil {
 		return nil, cerror.Wrap(err, "failed to get follows by public keys")
 	}
 	if len(publicKeys) == 0 {
