@@ -1,5 +1,5 @@
 import { Box } from "@mantine/core";
-import { IconHome, IconLogout, IconUser } from "@tabler/icons-react";
+import { IconHome, IconLogout, IconQuestionMark, IconUser } from "@tabler/icons-react";
 import { useContext } from "react";
 import { CurrentUserContext } from "../Template/PageTemplate";
 import { MenuItem } from "./MenuItem";
@@ -16,6 +16,11 @@ export const UserMenu = () => {
 				icon={<IconUser />}
 				title="My Profile"
 				href={`/profile/@${user?.username}`}
+			/>
+			<MenuItem
+				icon={<IconQuestionMark />}
+				title="How to Demo"
+				href="/how_to_demo"
 			/>
 			<MenuItemWithModal
 				icon={<IconLogout />}
