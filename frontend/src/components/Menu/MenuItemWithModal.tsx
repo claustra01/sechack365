@@ -14,7 +14,7 @@ export const MenuItemWithModal = (props: MenuItemWithModalProps) => {
 
 	return (
 		<Box p={4}>
-			<Modal opened={opened} onClose={close}>
+			<Modal opened={opened} onClose={close} title={props.title}>
 				{props.modalContent}
 			</Modal>
 
