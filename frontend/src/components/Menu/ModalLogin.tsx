@@ -16,9 +16,6 @@ export const ModalLogin = () => {
 	};
 
 	const handleSubmit = () => {
-		if (username.length === 0 || password.length === 0) {
-			return;
-		}
 		const reqBody = {
 			username: username,
 			password: password,
