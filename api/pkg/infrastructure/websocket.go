@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/claustra01/sechack365/pkg/model"
-	"golang.org/x/net/websocket"
+	"github.com/gorilla/websocket"
 )
 
 type WsHandler struct {
@@ -20,7 +20,7 @@ func NewWsHandler(relays []*model.NostrRelay, logger model.ILogger) (model.IWsHa
 	}
 	ws := make(map[string]*websocket.Conn)
 	for _, url := range urls {
-		conn, err := websocket.Dial(url, "", "http://localhost")
+		conn, _, err := websocket.DefaultDialer.Dial(url, nil)
 		if err != nil {
 			for _, c := range ws {
 				c.Close()
@@ -37,7 +37,7 @@ func NewWsHandler(relays []*model.NostrRelay, logger model.ILogger) (model.IWsHa
 
 func (ws *WsHandler) Send(msg string) error {
 	for _, conn := range ws.Ws {
-		_, err := conn.Write([]byte(msg))
+		err := conn.WriteMessage(websocket.TextMessage, []byte(msg))
 		if err != nil {
 			return err
 		}
@@ -48,10 +48,11 @@ func (ws *WsHandler) Send(msg string) error {
 func (ws *WsHandler) Receive() (string, error) {
 	var msg string
 	for _, conn := range ws.Ws {
-		err := websocket.Message.Receive(conn, &msg)
+		_, msgBytes, err := conn.ReadMessage()
 		if err != nil {
 			return "", err
 		}
+		msg = string(msgBytes)
 		if msg != "" {
 			return msg, nil
 		}
@@ -74,7 +75,7 @@ func (ws *WsHandler) monitor(logger model.ILogger) {
 		for range ticker.C {
 			ws.lock.Lock()
 			for url, conn := range ws.Ws {
-				_, err := conn.Write([]byte("PING"))
+				err := conn.WriteMessage(websocket.PingMessage, nil)
 				if err != nil {
 					logger.Error("connection broken: " + err.Error())
 					conn.Close()
@@ -91,7 +92,7 @@ func (ws *WsHandler) monitor(logger model.ILogger) {
 }
 
 func reconnect(url string, logger model.ILogger) (*websocket.Conn, error) {
-	conn, err := websocket.Dial(url, "", "http://localhost")
+	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -8,12 +8,12 @@ require (
 	github.com/deepmap/oapi-codegen v1.16.3
 	github.com/getkin/kin-openapi v0.118.0
 	github.com/google/uuid v1.6.0
+	github.com/gorilla/websocket v1.5.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lib/pq v1.10.9
 	github.com/minio/minio-go/v7 v7.0.83
 	github.com/pkg/errors v0.9.1
 	golang.org/x/crypto v0.31.0
-	golang.org/x/net v0.33.0
 )
 
 require (
@@ -86,6 +86,7 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/yosssi/ace v0.0.5 // indirect
 	golang.org/x/arch v0.3.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
