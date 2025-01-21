@@ -1,5 +1,7 @@
 import { colors } from "@/styles/colors";
-import { ActionIcon, Anchor, Flex, Title } from "@mantine/core";
+import { Box, Button, Flex, Title } from "@mantine/core";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 export type MenuItemProps = {
 	icon: JSX.Element;
@@ -8,16 +10,23 @@ export type MenuItemProps = {
 };
 
 export const MenuItem = (props: MenuItemProps) => {
+	const router = useRouter();
+
 	return (
-		<Anchor href={props.href} style={{ textDecoration: "none" }}>
+		<Box p={4}>
+		<Button
+			variant="subtle"
+			px={12}
+			onClick={() => router.push(props.href)}
+			style={{ borderRadius: "16px" }}
+		>
 			<Flex direction="row" align="center">
-				<ActionIcon variant="subtle" size="xl" color={colors.secondaryColor}>
-					{props.icon}
-				</ActionIcon>
-				<Title size="h3" fw={500} c={colors.secondaryColor}>
+				{React.cloneElement(props.icon, { color: colors.secondaryColor })}
+				<Title size="h3" fw={500} c={colors.secondaryColor} ml="md">
 					{props.title}
 				</Title>
 			</Flex>
-		</Anchor>
+		</Button>
+		</Box>
 	);
 };
