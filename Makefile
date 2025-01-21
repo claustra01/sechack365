@@ -118,6 +118,7 @@ dbdocs-token:
 
 # generate certificate for localhost
 dev-cert:
+	cp .env.example .env
 	@if ! command -v mkcert > /dev/null 2>&1; then \
 		sudo apt install mkcert -y; \
 	fi
