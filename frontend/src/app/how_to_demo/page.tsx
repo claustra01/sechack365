@@ -36,10 +36,9 @@ export default function HowToDemoPage() {
 	return (
 		<PageTemplate>
 			<Header title={"How to demo"} icon={<IconArrowBackUp />} />
-      <Box p={24}>
-			<Markdown>{content}</Markdown>
-
-      </Box>
+			<Box p={24}>
+				<Markdown>{content}</Markdown>
+			</Box>
 		</PageTemplate>
 	);
 }

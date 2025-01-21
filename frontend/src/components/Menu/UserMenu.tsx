@@ -1,5 +1,10 @@
 import { Box } from "@mantine/core";
-import { IconHome, IconLogout, IconQuestionMark, IconUser } from "@tabler/icons-react";
+import {
+	IconHome,
+	IconLogout,
+	IconQuestionMark,
+	IconUser,
+} from "@tabler/icons-react";
 import { useContext } from "react";
 import { CurrentUserContext } from "../Template/PageTemplate";
 import { MenuItem } from "./MenuItem";

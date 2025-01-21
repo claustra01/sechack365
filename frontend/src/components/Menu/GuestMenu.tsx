@@ -1,9 +1,9 @@
 import { Box } from "@mantine/core";
 import { IconLogin, IconQuestionMark, IconUser } from "@tabler/icons-react";
+import { MenuItem } from "./MenuItem";
 import { MenuItemWithModal } from "./MenuItemWithModal";
 import { ModalLogin } from "./ModalLogin";
 import { ModalRegister } from "./ModalRegister";
-import { MenuItem } from "./MenuItem";
 
 export const GuestMenu = () => {
 	return (
