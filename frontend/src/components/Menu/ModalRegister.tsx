@@ -79,7 +79,11 @@ export const ModalRegister = () => {
 				onChange={handleConfirmPasswordChange}
 			/>
 			<Button
-				disabled={username.length === 0 || password.length === 0}
+				disabled={
+					username.length === 0 ||
+					password.length === 0 ||
+					confirmPassword.length === 0
+				}
 				color={colors.secondaryColor}
 				style={{ alignSelf: "flex-end" }}
 				onClick={handleSubmit}
