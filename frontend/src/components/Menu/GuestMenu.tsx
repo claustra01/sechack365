@@ -1,25 +1,22 @@
 import { Box } from "@mantine/core";
 import { IconLogin, IconUser } from "@tabler/icons-react";
-import { MenuItem, type MenuItemProps } from "./MenuItem";
+import { MenuItemWithModal } from "./MenuItemWithModal";
+import { ModalLogin } from "./ModalLogin";
+import { ModalRegister } from "./ModalRegister";
 
 export const GuestMenu = () => {
-	const props: MenuItemProps[] = [
-		{
-			icon: <IconLogin />,
-			title: "Login",
-			href: "/login",
-		},
-		{
-			icon: <IconUser />,
-			title: "New Account",
-			href: "/register",
-		},
-	];
 	return (
 		<Box>
-			{props.map((item, _) => (
-				<MenuItem key={item.title} {...item} />
-			))}
+			<MenuItemWithModal
+				icon={<IconLogin />}
+				title="Login"
+				modalContent={<ModalLogin />}
+			/>
+			<MenuItemWithModal
+				icon={<IconUser />}
+				title="Register"
+				modalContent={<ModalRegister />}
+			/>
 		</Box>
 	);
 };

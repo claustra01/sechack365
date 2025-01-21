@@ -1,23 +1,27 @@
 import { colors } from "@/styles/colors";
-import { Box, Button, Flex, Title } from "@mantine/core";
-import { useRouter } from "next/navigation";
+import { Box, Button, Flex, Modal, Title } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import React from "react";
 
-export type MenuItemProps = {
+export type MenuItemWithModalProps = {
 	icon: JSX.Element;
 	title: string;
-	href: string;
+	modalContent: JSX.Element;
 };
 
-export const MenuItem = (props: MenuItemProps) => {
-	const router = useRouter();
+export const MenuItemWithModal = (props: MenuItemWithModalProps) => {
+	const [opened, { open, close }] = useDisclosure(false);
 
 	return (
 		<Box p={4}>
+			<Modal opened={opened} onClose={close} title={props.title}>
+				{props.modalContent}
+			</Modal>
+
 			<Button
 				variant="subtle"
 				px={12}
-				onClick={() => router.push(props.href)}
+				onClick={open}
 				style={{ borderRadius: "16px" }}
 			>
 				<Flex direction="row" align="center">
