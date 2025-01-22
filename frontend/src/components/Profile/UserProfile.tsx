@@ -10,12 +10,12 @@ export const UserProfile = (props: User) => {
 	return (
 		<>
 			<Header title={props.display_name} icon={<IconArrowBackUp />} />
-			<Flex direction="column" gap={24} p={24}>
+			<Flex direction="column" gap="sm" p="md">
 				<UserProfileCard {...props} />
-				<Text size="lg" style={{ wordBreak: "break-word" }}>
+				<Text size="md" style={{ wordBreak: "break-word" }}>
 					{parseHtml(props.profile)}
 				</Text>
-				<Flex direction="row" align="center" gap={24}>
+				<Flex direction="row" align="center" gap="sm">
 					<Anchor href="#posts" style={{ textDecoration: "none" }}>
 						<UserProfileCounter value={props.post_count} label="Post" />
 					</Anchor>

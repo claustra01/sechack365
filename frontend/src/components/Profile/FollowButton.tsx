@@ -17,7 +17,12 @@ export const FollowButton = (props: { targetId: string }) => {
 	};
 
 	return (
-		<Button color={colors.secondaryColor} size="lg" onClick={handleFollow}>
+		<Button
+			color={colors.secondaryColor}
+			size="md"
+			style={{ borderRadius: "12px" }}
+			onClick={handleFollow}
+		>
 			Follow
 		</Button>
 	);

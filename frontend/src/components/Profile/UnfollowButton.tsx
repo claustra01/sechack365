@@ -17,7 +17,12 @@ export const UnfollowButton = (props: { targetId: string }) => {
 	};
 
 	return (
-		<Button color={colors.secondaryColor} size="lg" onClick={handleUnfollow}>
+		<Button
+			color={colors.secondaryColor}
+			size="md"
+			style={{ borderRadius: "12px" }}
+			onClick={handleUnfollow}
+		>
 			Unfollow
 		</Button>
 	);
