@@ -1,5 +1,5 @@
 import type { Post } from "@/openapi/schemas";
-import { Box } from "@mantine/core";
+import { ScrollArea } from "@mantine/core";
 import { PostCard } from "../PostCard/PostCard";
 
 export const TimelineBase = ({ posts }: { posts: Post[] }) => {
@@ -8,10 +8,10 @@ export const TimelineBase = ({ posts }: { posts: Post[] }) => {
 	}
 
 	return (
-		<Box style={{ overflowY: "auto", height: "calc( 100vh - 325px )" }}>
+		<ScrollArea h={"calc( 100vh - 78px )"}>
 			{posts.map((post) => {
 				return <PostCard key={post.id} {...post} />;
 			})}
-		</Box>
+		</ScrollArea>
 	);
 };

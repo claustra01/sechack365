@@ -19,12 +19,16 @@ export const UserProfileCard = (props: User) => {
 	}, [props.id]);
 
 	return (
-		<Flex direction="column" gap={12}>
+		<Flex direction="column" gap="sm">
 			<Flex direction="row" align="center" justify="space-between">
-				<Avatar src={props.icon} size={80} />
+				<Avatar src={props.icon} size={64} />
 				{currentUser?.id === props.id ? (
 					// TODO: edit profile
-					<Button color={colors.secondaryColor} size="lg">
+					<Button
+						color={colors.secondaryColor}
+						size="md"
+						style={{ borderRadius: "12px" }}
+					>
 						Edit
 					</Button>
 				) : currentUser && isFollowed ? (
@@ -34,11 +38,11 @@ export const UserProfileCard = (props: User) => {
 				)}
 			</Flex>
 			<Flex direction="column" gap={4}>
-				<Title size="h3" fw={500}>
+				<Title size="h4" fw={500}>
 					{props.display_name}
 				</Title>
 				<Box style={{ maxWidth: "calc( 100vw - 48px )", overflowX: "auto" }}>
-					<Text size="sm" c={colors.black}>
+					<Text size="xs" c={colors.black}>
 						{bindUsername(props)}
 					</Text>
 				</Box>

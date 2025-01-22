@@ -1,6 +1,6 @@
 import { postApiV1AuthLogin, postApiV1AuthRegister } from "@/openapi/api";
 import { colors } from "@/styles/colors";
-import { Box, Button, TextInput } from "@mantine/core";
+import { Button, Flex, TextInput, Title } from "@mantine/core";
 import { useState } from "react";
 
 export const ModalRegister = () => {
@@ -53,14 +53,10 @@ export const ModalRegister = () => {
 	};
 
 	return (
-		<Box
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				padding: "24px",
-				gap: "24px",
-			}}
-		>
+		<Flex direction="column" gap={12}>
+			<Title size="h4" fw={500} c={colors.secondaryColor}>
+				Register
+			</Title>
 			<TextInput
 				label="Username"
 				placeholder="Username"
@@ -90,6 +86,6 @@ export const ModalRegister = () => {
 			>
 				Register
 			</Button>
-		</Box>
+		</Flex>
 	);
 };

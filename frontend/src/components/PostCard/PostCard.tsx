@@ -8,14 +8,17 @@ export const PostCard = (props: Post) => {
 	return (
 		<Flex
 			direction="column"
-			gap={12}
-			p={24}
-			mx={12}
-			mt={12}
-			style={{ border: `2px solid ${colors.primaryColor}`, borderRadius: 8 }}
+			gap="sm"
+			p="sm"
+			m="sm"
+			style={{
+				border: `2px solid ${colors.primaryColor}`,
+				borderRadius: 8,
+				boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.1)",
+			}}
 		>
 			<PostUserCard {...props.user} />
-			<Text size="lg" style={{ wordBreak: "break-word" }}>
+			<Text size="sm" style={{ wordBreak: "break-word" }}>
 				{parseHtml(props.content)}
 			</Text>
 		</Flex>

@@ -32,14 +32,17 @@ export const PageTemplate = ({ children }: { children: React.ReactNode }) => {
 					<Flex
 						bg={colors.primaryColor}
 						direction="row"
-						gap={24}
+						py="sm"
 						justify="center"
-						py={24}
 					>
 						<Box
 							bg={colors.white}
-							w={720}
-							style={{ minHeight: "calc( 100vh - 48px )" }}
+							w={540}
+							style={{
+								minHeight: "calc( 100vh - 24px )",
+								borderRadius: "12px",
+								boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.1)",
+							}}
 						>
 							{children}
 						</Box>

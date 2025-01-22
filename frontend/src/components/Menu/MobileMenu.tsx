@@ -14,7 +14,7 @@ export const MobileMenu = () => {
 		<Box style={{ position: "absolute", top: "12px", right: "12px" }}>
 			<Burger
 				lineSize={2}
-				size="lg"
+				size="md"
 				color={colors.white}
 				opened={opened}
 				onClick={toggle}

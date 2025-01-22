@@ -60,7 +60,7 @@ export const UserTimeline = (props: UserTimelineProps) => {
 	}, [user?.id, hash]);
 
 	if (!user) {
-		return <Box>Loading...</Box>;
+		return <></>;
 	}
 
 	return (

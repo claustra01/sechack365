@@ -8,7 +8,7 @@ export const DesktopMenu = () => {
 	const { user } = useContext(CurrentUserContext);
 
 	return (
-		<Box style={{ marginTop: "92px" }}>
+		<Box mt={60} ml={12}>
 			{user ? <UserMenu /> : <GuestMenu />}
 		</Box>
 	);

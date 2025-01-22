@@ -1,6 +1,6 @@
 import { postApiV1AuthLogout } from "@/openapi/api";
 import { colors } from "@/styles/colors";
-import { Box, Button, Text } from "@mantine/core";
+import { Button, Flex, Text, Title } from "@mantine/core";
 
 export const ModalLogout = () => {
 	const handleSubmit = () => {
@@ -17,14 +17,10 @@ export const ModalLogout = () => {
 	};
 
 	return (
-		<Box
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				padding: "24px",
-				gap: "24px",
-			}}
-		>
+		<Flex direction="column" gap={12}>
+			<Title size="h4" fw={500} c={colors.secondaryColor}>
+				Logout
+			</Title>
 			<Text>Are you sure you want to log out?</Text>
 			<Button
 				color={colors.secondaryColor}
@@ -33,6 +29,6 @@ export const ModalLogout = () => {
 			>
 				Logout
 			</Button>
-		</Box>
+		</Flex>
 	);
 };
