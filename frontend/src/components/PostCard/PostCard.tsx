@@ -8,10 +8,9 @@ export const PostCard = (props: Post) => {
 	return (
 		<Flex
 			direction="column"
-			gap={12}
-			p={24}
-			mx={12}
-			mt={12}
+			gap="sm"
+			p="sm"
+			m="sm"
 			style={{
 				border: `2px solid ${colors.primaryColor}`,
 				borderRadius: 8,
@@ -19,7 +18,7 @@ export const PostCard = (props: Post) => {
 			}}
 		>
 			<PostUserCard {...props.user} />
-			<Text size="lg" style={{ wordBreak: "break-word" }}>
+			<Text size="md" px="sm" style={{ wordBreak: "break-word" }}>
 				{parseHtml(props.content)}
 			</Text>
 		</Flex>
