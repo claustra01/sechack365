@@ -31,7 +31,7 @@ export default function NewArticlePage() {
 		postApiV1Articles(newArticle)
 			.then(() => {
 				// FIXME: routerを使うようにする
-				window.location.href="/";
+				window.location.href = "/";
 			})
 			.catch((error) => {
 				alert(error);
