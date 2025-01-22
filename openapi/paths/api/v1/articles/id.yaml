@@ -1,0 +1,17 @@
+get:
+  tags:
+    - articles
+  description: Get Article by ID
+  parameters:
+    - $ref: '../../../../components/params/articles.yaml#/id'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/article.yaml#/article'
+    '404':
+      description: Not Found
+    '500':
+      description: Internal Server Error

@@ -1,0 +1,35 @@
+post:
+  tags:
+    - articles
+  description: Create Article
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../../components/schemas/article.yaml#/new-article'
+  responses:
+    '201':
+      description: Article Created
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/article.yaml#/article'
+    '400':
+      description: Invalid Request Body
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-400'
+    '401':
+      description: No User Logged In
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-401'
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '../../../../components/schemas/errors.yaml#/error-500'
