@@ -10,9 +10,11 @@ export const HomeTimeline = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
 
 	useEffect(() => {
-		getApiV1Timeline().then((response) => {
-			setPosts(response.data as unknown as Post[]);
-		});
+		setInterval(() => {
+			getApiV1Timeline().then((response) => {
+				setPosts(response.data as unknown as Post[]);
+			});
+		}, 1000);
 	}, []);
 
 	return (
