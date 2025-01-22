@@ -1,6 +1,6 @@
 import { postApiV1AuthLogin } from "@/openapi/api";
 import { colors } from "@/styles/colors";
-import { Box, Button, TextInput } from "@mantine/core";
+import { Button, Flex, TextInput, Title } from "@mantine/core";
 import { useState } from "react";
 
 export const ModalLogin = () => {
@@ -33,14 +33,10 @@ export const ModalLogin = () => {
 	};
 
 	return (
-		<Box
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				padding: "24px",
-				gap: "24px",
-			}}
-		>
+		<Flex direction="column" gap={12}>
+			<Title size="h4" fw={500} c={colors.secondaryColor}>
+				Login
+			</Title>
 			<TextInput
 				label="Username"
 				placeholder="Username"
@@ -60,6 +56,6 @@ export const ModalLogin = () => {
 			>
 				Login
 			</Button>
-		</Box>
+		</Flex>
 	);
 };

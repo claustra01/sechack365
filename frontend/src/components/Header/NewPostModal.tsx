@@ -39,8 +39,12 @@ export const NewPostModal = () => {
 
 	return (
 		<Box p={4}>
-			<Modal opened={opened} onClose={close} title="New Post">
-				<Flex direction="column" p={24} gap={24}>
+			<Modal opened={opened} onClose={close} withCloseButton={false}>
+				<Flex direction="column" gap={12}>
+					<Title size="h4" fw={500} c={colors.secondaryColor}>
+						New Post
+					</Title>
+
 					<Textarea
 						placeholder="Your content here..."
 						autosize
