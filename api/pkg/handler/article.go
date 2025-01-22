@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
@@ -82,6 +85,25 @@ func CreateArticle(c *framework.Context) http.HandlerFunc {
 			returnError(w, http.StatusInternalServerError)
 			return
 		}
+
+		// post to federation
+		// FIXME: HTTPクライアントを使わないようにする
+		client := &http.Client{}
+		content := fmt.Sprintf("{\"content\":\"記事を投稿しました！\\nhttps://%s/article/%s\"}", c.Config.Host, uuid)
+		req, err := http.NewRequest("POST", "http://localhost:1323/api/v1/posts", bytes.NewBuffer([]byte(content)))
+		if err != nil {
+			fmt.Println("Error creating request:", err)
+			return
+		}
+		session, err := r.Cookie("session")
+		req.Header.Set("Cookie", "session="+session.Value)
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Println("Error sending request:", err)
+			return
+		}
+		defer resp.Body.Close()
+		log.Println(resp.Status)
 
 		returnResponse(w, http.StatusCreated, ContentTypeJson, nil)
 	}
