@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
@@ -46,21 +47,21 @@ func bindArticleComment(c *model.ArticleCommentWithUser) openapi.ArticleComment 
 
 func CreateArticle(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var articleRequsetBody openapi.NewArticle
-		body := make([]byte, r.ContentLength)
-		if _, err := r.Body.Read(body); err != nil && err.Error() != "EOF" {
-			// NOTE: err should be nil
-			panic(err)
-		}
-		err := json.Unmarshal(body, &articleRequsetBody)
+		var articleRequestBody openapi.NewArticle
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(err, "failed to create article"))
+			c.Logger.Warn("Failed to read request body", "Error", cerror.Wrap(err, "failed to create article"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		if err := json.Unmarshal(body, &articleRequestBody); err != nil {
+			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(err, "failed to parse JSON"))
 			returnError(w, http.StatusBadRequest)
 			return
 		}
 
 		// validate content
-		if articleRequsetBody.Title == "" || articleRequsetBody.Content == "" || len(articleRequsetBody.Title) > 100 {
+		if articleRequestBody.Title == "" || articleRequestBody.Content == "" || len(articleRequestBody.Title) > 100 {
 			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrEmptyContent, "failed to create article"))
 			returnError(w, http.StatusBadRequest)
 			return
@@ -76,7 +77,7 @@ func CreateArticle(c *framework.Context) http.HandlerFunc {
 
 		// create article
 		uuid := util.NewUuid().String()
-		if err := c.Controllers.Article.Create(user.Id, uuid, articleRequsetBody.Title, articleRequsetBody.Content); err != nil {
+		if err := c.Controllers.Article.Create(user.Id, uuid, articleRequestBody.Title, articleRequestBody.Content); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create article"))
 			returnError(w, http.StatusInternalServerError)
 			return

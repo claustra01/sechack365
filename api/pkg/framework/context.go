@@ -44,6 +44,7 @@ func NewControllers(conn model.ISqlHandler) *Controllers {
 		User:        controller.NewUserController(conn),
 		Follow:      controller.NewFollowController(conn),
 		Post:        controller.NewPostController(conn),
+		Article:     controller.NewArticleController(conn),
 		NostrRelay:  controller.NewNostrRelayController(conn),
 		ActivityPub: controller.NewActivityPubController(),
 		// set websocket connection with SetNostrRelays()
