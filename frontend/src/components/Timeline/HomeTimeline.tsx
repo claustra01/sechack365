@@ -14,7 +14,7 @@ export const HomeTimeline = () => {
 			getApiV1Timeline().then((response) => {
 				setPosts(response.data as unknown as Post[]);
 			});
-		}, 1000);
+		}, 2000);
 	}, []);
 
 	return (
