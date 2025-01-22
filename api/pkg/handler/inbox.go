@@ -110,6 +110,16 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 					return
 				}
 
+				// FIXME: ちゃんと処理する
+				if object["inReplyTo"] != nil {
+					if err := c.Controllers.Article.CreateArticleComment("a", user.Id, note.Content); err != nil {
+						c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
+						returnError(w, http.StatusInternalServerError)
+						return
+					}
+					returnResponse(w, http.StatusAccepted, ContentTypeJson, nil)
+				}
+
 				// create post
 				if err := c.Controllers.Post.InsertApRemotePost(user.Id, note); err != nil {
 					c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
