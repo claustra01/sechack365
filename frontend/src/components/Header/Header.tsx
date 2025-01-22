@@ -37,7 +37,7 @@ export const Header = (props: HeaderProps) => {
 							{props.title}
 						</Title>
 					</Flex>
-					<Box p={5}>
+					<Box p={5} pr={12}>
 						<NewPostModal />
 					</Box>
 				</Flex>

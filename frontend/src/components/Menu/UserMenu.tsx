@@ -30,11 +30,7 @@ export const UserMenu = () => {
 				title="My Profile"
 				href={`/profile/@${user?.username}`}
 			/>
-			<MenuItem
-				icon={<IconNote />}
-				title="New Article"
-				href={"/article/new"}
-			/>
+			<MenuItem icon={<IconNote />} title="New Article" href={"/article/new"} />
 			<MenuItem
 				icon={<IconQuestionMark />}
 				title="How to Demo"
