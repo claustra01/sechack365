@@ -1,7 +1,7 @@
 "use client";
 import { Header } from "@/components/Header/Header";
 import { PageTemplate } from "@/components/Template/PageTemplate";
-import { Box } from "@mantine/core";
+import { Box, ScrollArea } from "@mantine/core";
 import { IconArrowBackUp } from "@tabler/icons-react";
 import Markdown from "react-markdown";
 
@@ -36,9 +36,11 @@ export default function HowToDemoPage() {
 	return (
 		<PageTemplate>
 			<Header title={"How to Demo"} icon={<IconArrowBackUp />} />
-			<Box p={24}>
-				<Markdown>{content}</Markdown>
-			</Box>
+			<ScrollArea h={"calc( 100vh - 78px )"}>
+				<Box p={24}>
+					<Markdown>{content}</Markdown>
+				</Box>
+			</ScrollArea>
 		</PageTemplate>
 	);
 }
