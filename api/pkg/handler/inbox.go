@@ -118,6 +118,7 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 						return
 					}
 					returnResponse(w, http.StatusAccepted, ContentTypeJson, nil)
+					return
 				}
 
 				// create post
