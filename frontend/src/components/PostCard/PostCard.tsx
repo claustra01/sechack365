@@ -18,7 +18,7 @@ export const PostCard = (props: Post) => {
 			}}
 		>
 			<PostUserCard {...props.user} />
-			<Text size="md" px="sm" style={{ wordBreak: "break-word" }}>
+			<Text size="sm" style={{ wordBreak: "break-word" }}>
 				{parseHtml(props.content)}
 			</Text>
 		</Flex>
