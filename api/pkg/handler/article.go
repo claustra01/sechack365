@@ -95,7 +95,7 @@ func CreateArticle(c *framework.Context) http.HandlerFunc {
 			fmt.Println("Error creating request:", err)
 			return
 		}
-		session, err := r.Cookie("session")
+		session, _ := r.Cookie("session")
 		req.Header.Set("Cookie", "session="+session.Value)
 		resp, err := client.Do(req)
 		if err != nil {
