@@ -12,7 +12,11 @@ export const PostCard = (props: Post) => {
 			p={24}
 			mx={12}
 			mt={12}
-			style={{ border: `2px solid ${colors.primaryColor}`, borderRadius: 8 }}
+			style={{
+				border: `2px solid ${colors.primaryColor}`,
+				borderRadius: 8,
+				boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.1)",
+			}}
 		>
 			<PostUserCard {...props.user} />
 			<Text size="lg" style={{ wordBreak: "break-word" }}>

@@ -64,7 +64,6 @@ export const NewPostModal = () => {
 				onClick={open}
 				style={{
 					borderRadius: "12px",
-					boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
 				}}
 			>
 				<Title size="h4" fw={500} c={colors.secondaryColor}>

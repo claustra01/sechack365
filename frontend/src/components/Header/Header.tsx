@@ -17,7 +17,11 @@ export const Header = (props: HeaderProps) => {
 					bg={colors.secondaryColor}
 					justify="space-between"
 					w="100%"
-					style={{ overflow: "hidden", borderRadius: "12px 12px 0 0" }}
+					style={{
+						overflow: "hidden",
+						borderRadius: "12px 12px 0 0",
+						boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.1)",
+					}}
 				>
 					<Flex p="xs" align="center">
 						<ActionIcon
