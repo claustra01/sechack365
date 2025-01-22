@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"time"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
@@ -203,6 +204,7 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 
 			// send activity
 			go func() {
+				time.Sleep(1 * time.Second)
 				uuid := util.NewUuid()
 				acceptActivity := &model.ApActivity{
 					Context: *c.Controllers.ActivityPub.NewApContext(),
@@ -285,6 +287,7 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 
 				// send activity
 				go func() {
+					time.Sleep(1 * time.Second)
 					uuid := util.NewUuid()
 					rejectActivity := &model.ApActivity{
 						Context: *c.Controllers.ActivityPub.NewApContext(),
