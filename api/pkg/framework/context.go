@@ -22,6 +22,7 @@ type Controllers struct {
 	User        *controller.UserController
 	Follow      *controller.FollowController
 	Post        *controller.PostController
+	Article     *controller.ArticleController
 	NostrRelay  *controller.NostrRelayController
 	ActivityPub *controller.ActivityPubController
 	Nostr       *controller.NostrController
