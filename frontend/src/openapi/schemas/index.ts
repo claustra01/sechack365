@@ -81,3 +81,6 @@ export * from "./wellknownNodeinfo";
 export * from "./wellknownNodeinfoLink";
 export * from "./wellknownWebfinger";
 export * from "./wellknownWebfingerLink";
+export * from "./article";
+export * from "./articleComment";
+export * from "./newArticle";

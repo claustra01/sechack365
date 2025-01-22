@@ -12,6 +12,8 @@ import useSWRMutation from "swr/mutation";
 import type { SWRMutationConfiguration } from "swr/mutation";
 import type {
 	Actor,
+	Article,
+	ArticleComment,
 	Auth,
 	DeleteApiV1ConfigsNostrRelay204,
 	DeleteApiV1Follows204,
@@ -35,6 +37,7 @@ import type {
 	GetWellKnownNostrJson200,
 	GetWellKnownNostrJsonParams,
 	GetWellKnownWebfingerParams,
+	NewArticle,
 	NewReaction,
 	Newfollow,
 	Newpost,
@@ -982,6 +985,157 @@ export const useGetApiV1Timeline = <TError = AxiosError<Error500>>(
 		swrOptions?.swrKey ??
 		(() => (isEnabled ? getGetApiV1TimelineKey(params) : null));
 	const swrFn = () => getApiV1Timeline(params, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Create Article
+ */
+export const postApiV1Articles = (
+	newArticle: NewArticle,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<Article>> => {
+	return axios.post("/api/v1/articles", newArticle, options);
+};
+
+export const getPostApiV1ArticlesMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		{ arg }: { arg: NewArticle },
+	): Promise<AxiosResponse<Article>> => {
+		return postApiV1Articles(arg, options);
+	};
+};
+export const getPostApiV1ArticlesMutationKey = () =>
+	["/api/v1/articles"] as const;
+
+export type PostApiV1ArticlesMutationResult = NonNullable<
+	Awaited<ReturnType<typeof postApiV1Articles>>
+>;
+export type PostApiV1ArticlesMutationError = AxiosError<
+	Error400 | Error401 | Error500
+>;
+
+export const usePostApiV1Articles = <
+	TError = AxiosError<Error400 | Error401 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof postApiV1Articles>>,
+		TError,
+		Key,
+		NewArticle,
+		Awaited<ReturnType<typeof postApiV1Articles>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1ArticlesMutationKey();
+	const swrFn = getPostApiV1ArticlesMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Get Article by ID
+ */
+export const getApiV1ArticlesId = (
+	id: string,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<Article>> => {
+	return axios.get(`/api/v1/articles/${id}`, options);
+};
+
+export const getGetApiV1ArticlesIdKey = (id: string) =>
+	[`/api/v1/articles/${id}`] as const;
+
+export type GetApiV1ArticlesIdQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getApiV1ArticlesId>>
+>;
+export type GetApiV1ArticlesIdQueryError = AxiosError<void>;
+
+export const useGetApiV1ArticlesId = <TError = AxiosError<void>>(
+	id: string,
+	options?: {
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1ArticlesId>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
+		axios?: AxiosRequestConfig;
+	},
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1ArticlesIdKey(id) : null));
+	const swrFn = () => getApiV1ArticlesId(id, axiosOptions);
+
+	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
+		swrKey,
+		swrFn,
+		swrOptions,
+	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Get Comments by Article ID
+ */
+export const getApiV1ArticlesIdComments = (
+	id: string,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<ArticleComment[]>> => {
+	return axios.get(`/api/v1/articles/${id}/comments`, options);
+};
+
+export const getGetApiV1ArticlesIdCommentsKey = (id: string) =>
+	[`/api/v1/articles/${id}/comments`] as const;
+
+export type GetApiV1ArticlesIdCommentsQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getApiV1ArticlesIdComments>>
+>;
+export type GetApiV1ArticlesIdCommentsQueryError = AxiosError<void>;
+
+export const useGetApiV1ArticlesIdComments = <TError = AxiosError<void>>(
+	id: string,
+	options?: {
+		swr?: SWRConfiguration<
+			Awaited<ReturnType<typeof getApiV1ArticlesIdComments>>,
+			TError
+		> & { swrKey?: Key; enabled?: boolean };
+		axios?: AxiosRequestConfig;
+	},
+) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const isEnabled = swrOptions?.enabled !== false && !!id;
+	const swrKey =
+		swrOptions?.swrKey ??
+		(() => (isEnabled ? getGetApiV1ArticlesIdCommentsKey(id) : null));
+	const swrFn = () => getApiV1ArticlesIdComments(id, axiosOptions);
 
 	const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
 		swrKey,
