@@ -69,6 +69,17 @@ func setupRouter(r *framework.Router, lg model.ILogger) error {
 		return err
 	}
 
+	article := api.Group("/articles")
+	if err := article.Post("", handler.CreateArticle, framework.AuthMiddleware(lg)); err != nil {
+		return err
+	}
+	if err := article.Get("/{id}", handler.GetArticle); err != nil {
+		return err
+	}
+	if err := article.Get("/{id}/comments", handler.GetArticleCommentsById); err != nil {
+		return err
+	}
+
 	if err := api.Get("/timeline", handler.GetTimeline); err != nil {
 		return err
 	}

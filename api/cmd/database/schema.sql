@@ -64,6 +64,24 @@ CREATE TABLE "reactions" (
   "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE "articles" (
+  "id" varchar(255) PRIMARY KEY,
+  "user_id" varchar(255) NOT NULL,
+  "title" varchar(255) NOT NULL,
+  "content" text NOT NULL,
+  "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "article_comments" (
+  "id" varchar(255) PRIMARY KEY,
+  "user_id" varchar(255) NOT NULL,
+  "article_id" varchar(255) NOT NULL,
+  "content" text NOT NULL,
+  "created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE "nostr_relays" (
   "id" varchar(255) PRIMARY KEY,
   "url" varchar(255) UNIQUE NOT NULL,
@@ -85,4 +103,10 @@ ALTER TABLE "posts" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 ALTER TABLE "reactions" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "reactions" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("id");
+
+ALTER TABLE "articles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "article_comments" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "article_comments" ADD FOREIGN KEY ("article_id") REFERENCES "articles" ("id");
 

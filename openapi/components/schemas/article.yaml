@@ -1,0 +1,60 @@
+article:
+  type: object
+  properties:
+    id:
+      type: string
+    user:
+      $ref: './user.yaml#/simple-user'
+    title:
+      type: string
+    content:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+  required:
+    - id
+    - user
+    - title
+    - content
+    - created_at
+    - updated_at
+
+article-comment:
+  type: object
+  properties:
+    id:
+      type: string
+    user:
+      $ref: './user.yaml#/simple-user'
+    article_id:
+      type: string
+    content:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+  required:
+    - id
+    - user
+    - article_id
+    - content
+    - created_at
+    - updated_at
+
+new-article:
+  type: object
+  properties:
+    title:
+      type: string
+    content:
+      type: string
+  required:
+    - title
+    - content

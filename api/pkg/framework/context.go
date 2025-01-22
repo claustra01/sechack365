@@ -22,6 +22,7 @@ type Controllers struct {
 	User        *controller.UserController
 	Follow      *controller.FollowController
 	Post        *controller.PostController
+	Article     *controller.ArticleController
 	NostrRelay  *controller.NostrRelayController
 	ActivityPub *controller.ActivityPubController
 	Nostr       *controller.NostrController
@@ -43,6 +44,7 @@ func NewControllers(conn model.ISqlHandler) *Controllers {
 		User:        controller.NewUserController(conn),
 		Follow:      controller.NewFollowController(conn),
 		Post:        controller.NewPostController(conn),
+		Article:     controller.NewArticleController(conn),
 		NostrRelay:  controller.NewNostrRelayController(conn),
 		ActivityPub: controller.NewActivityPubController(),
 		// set websocket connection with SetNostrRelays()

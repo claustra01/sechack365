@@ -1,0 +1,19 @@
+get:
+  tags:
+    - articles
+  description: Get Comments by Article ID
+  parameters:
+    - $ref: '../../../../components/params/articles.yaml#/id'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../../../../components/schemas/article.yaml#/article-comment'
+    '404':
+      description: Not Found
+    '500':
+      description: Internal Server Error

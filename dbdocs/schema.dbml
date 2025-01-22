@@ -63,6 +63,24 @@ Table reactions {
   updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }
 
+Table articles {
+  id varchar(255) [pk]
+  user_id varchar(255) [not null, ref: > users.id]
+  title varchar(255) [not null]
+  content text [not null]
+  created_at timestamp [default: "CURRENT_TIMESTAMP"]
+  updated_at timestamp [default: "CURRENT_TIMESTAMP"]
+}
+
+Table article_comments {
+  id varchar(255) [pk]
+  user_id varchar(255) [not null, ref: > users.id]
+  article_id varchar(255) [not null, ref: > articles.id]
+  content text [not null]
+  created_at timestamp [default: "CURRENT_TIMESTAMP"]
+  updated_at timestamp [default: "CURRENT_TIMESTAMP"]
+}
+
 Table nostr_relays {
   id varchar(255) [pk]
   url varchar(255) [not null, unique]
