@@ -89,7 +89,7 @@ func CreateArticle(c *framework.Context) http.HandlerFunc {
 
 func GetArticle(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := r.URL.Query().Get("id")
+		id := r.PathValue("id")
 		if id == "" {
 			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrEmptyContent, "failed to get article"))
 			returnError(w, http.StatusBadRequest)
@@ -109,7 +109,7 @@ func GetArticle(c *framework.Context) http.HandlerFunc {
 
 func GetArticleCommentsById(c *framework.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := r.URL.Query().Get("id")
+		id := r.PathValue("id")
 		if id == "" {
 			c.Logger.Warn("Bad Request", "Error", cerror.Wrap(cerror.ErrEmptyContent, "failed to get article comments"))
 			returnError(w, http.StatusBadRequest)

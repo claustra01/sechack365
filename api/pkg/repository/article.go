@@ -23,7 +23,12 @@ func (r *ArticleRepository) Create(id, userId, title, content string) error {
 func (r *ArticleRepository) FindById(id string) (*model.ArticleWithUser, error) {
 	article := new(model.ArticleWithUser)
 	query := `
-		SELECT articles.*,
+		SELECT
+		articles.id,
+		articles.title,
+		articles.content,
+		articles.created_at,
+		articles.updated_at,
 		users.id AS "user.id",
 		users.display_name AS "user.display_name",
 		users.icon AS "user.icon"
