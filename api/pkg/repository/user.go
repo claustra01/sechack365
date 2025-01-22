@@ -347,9 +347,11 @@ func (r *UserRepository) GetAllFollowingNostrPubKeys() ([]string, error) {
 	query := `
 		SELECT nostr_user_identifiers.public_key
 		FROM nostr_user_identifiers
-		JOIN follows ON nostr_user_identifiers.user_id = follows.target_id;
+		JOIN follows ON nostr_user_identifiers.user_id = follows.target_id
+		JOIN users ON follows.follower_id = users.id
+		WHERE users.protocol = $1;
 	`
-	if err := r.SqlHandler.Select(&pubKeys, query); err != nil {
+	if err := r.SqlHandler.Select(&pubKeys, query, model.ProtocolNostr); err != nil {
 		return nil, cerror.Wrap(err, "failed to get following nostr public keys")
 	}
 	return pubKeys, nil
