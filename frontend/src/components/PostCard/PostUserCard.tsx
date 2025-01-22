@@ -1,4 +1,5 @@
 import type { SimpleUser } from "@/openapi/schemas";
+import { DesktopOnly, MobileOnly } from "@/styles/devices";
 import { Avatar, Box, Flex, Text } from "@mantine/core";
 import Link from "next/link";
 
@@ -13,11 +14,16 @@ export const PostUserCard = (props: SimpleUser) => {
 					{props.display_name}
 				</Text>
 				<Box>
-					<Text size="xs">
-						{props.username.length > 30
-							? `${props.username.slice(0, 30)}...`
-							: props.username}
-					</Text>
+					<DesktopOnly>
+						<Text size="xs">{props.username}</Text>
+					</DesktopOnly>
+					<MobileOnly>
+						<Text size="xs">
+							{props.username.length > 30
+								? `${props.username.slice(0, 30)}...`
+								: props.username}
+						</Text>
+					</MobileOnly>
 				</Box>
 			</Flex>
 		</Flex>
