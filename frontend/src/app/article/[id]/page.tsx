@@ -46,7 +46,7 @@ export default function UserProfilePage({
 					</Box>
 					<Markdown>{article.content}</Markdown>
 				</Box>
-				{comments && comments.map((comment) => {
+				{comments?.map((comment) => {
 					return <PostCard key={comment.id} {...comment} />;
 				})}
 			</ScrollArea>
