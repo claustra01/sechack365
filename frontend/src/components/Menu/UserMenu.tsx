@@ -2,6 +2,7 @@ import { Box } from "@mantine/core";
 import {
 	IconHome,
 	IconLogout,
+	IconNote,
 	IconQuestionMark,
 	IconSearch,
 	IconUser,
@@ -28,6 +29,11 @@ export const UserMenu = () => {
 				icon={<IconUser />}
 				title="My Profile"
 				href={`/profile/@${user?.username}`}
+			/>
+			<MenuItem
+				icon={<IconNote />}
+				title="New Article"
+				href={"/article/new"}
 			/>
 			<MenuItem
 				icon={<IconQuestionMark />}
