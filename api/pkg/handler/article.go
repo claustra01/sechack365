@@ -77,7 +77,7 @@ func CreateArticle(c *framework.Context) http.HandlerFunc {
 
 		// create article
 		uuid := util.NewUuid().String()
-		if err := c.Controllers.Article.Create(user.Id, uuid, articleRequestBody.Title, articleRequestBody.Content); err != nil {
+		if err := c.Controllers.Article.Create(uuid, user.Id, articleRequestBody.Title, articleRequestBody.Content); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create article"))
 			returnError(w, http.StatusInternalServerError)
 			return
