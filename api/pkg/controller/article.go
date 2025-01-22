@@ -28,6 +28,10 @@ func (c *ArticleController) FindById(id string) (*model.ArticleWithUser, error) 
 	return c.ArticleUsecase.FindById(id)
 }
 
+func (c *ArticleController) CreateArticleComment(articleId, userId, content string) error {
+	return c.ArticleUsecase.CreateArticleComment(articleId, userId, content)
+}
+
 func (c *ArticleController) FindCommentsByArticleId(articleId string) ([]*model.ArticleCommentWithUser, error) {
 	return c.ArticleUsecase.FindCommentsByArticleId(articleId)
 }

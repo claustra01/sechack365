@@ -3,6 +3,7 @@ package repository
 import (
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/model"
+	"github.com/claustra01/sechack365/pkg/util"
 )
 
 type ArticleRepository struct {
@@ -48,6 +49,23 @@ func (r *ArticleRepository) FindById(id string) (*model.ArticleWithUser, error) 
 		return nil, cerror.Wrap(err, "failed to get article by id")
 	}
 	return article, nil
+}
+
+func (r *ArticleRepository) CreateArticleComment(articleId, userId, content string) error {
+	// FIXME: 一旦最新のarticleにコメントを付けるが、本来は受け取るったものを使うべき
+	if err := r.SqlHandler.Select(&articleId, "SELECT id FROM articles ORDER BY created_at DESC LIMIT 1;"); err != nil {
+		return cerror.Wrap(err, "failed to create article comment")
+	}
+
+	uuid := util.NewUuid()
+	query := `
+		INSERT INTO article_comments (id, article_id, user_id, content)
+		VALUES ($1, $2, $3, $4);
+	`
+	if _, err := r.SqlHandler.Exec(query, uuid, articleId, userId, content); err != nil {
+		return cerror.Wrap(err, "failed to create article comment")
+	}
+	return nil
 }
 
 func (r *ArticleRepository) FindCommentsByArticleId(articleId string) ([]*model.ArticleCommentWithUser, error) {
