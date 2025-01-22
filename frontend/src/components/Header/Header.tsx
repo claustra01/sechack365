@@ -1,7 +1,8 @@
 import { colors } from "@/styles/colors";
 import { DesktopOnly, MobileOnly } from "@/styles/devices";
-import { ActionIcon, Flex, Title } from "@mantine/core";
+import { ActionIcon, Box, Flex, Title } from "@mantine/core";
 import Link from "next/link";
+import { NewPostModal } from "./NewPostModal";
 
 export type HeaderProps = {
 	title: string;
@@ -14,45 +15,53 @@ export const Header = (props: HeaderProps) => {
 			<DesktopOnly>
 				<Flex
 					bg={colors.secondaryColor}
-					align="center"
+					justify="space-between"
 					w="100%"
-					p="xs"
 					style={{ overflow: "hidden", borderRadius: "12px 12px 0 0" }}
 				>
-					<ActionIcon
-						component={Link}
-						href="/"
-						variant="subtle"
-						size="lg"
-						c={colors.primaryColor}
-					>
-						{props.icon}
-					</ActionIcon>
-					<Title size="h4" fw={500} c={colors.primaryColor}>
-						{props.title}
-					</Title>
+					<Flex p="xs" align="center">
+						<ActionIcon
+							component={Link}
+							href="/"
+							variant="subtle"
+							size="lg"
+							c={colors.primaryColor}
+						>
+							{props.icon}
+						</ActionIcon>
+						<Title size="h4" fw={500} c={colors.primaryColor}>
+							{props.title}
+						</Title>
+					</Flex>
+					<Box p={5}>
+						<NewPostModal />
+					</Box>
 				</Flex>
 			</DesktopOnly>
 			<MobileOnly>
 				<Flex
 					bg={colors.secondaryColor}
-					align="center"
+					justify="space-between"
 					w="100%"
-					p="xs"
 					style={{ overflow: "hidden" }}
 				>
-					<ActionIcon
-						component={Link}
-						href="/"
-						variant="subtle"
-						size="lg"
-						c={colors.primaryColor}
-					>
-						{props.icon}
-					</ActionIcon>
-					<Title size="h4" fw={500} c={colors.primaryColor}>
-						{props.title}
-					</Title>
+					<Flex align="center" p="xs">
+						<ActionIcon
+							component={Link}
+							href="/"
+							variant="subtle"
+							size="lg"
+							c={colors.primaryColor}
+						>
+							{props.icon}
+						</ActionIcon>
+						<Title size="h4" fw={500} c={colors.primaryColor}>
+							{props.title}
+						</Title>
+					</Flex>
+					<Box p={5} pr={52}>
+						<NewPostModal />
+					</Box>
 				</Flex>
 			</MobileOnly>
 		</>

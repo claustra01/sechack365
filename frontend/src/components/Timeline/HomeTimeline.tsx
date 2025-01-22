@@ -4,7 +4,6 @@ import { Box } from "@mantine/core";
 import { IconHome } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Header } from "../Header/Header";
-import { NewPost } from "../NewPost/NewPost";
 import { TimelineBase } from "./TimelineBase";
 
 export const HomeTimeline = () => {
@@ -19,7 +18,6 @@ export const HomeTimeline = () => {
 	return (
 		<Box>
 			<Header title={"Home"} icon={<IconHome />} />
-			<NewPost />
 			<TimelineBase posts={posts} />
 		</Box>
 	);
