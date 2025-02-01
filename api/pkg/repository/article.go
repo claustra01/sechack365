@@ -53,7 +53,7 @@ func (r *ArticleRepository) FindById(id string) (*model.ArticleWithUser, error) 
 
 func (r *ArticleRepository) CreateArticleComment(articleId, userId, content string) error {
 	var count int
-	query := "SELECT COUNT(*) FROM articles WHERE article_id = $1 AND user_id = $2 AND content = $3;"
+	query := "SELECT COUNT(*) FROM article_comments WHERE article_id = $1 AND user_id = $2 AND content = $3;"
 	if err := r.SqlHandler.Get(&count, query, articleId, userId, content); err != nil {
 		return cerror.Wrap(err, "failed to check article comment")
 	}
