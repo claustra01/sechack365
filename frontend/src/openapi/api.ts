@@ -49,6 +49,8 @@ import type {
 	PostApiV1AuthRegister201,
 	PostApiV1ConfigsNostrRelay201,
 	PostApiV1Follows201,
+	PostApiV1ImagesUpload201,
+	PostApiV1ImagesUploadBody,
 	PostApiV1Posts201,
 	PostApiV1Reactions201,
 	SimpleUser,
@@ -1142,6 +1144,66 @@ export const useGetApiV1ArticlesIdComments = <TError = AxiosError<void>>(
 		swrFn,
 		swrOptions,
 	);
+
+	return {
+		swrKey,
+		...query,
+	};
+};
+
+/**
+ * Upload Image
+ */
+export const postApiV1ImagesUpload = (
+	postApiV1ImagesUploadBody: PostApiV1ImagesUploadBody,
+	options?: AxiosRequestConfig,
+): Promise<AxiosResponse<PostApiV1ImagesUpload201>> => {
+	const formData = new FormData();
+	if (postApiV1ImagesUploadBody.image !== undefined) {
+		formData.append("image", postApiV1ImagesUploadBody.image);
+	}
+
+	return axios.post("/api/v1/images/upload", formData, options);
+};
+
+export const getPostApiV1ImagesUploadMutationFetcher = (
+	options?: AxiosRequestConfig,
+) => {
+	return (
+		_: Key,
+		{ arg }: { arg: PostApiV1ImagesUploadBody },
+	): Promise<AxiosResponse<PostApiV1ImagesUpload201>> => {
+		return postApiV1ImagesUpload(arg, options);
+	};
+};
+export const getPostApiV1ImagesUploadMutationKey = () =>
+	["/api/v1/images/upload"] as const;
+
+export type PostApiV1ImagesUploadMutationResult = NonNullable<
+	Awaited<ReturnType<typeof postApiV1ImagesUpload>>
+>;
+export type PostApiV1ImagesUploadMutationError = AxiosError<
+	Error400 | Error401 | Error500
+>;
+
+export const usePostApiV1ImagesUpload = <
+	TError = AxiosError<Error400 | Error401 | Error500>,
+>(options?: {
+	swr?: SWRMutationConfiguration<
+		Awaited<ReturnType<typeof postApiV1ImagesUpload>>,
+		TError,
+		Key,
+		PostApiV1ImagesUploadBody,
+		Awaited<ReturnType<typeof postApiV1ImagesUpload>>
+	> & { swrKey?: string };
+	axios?: AxiosRequestConfig;
+}) => {
+	const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+
+	const swrKey = swrOptions?.swrKey ?? getPostApiV1ImagesUploadMutationKey();
+	const swrFn = getPostApiV1ImagesUploadMutationFetcher(axiosOptions);
+
+	const query = useSWRMutation(swrKey, swrFn, swrOptions);
 
 	return {
 		swrKey,
