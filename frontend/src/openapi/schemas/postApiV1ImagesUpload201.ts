@@ -5,4 +5,6 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type PostApiV1ImagesUpload201 = { [key: string]: unknown };
+export type PostApiV1ImagesUpload201 = {
+	url?: string;
+};

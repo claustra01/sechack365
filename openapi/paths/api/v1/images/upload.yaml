@@ -19,6 +19,10 @@ post:
         application/json:
           schema:
             type: object
+            properties:
+              url:
+                type: string
+                format: uri
     '400':
       description: Invalid Request Body
       content:
