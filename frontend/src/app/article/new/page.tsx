@@ -25,8 +25,17 @@ export default function NewArticlePage() {
 		if (!files) return;
 		const file = Array.from(files)[0];
 		postApiV1ImagesUpload({ image: file })
-			.then(() => {
-				alert("Uploaded");
+			.then((res) => {
+				if (content.length === 0) {
+					setContent(`![](${res.data.url})`);
+					return;
+				}
+				if (content.endsWith("\n")) {
+					setContent(`${content}![](${res.data.url})`);
+					return;
+				}
+				setContent(`${content}\n![](${res.data.url})`);
+				return;
 			})
 			.catch((error) => {
 				alert(error);
@@ -58,24 +67,24 @@ export default function NewArticlePage() {
 				<TextInput
 					label="Title"
 					placeholder="Title"
+					value={title}
 					onChange={handleChangeTitle}
 				/>
 				<Textarea
 					label="Content"
 					placeholder="Your content here..."
+					value={content}
 					autosize
 					minRows={12}
 					onChange={handleChangeContent}
 				/>
 				<Flex justify="space-between">
-					<Button variant="outline" color={colors.secondaryColor}>
-						<input
-							type="file"
-							multiple
-							accept="image/*"
-							onChange={handleFileChange}
-						/>
-					</Button>
+					<input
+						type="file"
+						multiple
+						accept="image/*"
+						onChange={handleFileChange}
+					/>
 					<Button
 						disabled={title.length === 0 || content.length === 0}
 						color={colors.secondaryColor}
