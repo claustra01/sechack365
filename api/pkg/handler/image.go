@@ -47,5 +47,10 @@ func UploadImage(c *framework.Context) http.HandlerFunc {
 			returnError(w, http.StatusInternalServerError)
 			return
 		}
+
+		resBody := map[string]string{
+			"url": fmt.Sprintf("https://%s/static/%s", c.Config.Host, filename),
+		}
+		returnResponse(w, http.StatusCreated, ContentTypeJson, resBody)
 	}
 }
