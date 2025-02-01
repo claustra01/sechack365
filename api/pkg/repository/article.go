@@ -98,3 +98,23 @@ func (r *ArticleRepository) FindCommentsByArticleId(articleId string) ([]*model.
 	}
 	return comments, nil
 }
+
+func (r *ArticleRepository) CreateArticlePostRelation(articleId, postId string) error {
+	query := `
+		INSERT INTO article_post_relations (article_id, post_id)
+		VALUES ($1, $2);
+	`
+	if _, err := r.SqlHandler.Exec(query, articleId, postId); err != nil {
+		return cerror.Wrap(err, "failed to create article post relation")
+	}
+	return nil
+}
+
+func (r *ArticleRepository) FindArticlePostRelation(postId string) (*model.ArticlePostRelation, error) {
+	relation := new(model.ArticlePostRelation)
+	query := "SELECT * FROM article_post_relations WHERE post_id = $1;"
+	if err := r.SqlHandler.Get(relation, query, postId); err != nil {
+		return nil, cerror.Wrap(err, "failed to get article post relation")
+	}
+	return relation, nil
+}

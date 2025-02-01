@@ -37,3 +37,8 @@ type ArticleCommentWithUser struct {
 	CreatedAt time.Time  `db:"created_at"`
 	UpdatedAt time.Time  `db:"updated_at"`
 }
+
+type ArticlePostRelation struct {
+	ArticleId string `db:"article_id"`
+	PostId    string `db:"post_id"`
+}
