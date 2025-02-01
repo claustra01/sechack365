@@ -48,6 +48,9 @@ paths:
   /api/v1/articles/{id}/comments:
     $ref: ./paths/api/v1/articles/comments.yaml
 
+  /api/v1/images/upload:
+    $ref: ./paths/api/v1/images/upload.yaml
+
   /api/v1/reactions:
     $ref: ./paths/api/v1/reactions/new.yaml
   
