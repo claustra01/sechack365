@@ -111,8 +111,21 @@ func (r *PostRepository) DeleteById(id string) error {
 }
 
 func (r *PostRepository) InsertApRemotePost(userId string, note *model.ApNoteActivity) error {
-	uuid := util.NewUuid()
+	// check duplication
+	var count int
 	query := `
+			SELECT COUNT(*) FROM posts
+			WHERE user_id = $1 AND content = $2 AND created_at = $3;
+		`
+	if err := r.SqlHandler.Get(&count, query, userId, note.Content, note.Published); err != nil {
+		return cerror.Wrap(err, "failed to insert nostr remote posts")
+	}
+	if count > 0 {
+		return nil
+	}
+
+	uuid := util.NewUuid()
+	query = `
 		INSERT INTO posts (id, protocol, user_id, content, created_at)
 		VALUES ($1, $2, $3, $4, $5);
 	`
@@ -154,19 +167,6 @@ func (r *PostRepository) InsertNostrRemotePosts(events []*model.NostrEvent) erro
 			return nil
 		} else if err != nil {
 			return cerror.Wrap(err, "failed to insert nostr remote posts")
-		}
-
-		// check duplication
-		var count int
-		query = `
-			SELECT COUNT(*) FROM posts
-			WHERE user_id = $1 AND content = $2 AND created_at = $3;
-		`
-		if err := r.SqlHandler.Get(&count, query, userId, event.Content, time.Unix(int64(event.CreatedAt), 0)); err != nil {
-			return cerror.Wrap(err, "failed to insert nostr remote posts")
-		}
-		if count > 0 {
-			continue
 		}
 
 		// insert post
