@@ -132,7 +132,7 @@ func CreateArticle(c *framework.Context) http.HandlerFunc {
 				Object: &model.ApNoteActivity{
 					Id:        fmt.Sprintf("https://%s/posts/%s", user.Identifiers.Activitypub.Host, postId),
 					Type:      model.ActivityTypeNote,
-					Content:   postContent,
+					Content:   util.WrapURLWithAnchor(postContent),
 					Published: time.Now(),
 				},
 			}
