@@ -28,6 +28,9 @@ var ErrPushActivity = fmt.Errorf("failed to push activity")
 var ErrEmptyContent = fmt.Errorf("empty content")
 var ErrPostNotFound = fmt.Errorf("post not found")
 
+// image handler
+var ErrInvalidFileType = fmt.Errorf("invalid file type")
+
 // inbox handler
 var ErrInvalidActivityType = fmt.Errorf("invalid activity type")
 var ErrInvalidActivityObject = fmt.Errorf("invalid activity object")

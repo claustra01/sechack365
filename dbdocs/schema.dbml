@@ -81,6 +81,11 @@ Table article_comments {
   updated_at timestamp [default: "CURRENT_TIMESTAMP"]
 }
 
+Table article_post_relations {
+  article_id varchar(255) [pk, ref: - articles.id]
+  post_id varchar(255) [pk, ref: - posts.id]
+}
+
 Table nostr_relays {
   id varchar(255) [pk]
   url varchar(255) [not null, unique]

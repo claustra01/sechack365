@@ -70,6 +70,8 @@ export * from "./postApiV1ConfigsNostrRelay201";
 export * from "./postApiV1Follows201";
 export * from "./postApiV1FollowsFollow201";
 export * from "./postApiV1FollowsFollow204";
+export * from "./postApiV1ImagesUpload201";
+export * from "./postApiV1ImagesUploadBody";
 export * from "./postApiV1Posts201";
 export * from "./postApiV1Reactions201";
 export * from "./postApiV1ReactionsLike201";

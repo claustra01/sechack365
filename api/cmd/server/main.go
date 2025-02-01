@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/claustra01/sechack365/cmd/batch"
@@ -14,8 +13,8 @@ func main() {
 	logger := infrastructure.NewLogger(os.Getenv("LOG_LEVEL"))
 
 	// DB Connection
-	connStr := os.Getenv("POSTGRES_URL")
-	conn, err := infrastructure.NewSqlHandler(connStr)
+	dbConnStr := os.Getenv("POSTGRES_URL")
+	dbConn, err := infrastructure.NewSqlHandler(dbConnStr)
 	if err != nil {
 		panic(err)
 	}
@@ -25,15 +24,13 @@ func main() {
 	minioPort := os.Getenv("MINIO_PORT")
 	minioUser := os.Getenv("MINIO_ROOT_USER")
 	minioPassword := os.Getenv("MINIO_ROOT_PASSWORD")
-	storage, err := infrastructure.NewStorageHandler(minioHost, minioPort, minioUser, minioPassword)
+	storageConn, err := infrastructure.NewStorageHandler(minioHost, minioPort, minioUser, minioPassword)
 	if err != nil {
 		panic(err)
 	}
-	// TODO: use storage
-	log.Println(storage)
 
 	// Context
-	ctx := framework.NewContext(logger, conn)
+	ctx := framework.NewContext(logger, dbConn, storageConn)
 
 	// Websocket Connection
 	relays, err := ctx.Controllers.NostrRelay.FindAll()

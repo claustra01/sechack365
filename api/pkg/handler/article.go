@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
 	"github.com/claustra01/sechack365/pkg/framework"
@@ -79,31 +79,89 @@ func CreateArticle(c *framework.Context) http.HandlerFunc {
 		}
 
 		// create article
-		uuid := util.NewUuid().String()
-		if err := c.Controllers.Article.Create(uuid, user.Id, articleRequestBody.Title, articleRequestBody.Content); err != nil {
+		articleId := util.NewUuid().String()
+		if err := c.Controllers.Article.Create(articleId, user.Id, articleRequestBody.Title, articleRequestBody.Content); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create article"))
 			returnError(w, http.StatusInternalServerError)
 			return
 		}
 
-		// post to federation
-		// FIXME: HTTPクライアントを使わないようにする
-		client := &http.Client{}
-		content := fmt.Sprintf("{\"content\":\"記事を投稿しました！\\nhttps://%s/article/%s\"}", c.Config.Host, uuid)
-		req, err := http.NewRequest("POST", "http://localhost:1323/api/v1/posts", bytes.NewBuffer([]byte(content)))
+		// create post
+		postId := util.NewUuid().String()
+		postContent := fmt.Sprintf("記事を投稿しました！\nhttps://%s/article/%s", c.Config.Host, articleId)
+
+		// post to activitypub
+		keyId := c.Controllers.ActivityPub.NewKeyIdUrl(user.Identifiers.Activitypub.Host, user.Id)
+		privKeyPem, err := c.Controllers.User.GetActivityPubPrivKey(user.Id)
 		if err != nil {
-			fmt.Println("Error creating request:", err)
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+			returnError(w, http.StatusInternalServerError)
 			return
 		}
-		session, _ := r.Cookie("session")
-		req.Header.Set("Cookie", "session="+session.Value)
-		resp, err := client.Do(req)
+		apPrivKey, _, err := util.DecodePem(privKeyPem)
 		if err != nil {
-			fmt.Println("Error sending request:", err)
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create follow"))
+			returnError(w, http.StatusInternalServerError)
 			return
 		}
-		defer resp.Body.Close()
-		log.Println(resp.Status)
+		followers, err := c.Controllers.Follow.FindActivityPubRemoteFollowers(user.Id)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		for _, follower := range followers {
+			f := strings.Split(follower, "@")
+			targetUrl, err := c.Controllers.ActivityPub.ResolveWebfinger(f[0], f[1])
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			targetActor, err := c.Controllers.ActivityPub.ResolveRemoteActor(targetUrl)
+			if err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+			activity := &model.ApActivity{
+				Context: *c.Controllers.ActivityPub.NewApContext(),
+				Type:    model.ActivityTypeCreate,
+				Id:      fmt.Sprintf("https://%s/posts/%s", user.Identifiers.Activitypub.Host, postId),
+				Actor:   c.Controllers.ActivityPub.NewActorUrl(user.Identifiers.Activitypub.Host, user.Id),
+				Object: &model.ApNoteActivity{
+					Id:        fmt.Sprintf("https://%s/posts/%s", user.Identifiers.Activitypub.Host, postId),
+					Type:      model.ActivityTypeNote,
+					Content:   postContent,
+					Published: time.Now(),
+				},
+			}
+			if _, err := c.Controllers.ActivityPub.SendActivity(keyId, apPrivKey, targetActor.Inbox, activity); err != nil {
+				c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+				returnError(w, http.StatusInternalServerError)
+				return
+			}
+		}
+
+		// post to nostr
+		nostrPrivKey, err := c.Controllers.User.GetNostrPrivKey(user.Id)
+		if err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		if err := c.Controllers.Nostr.PublishPost(nostrPrivKey, postContent); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+
+		// create
+		if err := c.Controllers.Post.Create(postId, user.Id, postContent); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
 
 		returnResponse(w, http.StatusCreated, ContentTypeJson, nil)
 	}
