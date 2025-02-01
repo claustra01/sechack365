@@ -114,16 +114,13 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 				// reply to article
 				if object["inReplyTo"] != nil {
 					replyTarget := object["inReplyTo"].(string)
-					fmt.Println(replyTarget)
 					postId := strings.Split(replyTarget, "/posts/")[1]
-					fmt.Println(postId)
 					rel, err := c.Controllers.Article.FindArticlePostRelation(postId)
 					if err != nil {
 						c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
 						returnError(w, http.StatusInternalServerError)
 						return
 					}
-					fmt.Println(rel.ArticleId)
 					if err := c.Controllers.Article.CreateArticleComment(rel.ArticleId, user.Id, note.Content); err != nil {
 						c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
 						returnError(w, http.StatusInternalServerError)
