@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/claustra01/sechack365/pkg/cerror"
@@ -110,9 +111,17 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 					return
 				}
 
-				// FIXME: ちゃんと処理する
+				// reply to article
 				if object["inReplyTo"] != nil {
-					if err := c.Controllers.Article.CreateArticleComment("a", user.Id, note.Content); err != nil {
+					replyTarget := object["inReplyTo"].(string)
+					postId := strings.Split(replyTarget, "/api/v1/posts/")[1]
+					rel, err := c.Controllers.Article.FindArticlePostRelation(postId)
+					if err != nil {
+						c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
+						returnError(w, http.StatusInternalServerError)
+						return
+					}
+					if err := c.Controllers.Article.CreateArticleComment(rel.ArticleId, user.Id, note.Content); err != nil {
 						c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to receive activitypub note"))
 						returnError(w, http.StatusInternalServerError)
 						return

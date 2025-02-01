@@ -7,6 +7,9 @@ type IArticleRepository interface {
 	FindById(id string) (*model.ArticleWithUser, error)
 	CreateArticleComment(articleId, userId, content string) error
 	FindCommentsByArticleId(articleId string) ([]*model.ArticleCommentWithUser, error)
+	// Article連携
+	CreateArticlePostRelation(articleId, postId string) error
+	FindArticlePostRelation(postId string) (*model.ArticlePostRelation, error)
 }
 
 type ArticleUsecase struct {
@@ -27,4 +30,12 @@ func (u *ArticleUsecase) CreateArticleComment(articleId, userId, content string)
 
 func (u *ArticleUsecase) FindCommentsByArticleId(articleId string) ([]*model.ArticleCommentWithUser, error) {
 	return u.ArticleRepository.FindCommentsByArticleId(articleId)
+}
+
+func (u *ArticleUsecase) CreateArticlePostRelation(articleId, postId string) error {
+	return u.ArticleRepository.CreateArticlePostRelation(articleId, postId)
+}
+
+func (u *ArticleUsecase) FindArticlePostRelation(postId string) (*model.ArticlePostRelation, error) {
+	return u.ArticleRepository.FindArticlePostRelation(postId)
 }

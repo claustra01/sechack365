@@ -132,7 +132,7 @@ func CreateArticle(c *framework.Context) http.HandlerFunc {
 				Object: &model.ApNoteActivity{
 					Id:        fmt.Sprintf("https://%s/posts/%s", user.Identifiers.Activitypub.Host, postId),
 					Type:      model.ActivityTypeNote,
-					Content:   postContent,
+					Content:   util.WrapURLWithAnchor(postContent),
 					Published: time.Now(),
 				},
 			}
@@ -159,6 +159,11 @@ func CreateArticle(c *framework.Context) http.HandlerFunc {
 		// create
 		if err := c.Controllers.Post.Create(postId, user.Id, postContent); err != nil {
 			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create post"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
+		if err := c.Controllers.Article.CreateArticlePostRelation(articleId, postId); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create article post relation"))
 			returnError(w, http.StatusInternalServerError)
 			return
 		}

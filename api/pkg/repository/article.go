@@ -52,18 +52,12 @@ func (r *ArticleRepository) FindById(id string) (*model.ArticleWithUser, error) 
 }
 
 func (r *ArticleRepository) CreateArticleComment(articleId, userId, content string) error {
-	// FIXME: 一旦最新のarticleにコメントを付けるが、本来は受け取るったものを使うべき
-	var latestArticleId string
-	if err := r.SqlHandler.Get(&latestArticleId, "SELECT id FROM articles ORDER BY created_at DESC LIMIT 1;"); err != nil {
-		return cerror.Wrap(err, "failed to create article comment")
-	}
-
 	uuid := util.NewUuid()
 	query := `
 		INSERT INTO article_comments (id, article_id, user_id, content)
 		VALUES ($1, $2, $3, $4);
 	`
-	if _, err := r.SqlHandler.Exec(query, uuid, latestArticleId, userId, content); err != nil {
+	if _, err := r.SqlHandler.Exec(query, uuid, articleId, userId, content); err != nil {
 		return cerror.Wrap(err, "failed to create article comment")
 	}
 	return nil
@@ -97,4 +91,24 @@ func (r *ArticleRepository) FindCommentsByArticleId(articleId string) ([]*model.
 		return nil, cerror.Wrap(err, "failed to get comments by article id")
 	}
 	return comments, nil
+}
+
+func (r *ArticleRepository) CreateArticlePostRelation(articleId, postId string) error {
+	query := `
+		INSERT INTO article_post_relations (article_id, post_id)
+		VALUES ($1, $2);
+	`
+	if _, err := r.SqlHandler.Exec(query, articleId, postId); err != nil {
+		return cerror.Wrap(err, "failed to create article post relation")
+	}
+	return nil
+}
+
+func (r *ArticleRepository) FindArticlePostRelation(postId string) (*model.ArticlePostRelation, error) {
+	relation := new(model.ArticlePostRelation)
+	query := "SELECT * FROM article_post_relations WHERE post_id = $1;"
+	if err := r.SqlHandler.Get(relation, query, postId); err != nil {
+		return nil, cerror.Wrap(err, "failed to get article post relation")
+	}
+	return relation, nil
 }

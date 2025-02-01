@@ -35,3 +35,11 @@ func (c *ArticleController) CreateArticleComment(articleId, userId, content stri
 func (c *ArticleController) FindCommentsByArticleId(articleId string) ([]*model.ArticleCommentWithUser, error) {
 	return c.ArticleUsecase.FindCommentsByArticleId(articleId)
 }
+
+func (c *ArticleController) CreateArticlePostRelation(articleId, postId string) error {
+	return c.ArticleUsecase.CreateArticlePostRelation(articleId, postId)
+}
+
+func (c *ArticleController) FindArticlePostRelation(postId string) (*model.ArticlePostRelation, error) {
+	return c.ArticleUsecase.FindArticlePostRelation(postId)
+}
