@@ -1,7 +1,7 @@
 "use client";
 import { Header } from "@/components/Header/Header";
 import { PageTemplate } from "@/components/Template/PageTemplate";
-import { postApiV1Articles } from "@/openapi/api";
+import { postApiV1Articles, postApiV1ImagesUpload } from "@/openapi/api";
 import type { NewArticle } from "@/openapi/schemas";
 import { colors } from "@/styles/colors";
 import { Button, Flex, TextInput, Textarea } from "@mantine/core";
@@ -18,6 +18,19 @@ export default function NewArticlePage() {
 
 	const handleChangeContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setContent(e.currentTarget.value);
+	};
+
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = e.target.files;
+		if (!files) return;
+		const file = Array.from(files)[0];
+		postApiV1ImagesUpload({ image: file })
+			.then(() => {
+				alert("Uploaded");
+			})
+			.catch((error) => {
+				alert(error);
+			});
 	};
 
 	const handleSubmit = () => {
@@ -47,7 +60,6 @@ export default function NewArticlePage() {
 					placeholder="Title"
 					onChange={handleChangeTitle}
 				/>
-
 				<Textarea
 					label="Content"
 					placeholder="Your content here..."
@@ -56,12 +68,13 @@ export default function NewArticlePage() {
 					onChange={handleChangeContent}
 				/>
 				<Flex justify="space-between">
-					<Button
-						variant="outline"
-						color={colors.secondaryColor}
-						onClick={handleSubmit}
-					>
-						Upload Image
+					<Button variant="outline" color={colors.secondaryColor}>
+						<input
+							type="file"
+							multiple
+							accept="image/*"
+							onChange={handleFileChange}
+						/>
 					</Button>
 					<Button
 						disabled={title.length === 0 || content.length === 0}
