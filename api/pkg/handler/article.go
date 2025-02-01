@@ -162,6 +162,11 @@ func CreateArticle(c *framework.Context) http.HandlerFunc {
 			returnError(w, http.StatusInternalServerError)
 			return
 		}
+		if err := c.Controllers.Article.CreateArticlePostRelation(articleId, postId); err != nil {
+			c.Logger.Error("Internal Server Error", "Error", cerror.Wrap(err, "failed to create article post relation"))
+			returnError(w, http.StatusInternalServerError)
+			return
+		}
 
 		returnResponse(w, http.StatusCreated, ContentTypeJson, nil)
 	}
