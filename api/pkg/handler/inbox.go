@@ -115,7 +115,7 @@ func ActorInbox(c *framework.Context) http.HandlerFunc {
 				if object["inReplyTo"] != nil {
 					replyTarget := object["inReplyTo"].(string)
 					fmt.Println(replyTarget)
-					postId := strings.Split(replyTarget, "/api/v1/posts/")[1]
+					postId := strings.Split(replyTarget, "/posts/")[1]
 					fmt.Println(postId)
 					rel, err := c.Controllers.Article.FindArticlePostRelation(postId)
 					if err != nil {
