@@ -156,6 +156,19 @@ func (r *PostRepository) InsertNostrRemotePosts(events []*model.NostrEvent) erro
 			return cerror.Wrap(err, "failed to insert nostr remote posts")
 		}
 
+		// check duplication
+		var count int
+		query = `
+			SELECT COUNT(*) FROM posts
+			WHERE user_id = $1 AND content = $2 AND created_at = $3;
+		`
+		if err := r.SqlHandler.Get(&count, query, userId, event.Content, time.Unix(int64(event.CreatedAt), 0)); err != nil {
+			return cerror.Wrap(err, "failed to insert nostr remote posts")
+		}
+		if count > 0 {
+			continue
+		}
+
 		// insert post
 		uuid := util.NewUuid()
 		query = `
