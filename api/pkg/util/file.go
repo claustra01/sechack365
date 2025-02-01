@@ -16,7 +16,9 @@ func GetFileType(file multipart.File) (bool, string) {
 	}
 
 	// ファイルポインタを先頭に戻す
-	file.Seek(0, io.SeekStart)
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		return false, ""
+	}
 
 	// 判定されたMIMEタイプを取得
 	mimeType := http.DetectContentType(buffer)
