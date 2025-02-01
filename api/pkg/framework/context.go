@@ -27,29 +27,31 @@ type Controllers struct {
 	ActivityPub *controller.ActivityPubController
 	Nostr       *controller.NostrController
 	Webfinger   *controller.WebfingerController
+	File        *controller.FileController
 }
 
-func NewContext(logger model.ILogger, conn model.ISqlHandler) *Context {
+func NewContext(logger model.ILogger, dbConn model.ISqlHandler, storageConn model.IStorageHandler) *Context {
 	return &Context{
 		Ctx:         context.Background(),
 		Logger:      logger,
 		Config:      NewConfig(logger),
-		Controllers: NewControllers(conn),
+		Controllers: NewControllers(dbConn, storageConn),
 	}
 }
 
-func NewControllers(conn model.ISqlHandler) *Controllers {
+func NewControllers(dbConn model.ISqlHandler, storageConn model.IStorageHandler) *Controllers {
 	return &Controllers{
-		Transaction: controller.NewTransactionController(conn),
-		User:        controller.NewUserController(conn),
-		Follow:      controller.NewFollowController(conn),
-		Post:        controller.NewPostController(conn),
-		Article:     controller.NewArticleController(conn),
-		NostrRelay:  controller.NewNostrRelayController(conn),
+		Transaction: controller.NewTransactionController(dbConn),
+		User:        controller.NewUserController(dbConn),
+		Follow:      controller.NewFollowController(dbConn),
+		Post:        controller.NewPostController(dbConn),
+		Article:     controller.NewArticleController(dbConn),
+		NostrRelay:  controller.NewNostrRelayController(dbConn),
 		ActivityPub: controller.NewActivityPubController(),
 		// set websocket connection with SetNostrRelays()
 		// Nostr:               controller.NewNostrController(ws),
 		Webfinger: controller.NewWebfingerController(),
+		File:      controller.NewFileController(storageConn),
 	}
 }
 
