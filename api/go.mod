@@ -1,6 +1,6 @@
 module github.com/claustra01/sechack365
 
-go 1.22.5
+go 1.23.0
 
 require (
 	github.com/btcsuite/btcd/btcec/v2 v2.3.4
@@ -13,7 +13,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/minio/minio-go/v7 v7.0.83
 	github.com/pkg/errors v0.9.1
-	golang.org/x/crypto v0.31.0
+	golang.org/x/crypto v0.38.0
 )
 
 require (
@@ -87,8 +87,8 @@ require (
 	github.com/yosssi/ace v0.0.5 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
