@@ -16,7 +16,7 @@ jobs:
       - name: Setup
         uses: actions/setup-go@v5
         with:
-          go-version: 1.22
+          go-version: 1.24.3
 
       - name: Static check
         run: make lint-api
@@ -31,7 +31,7 @@ jobs:
       - name: Setup
         uses: actions/setup-go@v5
         with:
-          go-version: 1.22
+          go-version: 1.24.3
 
       - name: Test
         run: make test-api
@@ -46,7 +46,7 @@ jobs:
       - name: Setup
         uses: actions/setup-go@v5
         with:
-          go-version: 1.22
+          go-version: 1.24.3
 
       - name: Build
         run: cd api && go build ./cmd/server

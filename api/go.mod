@@ -1,6 +1,6 @@
 module github.com/claustra01/sechack365
 
-go 1.23.0
+go 1.24.3
 
 require (
 	github.com/btcsuite/btcd/btcec/v2 v2.3.4
