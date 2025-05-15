@@ -5,7 +5,6 @@ updates:
     directory: "/api"
     schedule:
       interval: "daily"
-      time: "03:15"
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
@@ -16,7 +15,6 @@ updates:
     directory: "/frontend"
     schedule:
       interval: "daily"
-      time: "03:15"
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
