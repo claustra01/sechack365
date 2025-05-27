@@ -13,7 +13,7 @@
     "orval:lint": "biome check ./src/openapi --write --unsafe"
   },
   "dependencies": {
-    "@mantine/core": "^7.14.0",
+    "@mantine/core": "^8.0.2",
     "@mantine/hooks": "^7.14.0",
     "@tabler/icons-react": "^3.33.0",
     "axios": "^1.9.0",
