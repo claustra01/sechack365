@@ -53,7 +53,7 @@ describe("AuthorProfileCard", () => {
 		expect(screen.getByText(longUsername)).toBeInTheDocument();
 	});
 
-	// 異常系: ユーザー名が空の場合でもコンポーネントが描画されることを確認する
+	// 準異常系: ユーザー名が空の場合でもコンポーネントが描画されることを確認する
 	test("renders even when username is empty", () => {
 		render(
 			<MantineProvider>
