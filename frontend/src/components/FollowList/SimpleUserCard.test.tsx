@@ -5,7 +5,7 @@ import { render, screen } from "@testing-library/react";
 
 import type { SimpleUser } from "@/openapi/schemas";
 
-import { AuthorProfileCard } from "./AuthorProfileCard";
+import { SimpleUserCard } from "./SimpleUserCard";
 
 vi.mock("next/link", () => ({
 	default: ({ children, href }: { children: ReactNode; href: string }) => (
@@ -13,28 +13,28 @@ vi.mock("next/link", () => ({
 	),
 }));
 
-const createUser = (overrides: Partial<SimpleUser> = {}): SimpleUser => ({
-	display_name: "Alice Example",
-	icon: "/avatar.png",
-	protocol: "atp",
-	username: "alice.example",
-	...overrides,
-});
-
 const renderWithMantine = (ui: ReactNode) => {
 	return render(<MantineProvider>{ui}</MantineProvider>);
 };
 
-describe("AuthorProfileCard", () => {
-	// 正常系: 表示名とユーザー名が表示されリンクが正しいことを確認する
-	test("正常系: ユーザー情報を表示しプロフィールリンクが正しい", () => {
-		renderWithMantine(<AuthorProfileCard {...createUser()} />);
+const createUser = (overrides: Partial<SimpleUser> = {}): SimpleUser => ({
+	display_name: "Carol Example",
+	icon: "/avatar.png",
+	protocol: "atp",
+	username: "carol.example",
+	...overrides,
+});
 
-		expect(screen.getByText("Alice Example")).toBeInTheDocument();
-		expect(screen.getAllByText("alice.example")).toHaveLength(2);
+describe("SimpleUserCard", () => {
+	// 正常系: 表示名とユーザー名が表示され正しいプロフィールリンクを指すことを確認する
+	test("正常系: ユーザー情報を表示しプロフィールリンクが正しい", () => {
+		renderWithMantine(<SimpleUserCard {...createUser()} />);
+
+		expect(screen.getByText("Carol Example")).toBeInTheDocument();
+		expect(screen.getAllByText("carol.example")).toHaveLength(2);
 		expect(screen.getByRole("link")).toHaveAttribute(
 			"href",
-			"/profile/alice.example",
+			"/profile/carol.example",
 		);
 	});
 
@@ -42,7 +42,7 @@ describe("AuthorProfileCard", () => {
 	test("正常系: 長いユーザー名はモバイル表示で省略される", () => {
 		const longUsername = "averylongusername_that_should_be_cut_off_here";
 		renderWithMantine(
-			<AuthorProfileCard {...createUser({ username: longUsername })} />,
+			<SimpleUserCard {...createUser({ username: longUsername })} />,
 		);
 
 		expect(
@@ -51,13 +51,13 @@ describe("AuthorProfileCard", () => {
 		expect(screen.getByText(longUsername)).toBeInTheDocument();
 	});
 
-	// 準異常系: アイコンが欠損していても描画が継続する
+	// 準異常系: アイコンが欠損したデータでも描画が継続する
 	test("準異常系: アイコンが欠損していても描画される", () => {
 		const { container } = renderWithMantine(
-			<AuthorProfileCard {...createUser({ icon: "" })} />,
+			<SimpleUserCard {...createUser({ icon: "" })} />,
 		);
 
 		expect(container.querySelector("img")).toBeNull();
-		expect(screen.getByText("Alice Example")).toBeInTheDocument();
+		expect(screen.getByText("Carol Example")).toBeInTheDocument();
 	});
 });
