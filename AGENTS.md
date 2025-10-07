@@ -18,6 +18,7 @@
 ### frontend
 - 全て`/frontend`内で実行する。
 - Lint: `pnpm check:ci`
+- Test: `pnpm test`
 - Build: `pnpm build`
 
 ### openapi
