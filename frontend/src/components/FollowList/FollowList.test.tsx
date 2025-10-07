@@ -53,10 +53,18 @@ describe("FollowList", () => {
 
 	// 異常系: 無効なエントリを含む場合はエラーになることを確認する
 	test("異常系: 無効なユーザーデータを含むとエラーになる", () => {
-		expect(() =>
-			renderWithMantine(
-				<FollowList users={[createUser(), null as unknown as SimpleUser]} />,
-			),
-		).toThrow();
+		const consoleErrorSpy = vi
+			.spyOn(console, "error")
+			.mockImplementation(() => {});
+
+		try {
+			expect(() =>
+				renderWithMantine(
+					<FollowList users={[createUser(), null as unknown as SimpleUser]} />,
+				),
+			).toThrow();
+		} finally {
+			consoleErrorSpy.mockRestore();
+		}
 	});
 });

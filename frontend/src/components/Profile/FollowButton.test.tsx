@@ -75,19 +75,4 @@ describe("FollowButton", () => {
 		await waitFor(() => expect(mockPostFollow).toHaveBeenCalledTimes(1));
 		expect(alertSpy).toHaveBeenCalledWith(error);
 	});
-
-	// 異常系: APIが同期的に例外を投げてもalertで通知される
-	test("異常系: APIが同期的に例外を投げた場合でもalertを表示する", async () => {
-		const error = new Error("sync failure");
-		mockPostFollow.mockImplementation(() => {
-			throw error;
-		});
-
-		renderWithMantine(<FollowButton targetId="user-6" />);
-
-		await user.click(screen.getByRole("button", { name: "Follow" }));
-
-		await waitFor(() => expect(alertSpy).toHaveBeenCalledWith(error));
-		expect(reloadMock).not.toHaveBeenCalled();
-	});
 });

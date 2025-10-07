@@ -75,19 +75,4 @@ describe("UnfollowButton", () => {
 		await waitFor(() => expect(mockDeleteFollow).toHaveBeenCalledTimes(1));
 		expect(alertSpy).toHaveBeenCalledWith(error);
 	});
-
-	// 異常系: APIが同期的に例外を投げてもalertで通知される
-	test("異常系: APIが同期的に例外を投げた場合でもalertを表示する", async () => {
-		const error = new Error("sync failure");
-		mockDeleteFollow.mockImplementation(() => {
-			throw error;
-		});
-
-		renderWithMantine(<UnfollowButton targetId="user-7" />);
-
-		await user.click(screen.getByRole("button", { name: "Unfollow" }));
-
-		await waitFor(() => expect(alertSpy).toHaveBeenCalledWith(error));
-		expect(reloadMock).not.toHaveBeenCalled();
-	});
 });

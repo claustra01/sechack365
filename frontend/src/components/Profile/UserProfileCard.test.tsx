@@ -110,8 +110,16 @@ describe("UserProfileCard", () => {
 			identifiers: undefined,
 		} as unknown as User;
 
-		expect(() =>
-			renderWithProviders(<UserProfileCard {...corruptedUser} />),
-		).toThrow();
+		const consoleErrorSpy = vi
+			.spyOn(console, "error")
+			.mockImplementation(() => {});
+
+		try {
+			expect(() =>
+				renderWithProviders(<UserProfileCard {...corruptedUser} />),
+			).toThrow();
+		} finally {
+			consoleErrorSpy.mockRestore();
+		}
 	});
 });
