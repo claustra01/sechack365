@@ -3,7 +3,6 @@ import {
 	IconHome,
 	IconLogout,
 	IconNote,
-	IconQuestionMark,
 	IconSearch,
 	IconUser,
 } from "@tabler/icons-react";
@@ -31,11 +30,6 @@ export const UserMenu = () => {
 				href={`/profile/@${user?.username}`}
 			/>
 			<MenuItem icon={<IconNote />} title="New Article" href={"/article/new"} />
-			<MenuItem
-				icon={<IconQuestionMark />}
-				title="How to Demo"
-				href="/how_to_demo"
-			/>
 			<MenuItemWithModal
 				icon={<IconLogout />}
 				title="Logout"
