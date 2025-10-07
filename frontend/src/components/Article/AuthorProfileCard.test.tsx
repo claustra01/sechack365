@@ -38,7 +38,7 @@ describe("AuthorProfileCard", () => {
 		);
 	});
 
-	// 準異常系: 長いユーザー名がモバイル表示では省略されることを確認する
+	// 正常系: 長いユーザー名がモバイル表示では省略されることを確認する
 	test("truncates long usernames for mobile view", () => {
 		const longUsername = "averylongusername_that_should_be_cut_off_here";
 		render(
