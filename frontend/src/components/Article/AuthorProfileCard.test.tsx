@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { render, screen } from "@testing-library/react";
 import { MantineProvider } from "@mantine/core";
+import { render, screen } from "@testing-library/react";
 
 import type { SimpleUser } from "@/openapi/schemas";
 
