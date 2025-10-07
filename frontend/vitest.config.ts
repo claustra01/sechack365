@@ -14,8 +14,11 @@ export default defineConfig({
 		environment: "jsdom",
 		globals: true,
 		setupFiles: "./vitest.setup.ts",
-		pool: {
-			threads: false,
+		pool: "threads",
+		poolOptions: {
+			threads: {
+				singleThread: true,
+			},
 		},
 	},
 });
