@@ -1,13 +1,18 @@
-"use client";
-import { PageTemplate } from "@/components/Template/PageTemplate";
-import { UserTimeline } from "@/components/Timeline/UserTimeline";
+import { notFound } from "next/navigation";
+import { UserProfilePageClient } from "./UserProfilePageClient";
 
-export default function UserProfilePage({
-	params,
-}: { params: { id: string } }) {
-	return (
-		<PageTemplate>
-			<UserTimeline username={params.id} />
-		</PageTemplate>
-	);
+type PageProps = {
+	params?: Promise<{ id: string | string[] | undefined }>;
+};
+
+export default async function UserProfilePage({ params }: PageProps) {
+	const resolvedParams = params ? await params : undefined;
+	const rawId = resolvedParams?.id;
+	const id = Array.isArray(rawId) ? rawId[0] : rawId;
+
+	if (!id) {
+		notFound();
+	}
+
+	return <UserProfilePageClient id={id} />;
 }
