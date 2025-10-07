@@ -11,14 +11,12 @@
 
 ### api
 - Lintはレポジトリのrootで、それ以外は全て`/api`内で実行する。
-- Deps: `go mod tidy`
 - Lint: `make lint-api`
 - Test: `go test -v ./...`
 - Build: `go build ./cmd/server`
 
 ### frontend
 - 全て`/frontend`内で実行する。
-- Deps: `pnpm install`
 - Lint: `pnpm check:ci`
 - Build: `pnpm build`
 
