@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
-
-import { MantineProvider } from "@mantine/core";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 import type { SimpleUser } from "@/openapi/schemas";
+
+import { buildSimpleUser } from "@/testutils/builders";
+import { renderWithMantine } from "@/testutils/renderWithMantine";
 
 import { FollowList } from "./FollowList";
 
@@ -13,26 +13,20 @@ vi.mock("./SimpleUserCard", () => ({
 	),
 }));
 
-const renderWithMantine = (ui: ReactNode) => {
-	return render(<MantineProvider>{ui}</MantineProvider>);
-};
-
-const createUser = (overrides: Partial<SimpleUser> = {}): SimpleUser => ({
-	display_name: "Dave Example",
-	icon: "/avatar.png",
-	protocol: "atp",
-	username: "dave.example",
-	...overrides,
-});
-
 describe("FollowList", () => {
 	// 正常系: ユーザー配列を受け取り各ユーザーが描画されることを確認する
 	test("正常系: ユーザー一覧を描画する", () => {
 		renderWithMantine(
 			<FollowList
 				users={[
-					createUser(),
-					createUser({ username: "eve", display_name: "Eve Example" }),
+					buildSimpleUser({
+						display_name: "Dave Example",
+						username: "dave.example",
+					}),
+					buildSimpleUser({
+						display_name: "Eve Example",
+						username: "eve",
+					}),
 				]}
 			/>,
 		);
@@ -60,7 +54,15 @@ describe("FollowList", () => {
 		try {
 			expect(() =>
 				renderWithMantine(
-					<FollowList users={[createUser(), null as unknown as SimpleUser]} />,
+					<FollowList
+						users={[
+							buildSimpleUser({
+								display_name: "Dave Example",
+								username: "dave.example",
+							}),
+							null as unknown as SimpleUser,
+						]}
+					/>,
 				),
 			).toThrow();
 		} finally {

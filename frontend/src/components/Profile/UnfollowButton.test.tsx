@@ -1,20 +1,14 @@
-import type { ReactNode } from "react";
-
-import { MantineProvider } from "@mantine/core";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { deleteApiV1Follows } from "@/openapi/api";
+import { renderWithMantine } from "@/testutils/renderWithMantine";
 
 import { UnfollowButton } from "./UnfollowButton";
 
 vi.mock("@/openapi/api", () => ({
 	deleteApiV1Follows: vi.fn(),
 }));
-
-const renderWithMantine = (ui: ReactNode) => {
-	return render(<MantineProvider>{ui}</MantineProvider>);
-};
 
 const user = userEvent.setup();
 const mockDeleteFollow = vi.mocked(deleteApiV1Follows);

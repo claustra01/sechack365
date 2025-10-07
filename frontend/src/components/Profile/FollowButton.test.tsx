@@ -1,20 +1,14 @@
-import type { ReactNode } from "react";
-
-import { MantineProvider } from "@mantine/core";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { postApiV1Follows } from "@/openapi/api";
+import { renderWithMantine } from "@/testutils/renderWithMantine";
 
 import { FollowButton } from "./FollowButton";
 
 vi.mock("@/openapi/api", () => ({
 	postApiV1Follows: vi.fn(),
 }));
-
-const renderWithMantine = (ui: ReactNode) => {
-	return render(<MantineProvider>{ui}</MantineProvider>);
-};
 
 const user = userEvent.setup();
 const mockPostFollow = vi.mocked(postApiV1Follows);

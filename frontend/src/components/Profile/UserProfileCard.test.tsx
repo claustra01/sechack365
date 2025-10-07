@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-import { MantineProvider } from "@mantine/core";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 
 import { getApiV1FollowsFollowingId } from "@/openapi/api";
 import type { User } from "@/openapi/schemas";
+import { renderWithMantine } from "@/testutils/renderWithMantine";
 
 import { CurrentUserContext } from "../Template/PageTemplate";
 import { UserProfileCard } from "./UserProfileCard";
@@ -59,14 +59,12 @@ const renderWithProviders = (
 	ui: ReactNode,
 	currentUser: User | null = baseUser,
 ) => {
-	return render(
-		<MantineProvider>
-			<CurrentUserContext.Provider
-				value={{ user: currentUser, setUser: vi.fn() }}
-			>
-				{ui}
-			</CurrentUserContext.Provider>
-		</MantineProvider>,
+	return renderWithMantine(
+		<CurrentUserContext.Provider
+			value={{ user: currentUser, setUser: vi.fn() }}
+		>
+			{ui}
+		</CurrentUserContext.Provider>,
 	);
 };
 

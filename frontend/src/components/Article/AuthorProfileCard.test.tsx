@@ -1,34 +1,22 @@
-import type { ReactNode } from "react";
+import { screen } from "@testing-library/react";
 
-import { MantineProvider } from "@mantine/core";
-import { render, screen } from "@testing-library/react";
-
-import type { SimpleUser } from "@/openapi/schemas";
+import "@/testutils/mockNextLink";
+import { buildSimpleUser } from "@/testutils/builders";
+import { renderWithMantine } from "@/testutils/renderWithMantine";
 
 import { AuthorProfileCard } from "./AuthorProfileCard";
-
-vi.mock("next/link", () => ({
-	default: ({ children, href }: { children: ReactNode; href: string }) => (
-		<a href={href}>{children}</a>
-	),
-}));
-
-const createUser = (overrides: Partial<SimpleUser> = {}): SimpleUser => ({
-	display_name: "Alice Example",
-	icon: "/avatar.png",
-	protocol: "atp",
-	username: "alice.example",
-	...overrides,
-});
-
-const renderWithMantine = (ui: ReactNode) => {
-	return render(<MantineProvider>{ui}</MantineProvider>);
-};
 
 describe("AuthorProfileCard", () => {
 	// 正常系: 表示名とユーザー名が表示されリンクが正しいことを確認する
 	test("正常系: ユーザー情報を表示しプロフィールリンクが正しい", () => {
-		renderWithMantine(<AuthorProfileCard {...createUser()} />);
+		renderWithMantine(
+			<AuthorProfileCard
+				{...buildSimpleUser({
+					display_name: "Alice Example",
+					username: "alice.example",
+				})}
+			/>,
+		);
 
 		expect(screen.getByText("Alice Example")).toBeInTheDocument();
 		expect(screen.getAllByText("alice.example")).toHaveLength(2);
@@ -42,7 +30,12 @@ describe("AuthorProfileCard", () => {
 	test("正常系: 長いユーザー名はモバイル表示で省略される", () => {
 		const longUsername = "averylongusername_that_should_be_cut_off_here";
 		renderWithMantine(
-			<AuthorProfileCard {...createUser({ username: longUsername })} />,
+			<AuthorProfileCard
+				{...buildSimpleUser({
+					display_name: "Alice Example",
+					username: longUsername,
+				})}
+			/>,
 		);
 
 		expect(
@@ -54,7 +47,13 @@ describe("AuthorProfileCard", () => {
 	// 準異常系: アイコンが欠損していても描画が継続する
 	test("準異常系: アイコンが欠損していても描画される", () => {
 		const { container } = renderWithMantine(
-			<AuthorProfileCard {...createUser({ icon: "" })} />,
+			<AuthorProfileCard
+				{...buildSimpleUser({
+					display_name: "Alice Example",
+					username: "alice.example",
+					icon: "",
+				})}
+			/>,
 		);
 
 		expect(container.querySelector("img")).toBeNull();

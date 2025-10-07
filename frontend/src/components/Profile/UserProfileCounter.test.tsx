@@ -1,13 +1,8 @@
-import type { ReactNode } from "react";
+import { screen } from "@testing-library/react";
 
-import { MantineProvider } from "@mantine/core";
-import { render, screen } from "@testing-library/react";
+import { renderWithMantine } from "@/testutils/renderWithMantine";
 
 import { UserProfileCounter } from "./UserProfileCounter";
-
-const renderWithMantine = (ui: ReactNode) => {
-	return render(<MantineProvider>{ui}</MantineProvider>);
-};
 
 describe("UserProfileCounter", () => {
 	// 正常系: 値とラベルが表示されることを確認する
