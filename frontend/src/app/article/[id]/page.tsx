@@ -1,55 +1,18 @@
-"use client";
+import { notFound } from "next/navigation";
+import { ArticlePageClient } from "./ArticlePageClient";
 
-import { AuthorProfileCard } from "@/components/Article/AuthorProfileCard";
-import { Header } from "@/components/Header/Header";
-import { PostCard } from "@/components/PostCard/PostCard";
-import { PageTemplate } from "@/components/Template/PageTemplate";
-import { getApiV1ArticlesId, getApiV1ArticlesIdComments } from "@/openapi/api";
-import type { Article, ArticleComment } from "@/openapi/schemas";
-import { Box, ScrollArea, Title } from "@mantine/core";
-import { IconArrowBack } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import Markdown from "react-markdown";
+type PageProps = {
+	params?: Promise<{ id: string | string[] | undefined }>;
+};
 
-export default function UserProfilePage({
-	params,
-}: { params: { id: string } }) {
-	const { id } = params;
-	const [article, setArticle] = useState<Article | null>(null);
-	const [comments, setComments] = useState<ArticleComment[]>([]);
+export default async function ArticlePage({ params }: PageProps) {
+	const resolvedParams = params ? await params : undefined;
+	const rawId = resolvedParams?.id;
+	const id = Array.isArray(rawId) ? rawId[0] : rawId;
 
-	useEffect(() => {
-		getApiV1ArticlesId(id).then((res) => {
-			setArticle(res.data);
-		});
-		getApiV1ArticlesIdComments(id).then((res) => {
-			setComments(res.data);
-		});
-	}, [id]);
-
-	if (!article) {
-		return (
-			<PageTemplate>
-				<Header title="" icon={<IconArrowBack />} />
-			</PageTemplate>
-		);
+	if (!id) {
+		notFound();
 	}
 
-	return (
-		<PageTemplate>
-			<Header title={article.title} icon={<IconArrowBack />} />
-			<ScrollArea h={"calc( 100vh - 78px )"}>
-				<Box p={24}>
-					<Title>{article.title}</Title>
-					<Box my={24}>
-						<AuthorProfileCard {...article.user} />
-					</Box>
-					<Markdown>{article.content}</Markdown>
-				</Box>
-				{comments?.map((comment) => {
-					return <PostCard key={comment.id} {...comment} />;
-				})}
-			</ScrollArea>
-		</PageTemplate>
-	);
+	return <ArticlePageClient id={id} />;
 }
