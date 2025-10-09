@@ -13,7 +13,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/minio/minio-go/v7 v7.0.95
 	github.com/pkg/errors v0.9.1
-	golang.org/x/crypto v0.42.0
+	golang.org/x/crypto v0.43.0
 )
 
 require (
@@ -91,9 +91,9 @@ require (
 	github.com/woodsbury/decimal128 v1.3.0 // indirect
 	github.com/yosssi/ace v0.0.5 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/net v0.43.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
-	golang.org/x/text v0.29.0 // indirect
+	golang.org/x/net v0.45.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/text v0.30.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
